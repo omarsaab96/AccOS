@@ -37,16 +37,6 @@ interface StoredUser extends User {
   password: string;
 }
 
-// Mock user storage
-// const getUsersFromStorage = (): Record<string, StoredUser> => {
-//   const users = localStorage.getItem('registeredUsers');
-//   return users ? JSON.parse(users) : {};
-// };
-
-// const saveUsersToStorage = (users: Record<string, StoredUser>) => {
-//   localStorage.setItem('registeredUsers', JSON.stringify(users));
-// };
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
