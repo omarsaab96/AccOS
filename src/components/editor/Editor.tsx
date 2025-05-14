@@ -53,14 +53,14 @@ const Editor: React.FC = () => {
   };
 
   const handleSave = async () => {
-    if (activeDoc && docContent) {
+    if (activeDoc!=null && docContent!=null) {
       setIsSaving(true);
       await saveDoc(activeDoc, docContent.data);
       setIsSaving(false);
     }
   };
 
-  if (activeDoc==null || !currentDoc || !docContent) {
+  if (activeDoc == null || !currentDoc || !docContent) {
     return (
       <div className="h-full flex items-center justify-center text-gray-500">
         No doc selected
@@ -72,9 +72,10 @@ const Editor: React.FC = () => {
     <div className="h-full flex flex-col relative">
       {/* Header */}
       <div className="p-2 bg-gray-50 dark:bg-gray-800 border-b border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-        <div className="font-bold text-xs flex gap-5">
-          <span>Date: {docContent.created_on}</span>
-          <span>Type: {docContent.docTypeNameEn}</span>
+        <div className="font-bold text-xs flex gap-5 text-gray-900 dark:text-blue-400">
+          <div><span className="text-blue-600 dark:text-white">{docContent.docTypeNameEn}</span></div>
+          <div>Document # <span className="text-blue-600 dark:text-white">1</span></div>
+          <div>Date <span className="text-blue-600 dark:text-white">{docContent.created_on}</span></div>
         </div>
 
         <motion.button
@@ -102,25 +103,25 @@ const Editor: React.FC = () => {
 
       {/* Table Editor */}
       <div className="p-2 overflow-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm text-left">
           <thead>
-            <tr className="text-blue-600 dark:text-blue-400 bg-gray-100 dark:bg-gray-700">
-              <th>Acc #</th>
-              <th>Acc Name</th>
-              <th>Currency</th>
-              <th>Debit</th>
-              <th>Credit</th>
-              <th>Rate</th>
-              <th>Description</th>
+            <tr className="text-gray-900 dark:text-blue-400 bg-gray-100 dark:bg-gray-800">
+              <th className="p-2 rounded-tl-lg rounded-bl-lg">Acc #</th>
+              <th className="p-2">Acc Name</th>
+              <th className="p-2">Currency</th>
+              <th className="p-2">Debit</th>
+              <th className="p-2">Credit</th>
+              <th className="p-2">Rate</th>
+              <th className="p-2 rounded-tr-lg rounded-br-lg">Description</th>
             </tr>
           </thead>
           <tbody>
             {docContent.data.map((row: any, rowIndex: number) => (
-              <tr key={rowIndex}>
+              <tr key={rowIndex} className="border-b border-gray-200 dark:border-gray-800 ">
                 {Object.entries(row).map(([key, value], cellIndex) => (
-                  <td key={cellIndex}>
+                  <td key={cellIndex} className="px-1 py-2 first:pl-0 last:pr-0">
                     <input
-                      className="bg-transparent border-none w-full p-1"
+                      className="bg-gray-100 dark:bg-gray-800 rounded-lg border-none w-full py-1 px-2 outline-none"
                       type="text"
                       value={value ?? '-'}
                       onChange={(e) => handleTableInputChange(rowIndex, key, e.target.value)}

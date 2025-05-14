@@ -22,5 +22,43 @@
     }
   ],
   "files": [
+    {
+      "id": 0,
+      "name": "test",
+      "docType": 0,
+      "docTypeNameEn": "Journal Entry",
+      "docTypeNameAr": "قيد اليومية",
+      "data": [
+        {
+          "accountNumber": "test",
+          "accountName": "bd",
+          "currency": "lbp",
+          "debit": "",
+          "credit": "",
+          "rate": "",
+          "description": ""
+        }
+      ],
+      "created_on": "14/05/2025"
+    },
+    {
+      "id": 1,
+      "name": "fwe",
+      "docType": 3,
+      "docTypeNameEn": "Voucher",
+      "docTypeNameAr": "سند قيـد",
+      "data": [
+        {
+          "accountNumber": "",
+          "accountName": "",
+          "currency": "",
+          "debit": "",
+          "credit": "",
+          "rate": "",
+          "description": ""
+        }
+      ],
+      "created_on": "14/05/2025"
+    }
   ]
 }
