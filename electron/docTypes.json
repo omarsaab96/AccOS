@@ -1,0 +1,27 @@
+{
+  "docTypes": [
+    {
+      "id": 0,
+      "nameEn": "Journal Entry",
+      "nameAr": "قيد اليومية"
+    },
+    {
+      "id": 1,
+      "nameEn": "Payment Voucher",
+      "nameAr": "سند صرف"
+    },
+    {
+      "id": 2,
+      "nameEn": "Receipt Voucher",
+      "nameAr": "سند قبض (إيصال)"
+    },
+    {
+      "id": 3,
+      "nameEn": "Voucher",
+      "nameAr": "سند قيـد"
+    }
+  ],
+  "files": [
+    
+  ]
+}

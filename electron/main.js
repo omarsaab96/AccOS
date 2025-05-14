@@ -2,17 +2,13 @@ import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs/promises';
+import * as fsSync from 'fs';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import { initDB, addDocType, getDocTypes, addDocument, getAllDocuments, readDoc, updateDoc } from './documentStore.js';
 
 dotenv.config();
-
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
 
 const userSchema = new mongoose.Schema({
   name: String,
@@ -20,15 +16,31 @@ const userSchema = new mongoose.Schema({
   phone: String,
   password: String,
 });
-
 const User = mongoose.model('User', userSchema);
-
 
 // Determine if we're in development or production
 const isDev = process.env.NODE_ENV === 'development';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let mainWindow;
+
+async function initializeApp() {
+  try {
+    await initDB();
+    console.log('LocalDB initialized');
+
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+    console.log('MongoDB connected');
+
+    await createWindow();
+  } catch (error) {
+    console.error('Application initialization failed:', error);
+    app.quit();
+  }
+}
 
 async function createWindow() {
   mainWindow = new BrowserWindow({
@@ -60,7 +72,7 @@ async function createWindow() {
 }
 
 // Initialize app
-app.whenReady().then(createWindow);
+app.whenReady().then(initializeApp);
 
 // Quit when all windows are closed, except on macOS
 app.on('window-all-closed', () => {
@@ -75,7 +87,7 @@ app.on('activate', () => {
   }
 });
 
-// IPC handler for registration
+// IPC handler for Auth
 ipcMain.handle('register-user', async (event, userData) => {
   console.log(userData)
   const existing = await User.findOne({ email: userData.email });
@@ -109,6 +121,85 @@ ipcMain.handle('login-user', async (event, { email, password }) => {
 
 });
 
+//IPC handler for Documents
+ipcMain.handle('doc:addDocType', async (_, name_en, name_ar) => {
+  await addDocType(name_en, name_ar)
+})
+
+ipcMain.handle('doc:getAllDocTypes', async () => {
+  return await getDocTypes()
+})
+
+ipcMain.handle('doc:addDocument', async (_, name, docType, docTypeNameEn, docTypeNameAr, data) => {
+  return await addDocument(name, docType, docTypeNameEn, docTypeNameAr, data)
+})
+
+ipcMain.handle('doc:getAllDocuments', async () => {
+  return await getAllDocuments()
+})
+
+ipcMain.handle('doc:readDoc', async (_, id) => {
+  return await readDoc(id)
+})
+
+ipcMain.handle('doc:updateDoc', async (_, id, data) => {
+  return await updateDoc(id, data)
+})
+
+
+//IPC handler for Files
+ipcMain.handle('fs:readDirectory', async (event, dirPath) => {
+  const absolutePath = path.resolve(dirPath);
+  const entries = await fs.readdir(absolutePath, { withFileTypes: true });
+  return entries.map(entry => ({
+    name: entry.name,
+    isDirectory: entry.isDirectory(),
+    path: path.join(absolutePath, entry.name)
+  }));
+});
+
+ipcMain.handle('fs:readFile', async (_, filePath) => {
+  try {
+    const content = await fs.readFile(filePath, 'utf-8');
+    return content;
+  } catch (error) {
+    console.error('Error reading file:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('fs:writeFile', async (_, filePath, content) => {
+  try {
+    await fs.writeFile(filePath, content, 'utf-8');
+    return true;
+  } catch (error) {
+    console.error('Error writing file:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('fs:createFile', async (_, directoryPath, fileName, docType) => {
+  const filePath = path.join(directoryPath, fileName);
+
+  if (fsSync.existsSync(filePath)) {
+    return { success: false, message: "File already exists! Change document name." };
+  }
+
+  const data = `{
+    "doctype": "${docType}",
+    "format": "json",
+    "created_on": "${new Date().toLocaleString('en-UK', { day: '2-digit', month: '2-digit', year: 'numeric' })}",
+    "data": []
+  }`;
+
+  try {
+    await fs.writeFile(filePath, data, 'utf-8');
+    return { success: true, filePath };
+  } catch (error) {
+    console.error('Error creating file:', error);
+    return { success: false, message: error.message || "Unknown error" };
+  }
+});
 
 // ipcMain.handle('dialog:openDirectory', async () => {
 //   const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
@@ -130,59 +221,6 @@ ipcMain.handle('login-user', async (event, { email, password }) => {
 
 //   if (canceled) return null;
 //   return filePaths[0];
-// });
-
-// ipcMain.handle('fs:readDirectory', async (_, directoryPath) => {
-//   try {
-//     const items = await fs.readdir(directoryPath, { withFileTypes: true });
-//     const files = items.map(item => ({
-//       name: item.name,
-//       path: path.join(directoryPath, item.name),
-//       isDirectory: item.isDirectory(),
-//       extension: item.isDirectory() ? null : path.extname(item.name)
-//     }));
-
-//     // Sort directories first, then files
-//     return files.sort((a, b) => {
-//       if (a.isDirectory && !b.isDirectory) return -1;
-//       if (!a.isDirectory && b.isDirectory) return 1;
-//       return a.name.localeCompare(b.name);
-//     });
-//   } catch (error) {
-//     console.error('Error reading directory:', error);
-//     throw error;
-//   }
-// });
-
-// ipcMain.handle('fs:readFile', async (_, filePath) => {
-//   try {
-//     const content = await fs.readFile(filePath, 'utf-8');
-//     return content;
-//   } catch (error) {
-//     console.error('Error reading file:', error);
-//     throw error;
-//   }
-// });
-
-// ipcMain.handle('fs:writeFile', async (_, filePath, content) => {
-//   try {
-//     await fs.writeFile(filePath, content, 'utf-8');
-//     return true;
-//   } catch (error) {
-//     console.error('Error writing file:', error);
-//     throw error;
-//   }
-// });
-
-// ipcMain.handle('fs:createFile', async (_, directoryPath, fileName) => {
-//   try {
-//     const filePath = path.join(directoryPath, fileName);
-//     await fs.writeFile(filePath, '', 'utf-8');
-//     return filePath;
-//   } catch (error) {
-//     console.error('Error creating file:', error);
-//     throw error;
-//   }
 // });
 
 // ipcMain.handle('fs:createDirectory', async (_, parentDirectory, directoryName) => {
