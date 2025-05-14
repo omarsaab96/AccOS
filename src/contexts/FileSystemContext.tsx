@@ -149,6 +149,7 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   // Open a document for editing
   const openDocument = async (id: number) => {
+
     try {
       if (openDocuments.some(doc => doc.id === id)) {
         setActiveDoc(id);
