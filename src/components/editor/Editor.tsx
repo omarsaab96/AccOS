@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Save, Plus, Trash, Check } from 'lucide-react';
+import { Save, Plus, Trash, Check, AlertTriangle, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useFileSystem } from '../../contexts/FileSystemContext';
 
@@ -122,6 +122,23 @@ const Editor: React.FC = () => {
     setRowRemove(-1)
   }
 
+  const calculateTotal = (key: string) => {
+    return docContent?.data?.reduce((sum: number, row: any) => {
+      const value = parseFloat(row[key]);
+      const rate = parseFloat(row.rate);
+
+      // If currency is already USD, use 1 as rate
+      const effectiveRate = row.currency === "USD" || isNaN(rate) ? 1 : rate;
+
+      const usdValue = isNaN(value) ? 0 : value / effectiveRate;
+      return sum + usdValue;
+    }, 0);
+  };
+
+  const totalDebit = calculateTotal("debit");
+  const totalCredit = calculateTotal("credit");
+  const isBalanced = Math.abs(totalDebit - totalCredit) < 0.01; // handles floating point precision
+
   if (activeDoc == null || !currentDoc || !docContent) {
     return (
       <div className="h-full flex items-center justify-center text-gray-500">
@@ -170,6 +187,18 @@ const Editor: React.FC = () => {
 
       {/* Table Editor */}
       <div className="p-2 overflow-auto">
+        {!isBalanced && (
+          <div className="flex items-center p-1.5 justify-between rounded-lg overflow-hidden font-medium mb-2 bg-red-500 bg-opacity-20 text-red-500">
+            <div className="relative flex items-center gap-3 pl-[15px] text-sm before:absolute before:top-0 before:left-0 before:w-[5px] before:h-[100%] before:bg-red-600 before:rounded-lg">
+              <AlertTriangle size={18} strokeWidth={2.5}/>
+              Debit and Credit totals do not match.
+            </div>
+            <X size={18} className="font-bold" strokeWidth={3.5}/>
+
+          </div>
+
+        )}
+
         <table className="w-full text-sm text-left">
           <thead>
             <tr className="text-gray-900 dark:text-blue-400 bg-gray-100 dark:bg-gray-800">
@@ -184,64 +213,96 @@ const Editor: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {docContent.data.map((row: any, rowIndex: number) => (
-              <tr key={rowIndex} className="border-b border-gray-200 dark:border-gray-800 relative">
-                <td className="px-1 py-2 pl-0">
-                  <motion.button
-                    className="bg-gray-100 dark:bg-gray-800 rounded-lg border-none py-2 px-2 outline-none"
-                    onClick={() => removeRow(rowIndex)}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Trash size={12} className='opacity-50' />
-                  </motion.button>
+            {docContent.data.map((row: any, rowIndex: number) => {
+              const isLast = rowIndex === docContent.data.length - 1;
+              return (
+                <tr key={rowIndex}
+                  className={`border-b border-gray-200 dark:border-gray-800 relative ${isLast ? 'border-none' : ''}`}>
+                  <td className="px-1 py-2 pl-0">
+                    <motion.button
+                      className="bg-gray-100 dark:bg-gray-800 rounded-lg border-none py-2 px-2 outline-none"
+                      onClick={() => removeRow(rowIndex)}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Trash size={12} className='opacity-50' />
+                    </motion.button>
 
-                  <div className={`absolute top-0 left-0 h-full px-1 py-2 rounded-lg transition-all w-full origin-left ${rowRemove == rowIndex ? ' scale-100 opacity-100 visible' : ' scale-0 opacity-0 invisible'}`}>
-                    <div className='h-full bg-red-600 bg-opacity-50 backdrop-blur-sm flex justify-center items-center gap-2 rounded-lg text-center font-bold'>
-                      <Trash size={14} />
-                      Are you sure?
-                      <motion.button
-                        className="px-2 py-0.25 rounded-lg bg-green-400 text-green-800"
-                        onClick={() => confirmRemoveRow(rowIndex)}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        Yes
-                      </motion.button>
-                      <motion.button
-                        className="px-2 py-0.25 rounded-lg bg-red-500 text-red-800"
-                        onClick={() => cancelRemoveRow()}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        No
-                      </motion.button>
+                    <div className={`absolute top-0 left-0 h-full px-1 py-2 rounded-lg transition-all w-full origin-left ${rowRemove == rowIndex ? ' scale-100 opacity-100 visible' : ' scale-0 opacity-0 invisible'}`}>
+                      <div className='h-full bg-red-600 bg-opacity-50 backdrop-blur-sm flex justify-center items-center gap-2 rounded-lg text-center font-bold'>
+                        <Trash size={14} />
+                        Are you sure?
+                        <motion.button
+                          className="px-2 py-0.25 rounded-lg bg-green-400 text-green-800"
+                          onClick={() => confirmRemoveRow(rowIndex)}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          Yes
+                        </motion.button>
+                        <motion.button
+                          className="px-2 py-0.25 rounded-lg bg-red-500 text-red-800"
+                          onClick={() => cancelRemoveRow()}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          No
+                        </motion.button>
 
+                      </div>
                     </div>
-                  </div>
-                </td>
-                {Object.entries(row).map(([key, value], cellIndex) => (
-                  <td key={cellIndex} className="px-1 py-2 last:pr-0">
-                    <input
-                      className="bg-gray-100 dark:bg-gray-800 rounded-lg border-none w-full py-1 px-2 outline-none"
-                      type="text"
-                      value={value ?? ""}
-                      onChange={(e) => handleTableInputChange(rowIndex, key, e.target.value)}
-                    />
                   </td>
-                ))}
-              </tr>
-            ))}
+                  {Object.entries(row).map(([key, value], cellIndex) => (
+                    <td key={cellIndex} className="px-1 py-2 last:pr-0">
+                      {key === "currency" ? (
+                        <select
+                          className="bg-gray-100 dark:bg-gray-800 rounded-lg border-none w-full py-1 px-2 outline-none"
+                          value={value ?? ""}
+                          onChange={(e) => handleTableInputChange(rowIndex, key, e.target.value)}
+                        >
+                          <option value="">Select</option>
+                          <option value="USD">USD</option>
+                          <option value="EUR">EUR</option>
+                          <option value="LBP">LBP</option>
+                          <option value="GBP">GBP</option>
+                          <option value="JPY">JPY</option>
+                          {/* Add more currencies as needed */}
+                        </select>
+                      ) : (
+                        <input
+                          className="bg-gray-100 dark:bg-gray-800 rounded-lg border-none w-full py-1 px-2 outline-none"
+                          type="text"
+                          value={value ?? ""}
+                          onChange={(e) => handleTableInputChange(rowIndex, key, e.target.value)}
+                        />
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+            <tr className="bg-gray-100 dark:bg-gray-800">
+              <td colSpan="4" className="px-1 py-1 rounded-tl-lg rounded-bl-lg">
+                <motion.button
+                  className="flex items-center gap-[5px] bg-gray-100 dark:bg-gray-900 rounded-lg border-none py-1 px-2 outline-none text-xs"
+                  onClick={handleAddRow}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Plus size={12} />
+                  Add row
+                </motion.button>
+              </td>
+              <td className="px-1 p y-1">
+                <div className='bg-gray-100 dark:bg-gray-900 rounded-lg border-none w-full py-1 px-2 outline-none'>
+                  {calculateTotal("debit").toFixed(2)}
+                </div>
+              </td>
+              <td className="px-1 p y-1">
+                <div className='bg-gray-100 dark:bg-gray-900 rounded-lg border-none w-full py-1 px-2 outline-none'>
+                  {calculateTotal("credit").toFixed(2)}
+                </div>
+              </td>
+              <td colSpan="2" className='rounded-tr-lg rounded-br-lg'></td>
+            </tr>
           </tbody>
         </table>
-      </div>
-
-      <div className="px-2 flex justify-end">
-        <motion.button
-          className="flex w-full justify-center items-center px-2 py-1 text-sm bg-gray-100 dark:bg-gray-800 rounded-lg border-none outline-none hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={handleAddRow}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Plus size={16} className="mr-1" />
-          Add Row
-        </motion.button>
       </div>
     </div >
   );

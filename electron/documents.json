@@ -26,5 +26,136 @@
     ],
     "company": -1,
     "created_on": "15/05/2025"
+  },
+  {
+    "id": 1,
+    "name": "wed",
+    "docType": 1,
+    "docNumber": 1,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": -1,
+    "created_on": "15/05/2025"
+  },
+  {
+    "id": 2,
+    "name": "dew",
+    "docType": 2,
+    "docNumber": 1,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": -1,
+    "created_on": "15/05/2025"
+  },
+  {
+    "id": 3,
+    "name": "ew",
+    "docType": 3,
+    "docNumber": 1,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": -1,
+    "created_on": "15/05/2025"
+  },
+  {
+    "id": 4,
+    "name": "wef",
+    "docType": 0,
+    "docNumber": 2,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "EUR",
+        "debit": "1000",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      },
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "1000",
+        "rate": "",
+        "description": ""
+      },
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "230",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      },
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "230",
+        "rate": "",
+        "description": ""
+      },
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "0",
+        "credit": "1",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": -1,
+    "created_on": "15/05/2025"
+  },
+  {
+    "id": 5,
+    "name": "dq",
+    "docType": 0,
+    "docNumber": 3,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": -1,
+    "created_on": "15/05/2025"
   }
 ]

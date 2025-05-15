@@ -1,5 +1,5 @@
-import React from 'react';
-import { FileText, RefreshCw, Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { FileText, RefreshCw, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { useFileSystem } from '../../contexts/FileSystemContext';
 import { motion } from 'framer-motion';
 
@@ -8,6 +8,19 @@ type Props = { onOpenCreateDocModal: () => void; };
 
 const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
   const { documentsList, refreshDocuments, openDocument } = useFileSystem();
+  const [expanded, setExpanded] = useState({});
+  const [hasInitialized, setHasInitialized] = useState(false);
+
+  useEffect(() => {
+    if (!hasInitialized && Object.keys(documentsList).length > 0) {
+      const defaultExpanded: Record<string, boolean> = {};
+      Object.keys(documentsList).forEach((docType) => {
+        defaultExpanded[docType] = true;
+      });
+      setExpanded(defaultExpanded);
+      setHasInitialized(true);
+    }
+  }, [documentsList, hasInitialized]);
 
   const containerVariants = {
     hidden: { opacity: 1 },
@@ -32,7 +45,7 @@ const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
     <div className="h-full flex flex-col overflow-hidden">
       {/* Sidebar Header with Actions */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
-        <h2 className="font-medium text-sm">Documents</h2>
+        <h2 className="font-bold text-sm">Documents</h2>
 
         <div className="flex space-x-1">
           <button
@@ -62,34 +75,52 @@ const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
           ) : (
 
             Object.entries(documentsList).map(([docType, docs]) => (
-              <div key={docType} className='border-b border-gray-800' onClick={() => { toggleList(docType) }}>
-                <div className='px-4 py-2 flex items-baseline gap-3 text-sm'>
-                  {docType} <span className='opacity-50 font-light text-xs'>{docs.length}</span>
-                </div>
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="outline-none"
+              <div key={docType} className='border-b dark:border-gray-800'>
+                <div
+                  className='px-4 p-2 flex items-baseline justify-between gap-3 text-sm cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800 font-medium'
+                  onClick={() =>
+                    setExpanded(prev => ({
+                      ...prev,
+                      [docType]: !prev[docType],
+                    }))
+                  }
                 >
-                  {docs.map((item, index) => (
-                    <div
-                      key={item.id || index}
-                      className="hover:bg-gray-200 dark:hover:bg-gray-800 outline-none"
-                    >
-                      <motion.div
-                        variants={itemVariants}
-                        whileTap={{ scale: 0.95 }}
-                        className="px-4 py-2 text-sm cursor-pointer flex items-center outline-none"
-                        onClick={() => openDocument(item.id)}
+                  <div>
+                    {docType} <span className='text-blue-600 dark:text-blue-500 font-normal text-sm ml-[10px]'>{docs.length}</span>
+                  </div>
+                  {expanded[docType] == true ? (
+                    <ChevronUp size={15} className="translate-y-[2px]" />
+                  ) : (
+                    <ChevronDown size={15} className="translate-y-[2px]" />
+                  )}
+                </div>
+                
+                {expanded[docType] && (
+                  <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="outline-none last:mb-5"
+                  >
+                    {docs.map((item, index) => (
+                      <div
+                        key={item.id || index}
+                        className="hover:bg-gray-200 dark:hover:bg-gray-800 outline-none"
                       >
-                        <FileText size={14} className="mr-2 flex-shrink-0 text-gray-500 dark:text-gray-400" />
-                        <span className="truncate">{item.name}</span>
-                      </motion.div>
-                    </div>
-                  ))}
+                        <motion.div
+                          variants={itemVariants}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-4 py-1 text-sm cursor-pointer flex items-center outline-none"
+                          onClick={() => openDocument(item.id)}
+                        >
+                          <FileText size={14} className="mr-2 flex-shrink-0 text-gray-500 dark:text-gray-400" />
+                          <span className="truncate">{item.name}</span>
+                        </motion.div>
+                      </div>
+                    ))}
 
-                </motion.div>
+                  </motion.div>
+                )}
               </div>
             ))
 
