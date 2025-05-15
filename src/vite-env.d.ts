@@ -18,14 +18,17 @@ interface Window {
     // app: {
     //   getVersion: () => Promise<string>;
     // };
-    doc: {
+    doctypes: {
       addDocType: (name_en: string, name_ar: string, type: string) => Promise<void>;
       getAllDocTypes: () => Promise<{ id: number; name_en: string; name_ar: string; type: string; }[]>;
-      addDocument: (name: string, docType: number, docTypeNameEn: string, docTypeNameAr: string, data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]) => Promise<number>;
-      getAllDocuments: () => Promise<{ id: number; name: string; created_on: string; data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]; docType: number; docTypeNameEn: stringr; docTypeNameAr: string; }[]>;
-      readDoc: (id: number) => Promise<{ id: number; name: string; created_on: string; data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]; docType: number; docTypeNameEn: stringr; docTypeNameAr: string; }>;
-      updateDoc: (id: number, data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]) => Promise<boolean>;
+      getDocTypeName: (id: number) => Promise<{ nameEn: string, nameAr: string }>;
     };
+    documents: {
+      addDocument: (name: string, docType: number, docNumber: number, data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[], company: number) => Promise<number>;
+      getAllDocuments: () => Promise<{ id: number; name: string; created_on: string; data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]; docType: number; docNumber:number}[]>;
+      readDoc: (id: number) => Promise<{ id: number; name: string; created_on: string; data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]; docType: number; docNumber:number}>;
+      updateDoc: (id: number, data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]) => Promise<boolean>;
+    }
 
     api: {
       registerUser: (data: any) => Promise<any>;

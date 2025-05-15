@@ -13,10 +13,13 @@ contextBridge.exposeInMainWorld('electron', {
     deleteFile: (path) => ipcRenderer.invoke('fs:deleteFile', path),
     getStats: (path) => ipcRenderer.invoke('fs:getStats', path),
   },
-  doc: {
+  doctypes: {
     addDocType: (name_en, name_ar, type) => ipcRenderer.invoke('doc:addDocType', name_en, name_ar),
     getAllDocTypes: () => ipcRenderer.invoke('doc:getAllDocTypes'),
-    addDocument: (name, docType, docTypeNameEn, docTypeNameAr, data) => ipcRenderer.invoke('doc:addDocument', name, docType, docTypeNameEn, docTypeNameAr, data),
+    getDocTypeName: (id) => ipcRenderer.invoke('doc:getDocTypeName', id),
+  },
+  documents: {
+    addDocument: (name, docType, docNumber, data, company) => ipcRenderer.invoke('doc:addDocument', name, docType, docNumber, data, company),
     getAllDocuments: () => ipcRenderer.invoke('doc:getAllDocuments'),
     readDoc: (id) => ipcRenderer.invoke('doc:readDoc', id),
     updateDoc: (id, data) => ipcRenderer.invoke('doc:updateDoc', id, data),

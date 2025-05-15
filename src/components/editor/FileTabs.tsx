@@ -1,10 +1,29 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useFileSystem } from '../../contexts/FileSystemContext';
 
 const FileTabs: React.FC = () => {
   const { openDocuments, activeDoc, setActiveDoc, closeDoc } = useFileSystem();
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
+
+  // Disable browser's auto-scroll on middle-click
+  useEffect(() => {
+    const el = tabsContainerRef.current;
+    if (!el) return;
+
+    const preventMiddleClickScroll = (e: MouseEvent) => {
+      if (e.button === 1) {
+        e.preventDefault();
+      }
+    };
+
+    el.addEventListener('mousedown', preventMiddleClickScroll, { passive: false });
+
+    return () => {
+      el.removeEventListener('mousedown', preventMiddleClickScroll);
+    };
+  }, []);
 
   // Get file name from path
   const getFileName = (path: string) => {
@@ -15,13 +34,15 @@ const FileTabs: React.FC = () => {
   // Handle middle-click (mouse wheel click) event to close tab
   const handleMiddleClick = (e: React.MouseEvent, docId: number) => {
     if (e.button === 1) { // 1 indicates the middle mouse button
-      e.stopPropagation(); // Prevents the default behavior (such as scrolling)
+      e.preventDefault(); // Prevent scroll behavior
       closeDoc(docId);
     }
   };
 
   return (
-    <div className="border-b border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-800 overflow-x-auto whitespace-nowrap p-2 flex">
+    <div
+      ref={tabsContainerRef}
+      className="border-b border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-800 overflow-x-auto whitespace-nowrap p-2 flex">
       {openDocuments.map((doc) => {
         const isActive = activeDoc === doc.id;
         const fileName = doc.name;
@@ -46,7 +67,7 @@ const FileTabs: React.FC = () => {
               <span className="ml-1.5 text-gray-500 dark:text-gray-400 text-xs">●</span>
             )}
             <button
-              className="absolute top-[50%] -translate-y-[50%] right-[10px] w-[15px] h-[15px] text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 rounded-full"
+              className="absolute top-[50%] -translate-y-[50%] right-[10px] w-[15px] h-[15px] outline-none text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 rounded-full"
               onClick={(e) => {
                 e.stopPropagation();
                 closeDoc(doc.id);

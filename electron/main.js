@@ -6,7 +6,8 @@ import * as fsSync from 'fs';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-import { initDB, addDocType, getDocTypes, addDocument, getAllDocuments, readDoc, updateDoc } from './documentStore.js';
+import { initDocTypesDB, addDocType, getDocTypes, getDocTypeName } from './docTypeStore.js';
+import { initDocumentsDB, addDocument, getAllDocuments, readDoc, updateDoc } from './documentStore.js';
 
 dotenv.config();
 
@@ -26,7 +27,8 @@ let mainWindow;
 
 async function initializeApp() {
   try {
-    await initDB();
+    await initDocTypesDB();
+    await initDocumentsDB();
     console.log('LocalDB initialized');
 
     await mongoose.connect(process.env.MONGO_URI, {
@@ -121,7 +123,7 @@ ipcMain.handle('login-user', async (event, { email, password }) => {
 
 });
 
-//IPC handler for Documents
+//IPC handler for DocTypes
 ipcMain.handle('doc:addDocType', async (_, name_en, name_ar) => {
   await addDocType(name_en, name_ar)
 })
@@ -130,8 +132,13 @@ ipcMain.handle('doc:getAllDocTypes', async () => {
   return await getDocTypes()
 })
 
-ipcMain.handle('doc:addDocument', async (_, name, docType, docTypeNameEn, docTypeNameAr, data) => {
-  return await addDocument(name, docType, docTypeNameEn, docTypeNameAr, data)
+ipcMain.handle('doc:getDocTypeName', async (_, id) => {
+  return await getDocTypeName(id)
+})
+
+//IPC handler for Documents
+ipcMain.handle('doc:addDocument', async (_, name, docType, docNumber, data, company) => {
+  return await addDocument(name, docType, docNumber, data, company)
 })
 
 ipcMain.handle('doc:getAllDocuments', async () => {

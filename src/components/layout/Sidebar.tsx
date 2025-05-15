@@ -9,6 +9,25 @@ type Props = { onOpenCreateDocModal: () => void; };
 const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
   const { documentsList, refreshDocuments, openDocument } = useFileSystem();
 
+  const containerVariants = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.03, // time between items
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: -10 },
+    visible: { opacity: 1, x: 0 },
+  };
+
+  const toggleList = (docType: string) => {
+    console.log(docType)
+  }
+
   return (
     <div className="h-full flex flex-col overflow-hidden">
       {/* Sidebar Header with Actions */}
@@ -35,29 +54,50 @@ const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
 
       {/* File List */}
       <div className="flex-1 overflow-y-auto">
-        <div className="py-2">
+        <div className="">
           {documentsList.length === 0 ? (
             <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
               No Documents found
             </div>
           ) : (
-            documentsList.map((item, index) => (
-              <motion.div
-                key={item.id || index}
-                className="px-4 py-2 text-sm hover:bg-gray-200 dark:hover:bg-gray-800 cursor-pointer flex items-center"
-                onClick={() => openDocument(item.id)}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <FileText size={14} className="mr-2 flex-shrink-0 text-gray-500 dark:text-gray-400" />
-                <span className="truncate">{item.name}</span>
-              </motion.div>
+
+            Object.entries(documentsList).map(([docType, docs]) => (
+              <div key={docType} className='border-b border-gray-800' onClick={() => { toggleList(docType) }}>
+                <div className='px-4 py-2 flex items-baseline gap-3 text-sm'>
+                  {docType} <span className='opacity-50 font-light text-xs'>{docs.length}</span>
+                </div>
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="outline-none"
+                >
+                  {docs.map((item, index) => (
+                    <div
+                      key={item.id || index}
+                      className="hover:bg-gray-200 dark:hover:bg-gray-800 outline-none"
+                    >
+                      <motion.div
+                        variants={itemVariants}
+                        whileTap={{ scale: 0.95 }}
+                        className="px-4 py-2 text-sm cursor-pointer flex items-center outline-none"
+                        onClick={() => openDocument(item.id)}
+                      >
+                        <FileText size={14} className="mr-2 flex-shrink-0 text-gray-500 dark:text-gray-400" />
+                        <span className="truncate">{item.name}</span>
+                      </motion.div>
+                    </div>
+                  ))}
+
+                </motion.div>
+              </div>
             ))
+
+
           )}
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

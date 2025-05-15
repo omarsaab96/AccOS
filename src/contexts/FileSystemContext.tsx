@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import Swal from 'sweetalert2';
 
 interface FileItem {
   name: string;
@@ -45,8 +46,7 @@ interface DocumentContent {
     rate: string | null;
   }[];
   docType: number;
-  docTypeNameEn: string,
-  docTypeNameAr: string,
+  docNumber:number,
   isDirty: boolean;
 }
 
@@ -57,6 +57,7 @@ interface FileSystemContextType {
   openDocuments: DocumentContent[];
   activeFile: string | null;
   activeDoc: number | null;
+  docTypesCount:any[];
   openFile: (path: string) => Promise<void>;
   openDocument: (id: number) => Promise<void>;
   saveFile: (path: string, content: string) => Promise<boolean>;
@@ -69,7 +70,7 @@ interface FileSystemContextType {
   updateDocContent: (id: number, data: any) => void;
   getDocumentById: (id: number) => Promise<DocItem | undefined>;
   closeFile: (path: string) => void;
-  closeDoc: (id: number) => void;
+  closeDoc: (id: number) => Promise<boolean>;
 }
 
 const FileSystemContext = createContext<FileSystemContextType>({
@@ -79,6 +80,7 @@ const FileSystemContext = createContext<FileSystemContextType>({
   openDocuments: [],
   activeFile: null,
   activeDoc: null,
+  docTypesCount:[],
   openFile: async () => { },
   openDocument: async () => { },
   saveFile: async () => false,
@@ -91,7 +93,7 @@ const FileSystemContext = createContext<FileSystemContextType>({
   updateDocContent: () => { },
   getDocumentById: async () => undefined,
   closeFile: () => { },
-  closeDoc: () => { },
+  closeDoc: async () => false,
 });
 
 export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -101,10 +103,11 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [openDocuments, setOpenDocuments] = useState<DocumentContent[]>([]);
   const [activeFile, setActiveFilePath] = useState<string | null>(null);
   const [activeDoc, setActiveDoc] = useState<number | null>(null);
+  const [docTypesCount, setDocTypesCount] = useState([]);
 
   // Load files on initial mount
   useEffect(() => {
-    refreshDirectory();
+    // refreshDirectory();
     refreshDocuments();
   }, []);
 
@@ -120,9 +123,30 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   // Refresh the documents list
   const refreshDocuments = async () => {
+    setDocumentsList([]);
     try {
-      const docs = await window.electron.doc.getAllDocuments();
-      setDocumentsList(docs);
+      const docs = await window.electron.documents.getAllDocuments();
+
+      const groupedByDoctype = {};
+
+      for (const doc of docs) {
+        const docTypeName = await window.electron.doctypes.getDocTypeName(doc.docType);
+        if (!groupedByDoctype[docTypeName.nameEn]) {
+          groupedByDoctype[docTypeName.nameEn] = [];
+        }
+        groupedByDoctype[docTypeName.nameEn].push(doc);
+      }
+
+      setDocumentsList(groupedByDoctype);
+
+      // Compute counts
+      const docTypesCount = Object.entries(groupedByDoctype).map(([name, docs]) => ({
+        name,
+        count: docs.length
+      }));
+
+      setDocTypesCount(docTypesCount);
+
     } catch (error) {
       console.error('Failed to refresh documents list:', error);
     }
@@ -149,14 +173,13 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   // Open a document for editing
   const openDocument = async (id: number) => {
-
     try {
       if (openDocuments.some(doc => doc.id === id)) {
         setActiveDoc(id);
         return;
       }
 
-      const content = await window.electron.doc.readDoc(id);
+      const content = await window.electron.documents.readDoc(id);
 
       if (!content || typeof content.id !== 'number') {
         console.error('Invalid document content received.');
@@ -169,8 +192,7 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         created_on: content.created_on,
         data: content.data,
         docType: content.docType,
-        docTypeNameEn: content.docTypeNameEn,
-        docTypeNameAr: content.docTypeNameAr,
+        docNumber:content.docNumber,
         isDirty: false
       }
 
@@ -208,7 +230,7 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // Save doc content
   const saveDoc = async (id: number, data: any) => {
     try {
-      await window.electron.doc.updateDoc(id, data);
+      await window.electron.documents.updateDoc(id, data);
 
       // Update open files to mark file as not dirty
       setOpenDocuments(prev =>
@@ -255,7 +277,7 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const getDocumentById = async (id: number): Promise<DocItem | undefined> => {
     try {
-      const allDocs = await window.electron.doc.getAllDocuments();
+      const allDocs = await window.electron.documents.getAllDocuments();
       return allDocs.find(doc => doc.id === id);
     } catch (error) {
       console.error('Failed to get document by ID:', error);
@@ -275,14 +297,54 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   // Close a doc
-  const closeDoc = (id: number) => {
-    setOpenDocuments(prev => prev.filter(doc => doc.id !== id));
+  const closeDoc = async (id: number) => {
+    const docToBeClosed = openDocuments.find(doc => doc.id === id);
 
-    // If we closed the active doc, set a new active doc
-    if (activeDoc === id) {
-      const remaining = openDocuments.filter(doc => doc.id !== id);
-      setActiveDoc(remaining.length > 0 ? remaining[0].id : null);
+    const isDarkMode = true
+
+    if (docToBeClosed?.isDirty) {
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'You have unsaved changes.',
+        icon: 'warning',
+        showCancelButton: true,
+        showDenyButton: true,
+        confirmButtonText: 'Save & close',
+        denyButtonText: 'Close without saving',
+        cancelButtonText: 'Cancel',
+        background: isDarkMode ? '#1f2937' : undefined, // Tailwind gray-800
+        color: isDarkMode ? '#f9fafb' : undefined,      // Tailwind gray-50
+
+        // 🔥 Remove default styling
+        buttonsStyling: false,
+
+        // 🎨 Custom button classes
+        customClass: {
+          popup: 'rounded-xl shadow-xl',
+          icon: 'text-xs',
+          confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-3 py-1.5 rounded-md outline-none mr-[10px]',
+          denyButton: 'bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-3 py-1.5 rounded-md outline-none mr-[10px]',
+          cancelButton: 'bg-gray-500 hover:bg-gray-600 text-white text-sm font-medium px-3 py-1.5 rounded-md outline-none',
+        },
+      });
+
+      if (result.isConfirmed) {
+        const success = await saveDoc(id, docToBeClosed.data);
+        if (!success) return false;
+      } else if (result.isDismissed) {
+        return false;
+      }
     }
+
+    setOpenDocuments(prev => {
+      const updatedDocs = prev.filter(doc => doc.id !== id);
+      if (activeDoc === id) {
+        setActiveDoc(updatedDocs.length > 0 ? updatedDocs[0].id : null);
+      }
+      return updatedDocs;
+    });
+
+    return true;
   };
 
   return (
@@ -294,6 +356,7 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         openDocuments,
         activeFile,
         activeDoc,
+        docTypesCount,
         openFile,
         openDocument,
         saveFile,

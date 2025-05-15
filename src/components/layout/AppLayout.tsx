@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { PanelLeftOpen, PanelLeftClose, Moon, Sun, ChevronDown, LogOut } from 'lucide-react';
+import { PanelLeftOpen, PanelLeftClose, Moon, Sun, ChevronDown, LogOut, FilePlus } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useFileSystem } from '../../contexts/FileSystemContext';
@@ -20,10 +20,10 @@ const AppLayout: React.FC = () => {
 
   useEffect(() => {
     const fetchFileName = async () => {
-      if (activeDoc!=null) {
+      if (activeDoc != null) {
         const name = await getFileName(activeDoc);
         setActiveFileName(name);
-      }else{
+      } else {
       }
     };
 
@@ -85,7 +85,7 @@ const AppLayout: React.FC = () => {
           </button>
 
           <div className="relative group">
-            <button className="flex items-center space-x-1 px-2 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button className="flex items-center space-x-1 px-2 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 outline-none">
               <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white">
                 {user?.name?.charAt(0).toUpperCase() || 'null'}
               </div>
@@ -123,11 +123,11 @@ const AppLayout: React.FC = () => {
           {/* Editor Area */}
           <div className="flex-1 overflow-hidden">
             {showDocTypesModal &&
-              
+
               < CreateDocModal onClose={() => setShowDocTypesModal(false)} />
             }
 
-            {activeDoc!=null ? (
+            {activeDoc != null ? (
               <>
                 {/* File Tabs */}
                 {openDocuments.length > 0 && (
@@ -147,12 +147,15 @@ const AppLayout: React.FC = () => {
                 <p className="text-center max-w-md mb-8">
                   Open a document from the sidebar or create a new one.
                 </p>
-                <button
+
+                <motion.button
+                  className="flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors focus:outline-none"
                   onClick={() => createNewFile()}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors focus:outline-none "
+                  whileTap={{ scale: 0.95 }}
                 >
+                  <FilePlus size={20} className="mr-1" />
                   Create New Document
-                </button>
+                </motion.button>
               </div>
             )}
           </div>

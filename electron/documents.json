@@ -1,0 +1,30 @@
+[
+  {
+    "id": 0,
+    "name": "test",
+    "docType": 0,
+    "docNumber": 1,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      },
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": -1,
+    "created_on": "15/05/2025"
+  }
+]

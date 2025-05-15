@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FolderPen } from 'lucide-react';
 import { useFileSystem } from '../contexts/FileSystemContext';
+import { motion } from 'framer-motion';
 
 
 type AddDocumentResult = | { success: true; id: number } | { success: false; message: string };
@@ -11,9 +12,9 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
     const [documentNameError, setDocumentNameError] = useState("");
     const [documentName, setDocumentName] = useState("");
     const [selectedDocType, setSelectedDocType] = useState(-1);
-    const [docTypes, setDocTypes] = useState<{ id: number; nameEn: string; nameAr: string; }[]>([]);
+    const [docTypes, setDocTypes] = useState<any[]>([]);
 
-    const { refreshDocuments, openDocument } = useFileSystem();
+    const { refreshDocuments, openDocument, docTypesCount } = useFileSystem();
 
     useEffect(() => {
         fetchDocTypes()
@@ -21,14 +22,14 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
 
     //get all docTypes from db
     const fetchDocTypes = async () => {
-        const result = await window.electron.doc.getAllDocTypes()
+        const result = await window.electron.doctypes.getAllDocTypes()
         setDocTypes(result)
     }
 
     //add new docType and document to db
     // const handleAddDocType = async () => {
     //     try {
-    //         await window.electron.doc.addDocType(
+    //         await window.electron.doctypes.addDocType(
     //             "test",
     //             "testAr",
     //             "general"
@@ -36,7 +37,7 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
 
     //         console.log("Document type added successfully");
     //         // Refresh your document types list if needed
-    //         const updatedTypes = await window.electron.doc.getAllDocTypes();
+    //         const updatedTypes = await window.electron.doctypes.getAllDocTypes();
     //         setDocTypes(updatedTypes);
     //     } catch (error) {
     //         console.error("Failed to add document type:", error);
@@ -44,13 +45,10 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
     //     }
     // };
 
-    const handleAddDocument = async (name: string, docType: number, docTypeNameEn: string, docTypeNameAr: string, data: any): Promise<AddDocumentResult> => {
+    const handleAddDocument = async (name: string, docType: number, docNumber: number, data: any, company: number): Promise<AddDocumentResult> => {
 
         try {
-            const resp = await window.electron.doc.addDocument(name, docType, docTypeNameEn, docTypeNameAr, data);
-
-
-
+            const resp = await window.electron.documents.addDocument(name, docType, docNumber, data, company);
 
             return { success: true, id: resp };
         } catch (error) {
@@ -72,7 +70,7 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
 
     const getDocTypeByID = async (id: Number): Promise<any> => {
         try {
-            const allDocTypes = await window.electron.doc.getAllDocTypes();
+            const allDocTypes = await window.electron.doctypes.getAllDocTypes();
             return allDocTypes.find(docType => docType.id === id);
         } catch (error) {
             console.error('Failed to get docType by ID:', error);
@@ -83,16 +81,8 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
     const confirmCreateNewFile = async () => {
         const fileName = documentName;
         const docType = selectedDocType;
-
-        var docTypeNameEn;
-        var docTypeNameAr;
-
-        try {
-            const docTypeObj = await getDocTypeByID(selectedDocType)
-            docTypeNameEn = docTypeObj.nameEn;
-            docTypeNameAr = docTypeObj.nameAr;
-        } catch { }
-
+        const docNumber = docTypesCount[selectedDocType]?.count + 1 || 1;
+        const company = -1;
 
         const data = [{
             "accountNumber": "",
@@ -109,7 +99,7 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
             return;
         }
 
-        const result = await handleAddDocument(fileName, docType, docTypeNameEn, docTypeNameAr, data);
+        const result = await handleAddDocument(fileName, docType, docNumber, data, company);
 
         if (!result?.success) {
             setDocumentNameError(result?.message);
@@ -170,19 +160,22 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
             </div>
 
             <div className="flex gap-5 bg-white dark:bg-gray-800 justify-between items-center p-4">
-                <button
+                <motion.button
+                    className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors focus:outline-none"
                     onClick={() => cancelShowDocTypesModal()}
-                    className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors focus:outline-none "
+                    whileTap={{ scale: 0.95 }}
                 >
                     Cancel
-                </button>
-                <button
-                    onClick={() => confirmCreateNewFile()}
-                    disabled={selectedDocType === -1 || documentName === ""}
+                </motion.button>
+
+                <motion.button
                     className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-500"
+                    onClick={() => confirmCreateNewFile()}
+                    whileTap={{ scale: 0.95 }}
+                    disabled={selectedDocType === -1 || documentName === ""}
                 >
                     Create Document
-                </button>
+                </motion.button>
             </div>
         </div>
     );
