@@ -93,7 +93,7 @@
       {
         "accountNumber": "",
         "accountName": "",
-        "currency": "EUR",
+        "currency": "USD",
         "debit": "1000",
         "credit": "",
         "rate": "",
@@ -102,16 +102,16 @@
       {
         "accountNumber": "",
         "accountName": "",
-        "currency": "",
+        "currency": "USD",
         "debit": "",
         "credit": "1000",
-        "rate": "",
+        "rate": "s",
         "description": ""
       },
       {
         "accountNumber": "",
         "accountName": "",
-        "currency": "",
+        "currency": "USD",
         "debit": "230",
         "credit": "",
         "rate": "",
@@ -120,7 +120,7 @@
       {
         "accountNumber": "",
         "accountName": "",
-        "currency": "",
+        "currency": "USD",
         "debit": "",
         "credit": "230",
         "rate": "",
@@ -129,9 +129,9 @@
       {
         "accountNumber": "",
         "accountName": "",
-        "currency": "",
+        "currency": "USD",
         "debit": "0",
-        "credit": "1",
+        "credit": "100",
         "rate": "",
         "description": ""
       }
@@ -157,5 +157,43 @@
     ],
     "company": -1,
     "created_on": "15/05/2025"
+  },
+  {
+    "id": 6,
+    "name": "gergre",
+    "docType": 0,
+    "docNumber": 4,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": -1,
+    "created_on": "16/05/2025"
+  },
+  {
+    "id": 7,
+    "name": "يث",
+    "docType": 3,
+    "docNumber": 2,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": -1,
+    "created_on": "16/05/2025"
   }
 ]

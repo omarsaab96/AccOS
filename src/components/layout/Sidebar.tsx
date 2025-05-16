@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { FileText, RefreshCw, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { useFileSystem } from '../../contexts/FileSystemContext';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 type Props = { onOpenCreateDocModal: () => void; };
 
 
 const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
   const { documentsList, refreshDocuments, openDocument } = useFileSystem();
+
   const [expanded, setExpanded] = useState({});
   const [hasInitialized, setHasInitialized] = useState(false);
 
@@ -33,19 +38,15 @@ const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, x: -10 },
+    hidden: { opacity: 0, x: language === 'ar' ? 10 : -10 },
     visible: { opacity: 1, x: 0 },
   };
-
-  const toggleList = (docType: string) => {
-    console.log(docType)
-  }
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
       {/* Sidebar Header with Actions */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
-        <h2 className="font-bold text-sm">Documents</h2>
+        <h2 className="font-bold text-sm">{t('Sidebar.title')}</h2>
 
         <div className="flex space-x-1">
           <button
@@ -70,7 +71,7 @@ const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
         <div className="">
           {documentsList.length === 0 ? (
             <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
-              No Documents found
+              {t('Sidebar.noDocuments')}
             </div>
           ) : (
 
@@ -85,16 +86,18 @@ const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
                     }))
                   }
                 >
-                  <div>
-                    {docType} <span className='text-blue-600 dark:text-blue-500 font-normal text-sm ml-[10px]'>{docs.length}</span>
+                  <div className="flex items-center gap-[10px]">
+                    {t('Doctypes.'+docType.replace(" ",""))} <span className='text-blue-600 dark:text-blue-500 font-normal text-sm'>{docs.length}</span>
                   </div>
+
                   {expanded[docType] == true ? (
                     <ChevronUp size={15} className="translate-y-[2px]" />
                   ) : (
                     <ChevronDown size={15} className="translate-y-[2px]" />
                   )}
+
                 </div>
-                
+
                 {expanded[docType] && (
                   <motion.div
                     variants={containerVariants}
@@ -110,10 +113,10 @@ const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
                         <motion.div
                           variants={itemVariants}
                           whileTap={{ scale: 0.95 }}
-                          className="px-4 py-1 text-sm cursor-pointer flex items-center outline-none"
+                          className="px-4 py-1 text-sm cursor-pointer flex items-center outline-none gap-2"
                           onClick={() => openDocument(item.id)}
                         >
-                          <FileText size={14} className="mr-2 flex-shrink-0 text-gray-500 dark:text-gray-400" />
+                          <FileText size={14} className="flex-shrink-0 text-gray-500 dark:text-gray-400" />
                           <span className="truncate">{item.name}</span>
                         </motion.div>
                       </div>

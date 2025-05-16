@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import { useTranslation } from 'react-i18next';
 
 interface FileItem {
   name: string;
@@ -46,7 +47,7 @@ interface DocumentContent {
     rate: string | null;
   }[];
   docType: number;
-  docNumber:number,
+  docNumber: number,
   isDirty: boolean;
 }
 
@@ -57,7 +58,7 @@ interface FileSystemContextType {
   openDocuments: DocumentContent[];
   activeFile: string | null;
   activeDoc: number | null;
-  docTypesCount:any[];
+  docTypesCount: any[];
   openFile: (path: string) => Promise<void>;
   openDocument: (id: number) => Promise<void>;
   saveFile: (path: string, content: string) => Promise<boolean>;
@@ -80,7 +81,7 @@ const FileSystemContext = createContext<FileSystemContextType>({
   openDocuments: [],
   activeFile: null,
   activeDoc: null,
-  docTypesCount:[],
+  docTypesCount: [],
   openFile: async () => { },
   openDocument: async () => { },
   saveFile: async () => false,
@@ -97,6 +98,7 @@ const FileSystemContext = createContext<FileSystemContextType>({
 });
 
 export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
   const [directoryContents, setDirectoryContents] = useState<FileItem[]>([]);
   const [documentsList, setDocumentsList] = useState<DocItem[]>([]);
   const [openFiles, setOpenFiles] = useState<FileContent[]>([]);
@@ -192,7 +194,7 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         created_on: content.created_on,
         data: content.data,
         docType: content.docType,
-        docNumber:content.docNumber,
+        docNumber: content.docNumber,
         isDirty: false
       }
 
@@ -304,14 +306,14 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     if (docToBeClosed?.isDirty) {
       const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: 'You have unsaved changes.',
+        title: t('Editor.popup.title'),
+        text: t('Editor.popup.subtitle'),
         icon: 'warning',
         showCancelButton: true,
         showDenyButton: true,
-        confirmButtonText: 'Save & close',
-        denyButtonText: 'Close without saving',
-        cancelButtonText: 'Cancel',
+        confirmButtonText: t('Editor.popup.ctas.saveAndClose'),
+        denyButtonText: t('Editor.popup.ctas.closeWithoutSaving'),
+        cancelButtonText: t('Editor.popup.ctas.cancel'),
         background: isDarkMode ? '#1f2937' : undefined, // Tailwind gray-800
         color: isDarkMode ? '#f9fafb' : undefined,      // Tailwind gray-50
 
@@ -322,8 +324,8 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         customClass: {
           popup: 'rounded-xl shadow-xl',
           icon: 'text-xs',
-          confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-3 py-1.5 rounded-md outline-none mr-[10px]',
-          denyButton: 'bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-3 py-1.5 rounded-md outline-none mr-[10px]',
+          confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-3 py-1.5 rounded-md outline-none ltr:mr-[10px] rtl:ml-[10px]',
+          denyButton: 'bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-3 py-1.5 rounded-md outline-none ltr:mr-[10px] rtl:ml-[10px]',
           cancelButton: 'bg-gray-500 hover:bg-gray-600 text-white text-sm font-medium px-3 py-1.5 rounded-md outline-none',
         },
       });

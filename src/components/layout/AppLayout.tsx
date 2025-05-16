@@ -9,8 +9,12 @@ import Sidebar from './Sidebar';
 import Editor from '../editor/Editor';
 import FileTabs from '../editor/FileTabs';
 import CreateDocModal from '../createDocModal';
+import { useTranslation } from 'react-i18next';
+
+
 
 const AppLayout: React.FC = () => {
+  const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeFileName, setActiveFileName] = useState('');
   const [showDocTypesModal, setShowDocTypesModal] = useState(false);
@@ -57,7 +61,7 @@ const AppLayout: React.FC = () => {
         <div className="flex items-center">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="mr-4 p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
+            className="ltr:mr-4 rtl:ml-4 rtl:rotate-180 p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
             aria-label="Toggle sidebar"
           >
             {sidebarOpen ? <PanelLeftClose size={20} /> : <PanelLeftOpen size={20} />}
@@ -77,16 +81,15 @@ const AppLayout: React.FC = () => {
           </h1>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <div>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <button
               onClick={toggleLanguage}
               className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
-              aria-label={`Switch to ${language === 'en' ? 'Arabic' : 'English'}`}
             >
-              Switch to {language === 'en' ? 'Arabic' : 'English'}
+              {t('Common.languageToggle')}
             </button>
-            
+
             <button
               onClick={toggleTheme}
               className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
@@ -95,8 +98,9 @@ const AppLayout: React.FC = () => {
               {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
             </button>
           </div>
+
           <div className="relative group">
-            <button className="flex items-center space-x-1 px-2 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 outline-none">
+            <button className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 outline-none">
               <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white">
                 {user?.name?.charAt(0).toUpperCase() || 'null'}
               </div>
@@ -104,12 +108,12 @@ const AppLayout: React.FC = () => {
               <ChevronDown size={14} />
             </button>
 
-            <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 border border-gray-200 dark:border-gray-700 hidden group-hover:block">
+            <div className="absolute ltr:right-0 rtl:left-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 border border-gray-200 dark:border-gray-700 hidden group-hover:block">
               <button
                 onClick={logout}
                 className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left"
               >
-                <LogOut size={16} className="mr-2" />
+                <LogOut size={16} className="ltr:mr-2 rtl:ml-2 rtl:rotate-180" />
                 Sign out
               </button>
             </div>
@@ -120,7 +124,7 @@ const AppLayout: React.FC = () => {
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
         <motion.div
-          className="border-r border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 overflow-hidden"
+          className="ltr:border-r rtl:border-l border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 overflow-hidden"
           initial={{ width: sidebarOpen ? 250 : 0 }}
           animate={{ width: sidebarOpen ? 250 : 0 }}
           transition={{ duration: 0.2 }}
@@ -135,7 +139,7 @@ const AppLayout: React.FC = () => {
           <div className="flex-1 overflow-hidden">
             {showDocTypesModal &&
 
-              < CreateDocModal onClose={() => setShowDocTypesModal(false)} />
+              <CreateDocModal onClose={() => setShowDocTypesModal(false)} />
             }
 
             {activeDoc != null ? (
@@ -154,18 +158,18 @@ const AppLayout: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
-                <h2 className="text-xl font-medium mb-2">No Open Documents</h2>
+                <h2 className="text-xl font-medium mb-2">{t('NoOpenDocuments.title')}</h2>
                 <p className="text-center max-w-md mb-8">
-                  Open a document from the sidebar or create a new one.
+                  {t('NoOpenDocuments.subtitle')}
                 </p>
 
                 <motion.button
-                  className="flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors focus:outline-none"
+                  className="flex items-center gap-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors focus:outline-none"
                   onClick={() => createNewFile()}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <FilePlus size={20} className="mr-1" />
-                  Create New Document
+                  <FilePlus size={20} />
+                  {t('NoOpenDocuments.cta')}
                 </motion.button>
               </div>
             )}

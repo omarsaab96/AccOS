@@ -1,3 +1,120 @@
 {
-  "welcome": "مرحبا بك في التطبيق"
+  "Common": {
+    "languageToggle": "English"
+  },
+  "Login": {
+    "title": "تسجيل الدخول",
+    "inputs": {
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "password": "كلمة المرور",
+      "passwordPlaceholder": "أدخل كلمة المرور الخاصة بك"
+    },
+    "ctas": {
+      "login": "تسجيل الدخول",
+      "loggingIn": "جارٍ تسجيل الدخول...",
+      "register": "إنشاء حساب"
+    },
+    "errors": {
+      "emailAndPasswordEmpty": "يرجى إدخال البريد الإلكتروني وكلمة المرور.",
+      "invalidCredentials": "المعلومات المدخلة غير صحيحة."
+    }
+  },
+  "Register": {
+    "title": "إنشاء حساب",
+    "inputs": {
+      "name": "الاسم",
+      "namePlaceholder": "أدخل اسمك",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "phone": "رقم الهاتف",
+      "phonePlaceholder": "أدخل رقم هاتفك",
+      "password": "كلمة المرور",
+      "passwordPlaceholder": "أدخل كلمة المرور الخاصة بك",
+      "confirmpassword": "تأكيد كلمة المرور",
+      "confirmpasswordPlaceholder": "أكد كلمة المرور الخاصة بك"
+    },
+    "ctas": {
+      "register": "إنشاء الحساب",
+      "registering": "جارٍ إنشاء الحساب...",
+      "login": "العودة لتسجيل الدخول"
+    },
+    "errors": {
+      "fieldEmpty": "يرجى تعبئة جميع الحقول.",
+      "passwordsMatch": "كلمتا المرور غير متطابقتين.",
+      "passwordLength": "يجب أن تكون كلمة المرور 6 أحرف على الأقل.",
+      "nameLength": "يجب أن يكون الاسم 3 أحرف على الأقل.",
+      "invalidEmail": "يرجى إدخال عنوان بريد إلكتروني صالح.",
+      "invalidPhone": "يرجى إدخال رقم هاتف صالح.",
+      "accountExists": "هذا الحساب مسجّل مسبقًا.",
+      "registerError": "حدث خطأ أثناء عملية التسجيل. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "Doctypes": {
+    "JournalEntry": "قيد اليومية",
+    "PaymentVoucher": "سند صرف",
+    "ReceiptVoucher": "سند قبض (إيصال)",
+    "Voucher": "سند قيـد"
+  },
+  "Sidebar": {
+    "title": "المستندات",
+    "noDocuments": "لا يوجد مستندات"
+  },
+  "NoOpenDocuments": {
+    "title": "لا توجد مستندات مفتوحة",
+    "subtitle": "افتح مستندًا من الشريط الجانبي أو أنشئ مستندًا جديدًا",
+    "cta": "إنشاء مستند جديد"
+  },
+  "CreateDocumentModal": {
+    "title": "إنشاء مستند جديد",
+    "inputs": {
+      "docnameLabel": "اسم المستند",
+      "docnameplaceHolder": "قم بتسمية المستند الجديد",
+      "templateLabel": "اختر نوع المستند"
+    },
+    "ctas": {
+      "cancel": "إلغاء",
+      "create": "إنشاء المستند"
+    }
+  },
+  "Editor": {
+    "header": {
+      "documentNumber": "رقم المستند",
+      "date": "التاريخ"
+    },
+    "table": {
+      "th": {
+        "accountNumber": "رقم الحساب",
+        "accountName": "اسم الحساب",
+        "currency": "العملة",
+        "debit": "مدين",
+        "credit": "دائن",
+        "rate": "سعر الصرف",
+        "description": "الوصف"
+      }
+    },
+    "removeRow": {
+      "title": "هل أنت متأكد؟",
+      "yes": "نعم",
+      "no": "لا"
+    },
+    "popup": {
+      "title": "هل أنت متأكد؟",
+      "subtitle": "سيتم فقدان التغييرات غير المحفوظة.",
+      "ctas": {
+        "saveAndClose": "حفظ وإغلاق",
+        "closeWithoutSaving": "إغلاق بدون حفظ",
+        "cancel": "إلغاء"
+      }
+    },
+    "errors": {
+      "balance": "إجمالي المدين والدائن غير متساويين."
+    },
+    "ctas": {
+      "save": "حفظ",
+      "saving": "جارٍ الحفظ...",
+      "saved": "تم الحفظ",
+      "addRow": "إضافة صف"
+    }
+  }
 }

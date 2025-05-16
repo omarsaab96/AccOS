@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { FolderPen } from 'lucide-react';
 import { useFileSystem } from '../contexts/FileSystemContext';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../contexts/LanguageContext';
+
 
 
 type AddDocumentResult = | { success: true; id: number } | { success: false; message: string };
@@ -9,6 +12,8 @@ type AddDocumentResult = | { success: true; id: number } | { success: false; mes
 type Props = { onClose: () => void; };
 
 const CreateDocModal: React.FC<Props> = ({ onClose }) => {
+    const { t } = useTranslation();
+    const { language } = useLanguage();
     const [documentNameError, setDocumentNameError] = useState("");
     const [documentName, setDocumentName] = useState("");
     const [selectedDocType, setSelectedDocType] = useState(-1);
@@ -46,7 +51,6 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
     // };
 
     const handleAddDocument = async (name: string, docType: number, docNumber: number, data: any, company: number): Promise<AddDocumentResult> => {
-
         try {
             const resp = await window.electron.documents.addDocument(name, docType, docNumber, data, company);
 
@@ -119,13 +123,13 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
     return (
         <div className="h-full flex flex-col justify-between text-gray-500 dark:text-gray-400">
             <div className="p-4">
-                <h2 className="text-xl font-medium text-white mb-5">Select Document Type</h2>
+                <h2 className="text-xl font-medium text-white mb-5">{t('CreateDocumentModal.title')}</h2>
 
-                <p className="max-w-full mb-3 pl-[35px] relative before:absolute before:content-['1'] before:font-medium before:text-white before:text-center before:leading-[24px] before:w-[24px]  before:h-[24px]  before:top-50 before:left-0 before:-translate-y-50 before:bg-blue-500 before:rounded-full">
-                    Document Name
+                <p className="max-w-full mb-3 ltr:pl-[35px] rtl:pr-[35px] relative before:absolute before:content-['1'] before:font-medium before:text-white before:text-center before:leading-[24px] before:w-[24px]  before:h-[24px]  before:top-50 ltr:before:left-0 rtl:before:right-0 before:-translate-y-50 before:bg-blue-500 before:rounded-full">
+                    {t('CreateDocumentModal.inputs.docnameLabel')}
                 </p>
                 <div className="relative mb-10">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 ltr:left-0 rtl:right-0 ltr:pl-3 rtl:pr-3 flex items-center pointer-events-none">
                         <FolderPen size={18} className={`text-gray-400 ${documentNameError != "" ? 'text-red-500' : ''}`} />
                     </div>
                     <input
@@ -133,14 +137,14 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
                         type="text"
                         value={documentName}
                         onChange={(e) => { setDocumentName(e.target.value); setDocumentNameError("") }}
-                        className={`pl-10 w-full py-2 border border-gray-300 outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md transition-colors  ${documentNameError != "" ? 'text-red-500 dark:text-red-500 border-red-500 dark:border-red-500' : ''}`}
-                        placeholder="Name your new document"
+                        className={`ltr:pl-10 rtl:pr-10 w-full py-2 border border-gray-300 outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md transition-colors  ${documentNameError != "" ? 'text-red-500 dark:text-red-500 border-red-500 dark:border-red-500' : ''}`}
+                        placeholder={t('CreateDocumentModal.inputs.docnameplaceHolder')}
                     />
                     {documentNameError != "" && <div className='absolute -bottom-4 text-xs text-red-500'>{documentNameError}</div>}
                 </div>
 
-                <p className="max-w-full mb-3 pl-[35px] relative before:absolute before:content-['2'] before:font-medium before:text-white before:text-center before:leading-[24px] before:w-[24px]  before:h-[24px]  before:top-50 before:left-0 before:-translate-y-50 before:bg-blue-500 before:rounded-full">
-                    Choose a document template
+                <p className="max-w-full mb-3 ltr:pl-[35px] rtl:pr-[35px] relative before:absolute before:content-['2'] before:font-medium before:text-white before:text-center before:leading-[24px] before:w-[24px]  before:h-[24px]  before:top-50 ltr:before:left-0 rtl:before:right-0 before:-translate-y-50 before:bg-blue-500 before:rounded-full">
+                    {t('CreateDocumentModal.inputs.templateLabel')}
                 </p>
 
                 <div className='flex w-full flex-wrap gap-2'>
@@ -151,7 +155,7 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
                                 onClick={() => selectTemplate(docType.id)}
                             >
                                 <p className="text-sm flex flex-col items-center font-medium">
-                                    {docType.nameEn}
+                                    {language === 'ar' ? docType.nameAr : docType.nameEn}
                                 </p>
                             </div>
                         </div>
@@ -165,7 +169,7 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
                     onClick={() => cancelShowDocTypesModal()}
                     whileTap={{ scale: 0.95 }}
                 >
-                    Cancel
+                    {t('CreateDocumentModal.ctas.cancel')}
                 </motion.button>
 
                 <motion.button
@@ -174,7 +178,7 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
                     whileTap={{ scale: 0.95 }}
                     disabled={selectedDocType === -1 || documentName === ""}
                 >
-                    Create Document
+                    {t('CreateDocumentModal.ctas.create')}
                 </motion.button>
             </div>
         </div>

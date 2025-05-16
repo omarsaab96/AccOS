@@ -7,11 +7,9 @@ import { FileSystemProvider } from './contexts/FileSystemContext';
 import LoginScreen from './components/auth/LoginScreen';
 import RegisterScreen from './components/auth/RegisterScreen';
 import AppLayout from './components/layout/AppLayout';
-import { useTranslation } from 'react-i18next';
 
 function AppContent() {
   const { isAuthenticated, loading, showRegister } = useAuth();
-  const { t, i18n } = useTranslation();
 
   if (loading) {
     return (

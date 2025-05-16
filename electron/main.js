@@ -50,6 +50,7 @@ async function createWindow() {
     height: 800,
     minWidth: 800,
     minHeight: 600,
+    icon: path.join(__dirname, 'assets/favicon.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

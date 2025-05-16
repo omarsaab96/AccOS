@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Save, Plus, Trash, Check, AlertTriangle, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useFileSystem } from '../../contexts/FileSystemContext';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 
 const Editor: React.FC = () => {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
   const { activeDoc, openDocuments, updateDocContent, saveDoc } = useFileSystem();
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -118,6 +122,7 @@ const Editor: React.FC = () => {
   const removeRow = (index: number) => {
     setRowRemove(index)
   }
+
   const confirmRemoveRow = (index: number) => {
     if (!docContent) return;
 
@@ -128,6 +133,7 @@ const Editor: React.FC = () => {
     updateDocContent(activeDoc!, updatedData);
     setRowRemove(-1);
   };
+
   const cancelRemoveRow = () => {
     setRowRemove(-1)
   }
@@ -158,34 +164,34 @@ const Editor: React.FC = () => {
       {/* Header */}
       <div className="p-2 bg-gray-50 dark:bg-gray-800 border-b border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
         <div className="font-bold text-xs flex gap-5 text-gray-900 dark:text-blue-400">
-          <div><span className="text-blue-600 dark:text-white">{docTypeNameEn}</span></div>
-          <div>Document # <span className="text-blue-600 dark:text-white">{docContent.docNumber}</span></div>
-          <div>Date <span className="text-blue-600 dark:text-white">{docContent.created_on}</span></div>
+          <div><span className="text-blue-600 dark:text-white">{language == 'ar' ? docTypeNameAr : docTypeNameEn}</span></div>
+          <div className='flex items-center'>{t('Editor.header.documentNumber')}&nbsp;<span className="text-blue-600 dark:text-white">{docContent.docNumber}</span></div>
+          <div className='flex items-center'>{t('Editor.header.date')}&nbsp;<span className="text-blue-600 dark:text-white">{docContent.created_on}</span></div>
         </div>
 
         <motion.button
-          className="flex items-center px-2 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-75 disabled:hover:bg-blue-500 disabled:cursor-not-allowed"
+          className="flex items-center gap-1 px-2 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-75 disabled:hover:bg-blue-500 disabled:cursor-not-allowed"
           onClick={handleSave}
           disabled={isSaving || !currentDoc.isDirty}
           whileTap={{ scale: 0.95 }}
         >
           {isSaving ? (
             <>
-              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin ltr:-ml-1 ltr:mr-2 rtl:-mr-1 rtl:ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zM6 17.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              Saving...
+              {t('Editor.ctas.saving')}
             </>
           ) : isSaved ? (
             <>
-              <Check size={16} className="mr-1" />
-              Saved
+              <Check size={16} />
+              {t('Editor.ctas.saved')}
             </>
           ) : (
             <>
-              <Save size={16} className="mr-1" />
-              Save
+              <Save size={16} />
+              {t('Editor.ctas.save')}
             </>
           )}
         </motion.button>
@@ -195,36 +201,35 @@ const Editor: React.FC = () => {
       <div className="p-2 overflow-auto">
         {!isBalanced && (
           <div className="flex items-center p-1.5 justify-between rounded-lg overflow-hidden font-medium mb-2 bg-red-500 bg-opacity-20 text-red-500">
-            <div className="relative flex items-center gap-2 pl-[15px] text-sm before:absolute before:top-0 before:left-0 before:w-[5px] before:h-[100%] before:bg-red-600 before:rounded-lg">
+            <div className="relative flex items-center gap-2 ltr:pl-[15px] rtl:pr-[15px] text-sm before:absolute before:top-0 ltr:before:left-0 rtl:before:right-0 before:w-[5px] before:h-[100%] before:bg-red-600 before:rounded-lg">
               <AlertTriangle size={18} strokeWidth={2.5} />
-              Debit and Credit totals do not match.
+              {t('Editor.errors.balance')}
             </div>
             <X size={18} className="font-bold cursor-pointer" strokeWidth={3.5} onClick={() => setIsBalanced(true)} />
-
           </div>
-
         )}
 
-        <table className="w-full text-sm text-left">
+        <table className="w-full text-sm ltr:text-left rtl:text-right">
           <thead>
             <tr className="text-gray-900 dark:text-blue-400 bg-gray-100 dark:bg-gray-800">
-              <th className="p-2 rounded-tl-lg rounded-bl-lg"></th>
-              <th className="p-2">Acc #</th>
-              <th className="p-2">Acc Name</th>
-              <th className="p-2">Currency</th>
-              <th className="p-2">Debit</th>
-              <th className="p-2">Credit</th>
-              <th className="p-2">Rate</th>
-              <th className="p-2 rounded-tr-lg rounded-br-lg">Description</th>
+              <th className="p-2 ltr:rounded-tl-lg ltr:rounded-bl-lg rtl:rounded-tr-lg rtl:rounded-br-lg "></th>
+              <th className="p-2">{t('Editor.table.th.accountNumber')}</th>
+              <th className="p-2">{t('Editor.table.th.accountName')}</th>
+              <th className="p-2">{t('Editor.table.th.currency')}</th>
+              <th className="p-2">{t('Editor.table.th.debit')}</th>
+              <th className="p-2">{t('Editor.table.th.credit')}</th>
+              <th className="p-2">{t('Editor.table.th.rate')}</th>
+              <th className="p-2 ltr:rounded-tr-lg ltr:rounded-br-lg rtl:rounded-tl-lg rtl:rounded-bl-lg">{t('Editor.table.th.description')}</th>
             </tr>
           </thead>
+
           <tbody>
             {docContent.data.map((row: any, rowIndex: number) => {
               const isLast = rowIndex === docContent.data.length - 1;
               return (
                 <tr key={rowIndex}
                   className={`border-b border-gray-200 dark:border-gray-800 relative ${isLast ? 'border-none' : ''}`}>
-                  <td className="px-1 py-2 pl-0">
+                  <td className="px-1 py-2 ltr:pl-0 rtl:pr-0">
                     <motion.button
                       className="bg-gray-100 dark:bg-gray-800 rounded-lg border-none py-2 px-2 outline-none"
                       onClick={() => removeRow(rowIndex)}
@@ -236,27 +241,27 @@ const Editor: React.FC = () => {
                     <div className={`absolute top-0 left-0 h-full px-1 py-2 rounded-lg transition-all w-full origin-left ${rowRemove == rowIndex ? ' scale-100 opacity-100 visible' : ' scale-0 opacity-0 invisible'}`}>
                       <div className='h-full bg-red-600 bg-opacity-50 backdrop-blur-sm flex justify-center items-center gap-2 rounded-lg text-center font-bold'>
                         <Trash size={14} />
-                        Are you sure?
+                        {t('Editor.removeRow.title')}
                         <motion.button
                           className="px-2 py-0.25 rounded-lg bg-green-400 text-green-800"
                           onClick={() => confirmRemoveRow(rowIndex)}
                           whileTap={{ scale: 0.95 }}
                         >
-                          Yes
+                          {t('Editor.removeRow.yes')}
                         </motion.button>
                         <motion.button
                           className="px-2 py-0.25 rounded-lg bg-red-500 text-red-800"
                           onClick={() => cancelRemoveRow()}
                           whileTap={{ scale: 0.95 }}
                         >
-                          No
+                          {t('Editor.removeRow.no')}
                         </motion.button>
 
                       </div>
                     </div>
                   </td>
                   {Object.entries(row).map(([key, value], cellIndex) => (
-                    <td key={cellIndex} className="px-1 py-2 last:pr-0">
+                    <td key={cellIndex} className="px-1 py-2 ltr:last:pr-0 rtl:last:pl-0">
                       {key === "currency" ? (
                         <select
                           className="bg-gray-100 dark:bg-gray-800 rounded-lg border-none w-full py-1 px-2 outline-none"
@@ -281,17 +286,19 @@ const Editor: React.FC = () => {
                 </tr>
               );
             })}
+
             <tr className="bg-gray-100 dark:bg-gray-800">
-              <td colSpan="4" className="px-1 py-1 rounded-tl-lg rounded-bl-lg">
+              <td colSpan="4" className="px-1 py-1 ltr:rounded-tl-lg ltr:rounded-bl-lg rtl:rounded-tr-lg rtl:rounded-br-lg">
                 <motion.button
                   className="flex items-center gap-[5px] bg-gray-100 dark:bg-gray-900 rounded-lg border-none py-1 px-2 outline-none text-xs"
                   onClick={handleAddRow}
                   whileTap={{ scale: 0.95 }}
                 >
                   <Plus size={12} />
-                  Add row
+                  {t('Editor.ctas.addRow')}
                 </motion.button>
               </td>
+
               <td className="px-1 p y-1">
                 <div className='bg-gray-100 dark:bg-gray-900 rounded-lg border-none w-full py-1 px-2 outline-none'>
                   {calculateTotal("debit").toFixed(2)}
@@ -302,7 +309,7 @@ const Editor: React.FC = () => {
                   {calculateTotal("credit").toFixed(2)}
                 </div>
               </td>
-              <td colSpan="2" className='rounded-tr-lg rounded-br-lg'></td>
+              <td colSpan="2" className='ltr:rounded-tr-lg ltr:rounded-br-lg rtl:rounded-tl-lg rtl:rounded-bl-lg'></td>
             </tr>
           </tbody>
         </table>

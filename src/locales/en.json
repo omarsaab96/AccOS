@@ -1,3 +1,121 @@
 {
-  "welcome": "Welcome to the App"
+  "Common":{
+    "languageToggle":"العربية"
+  },
+  "Login":{
+    "title":"Log In",
+    "inputs":{
+      "email":"Email",
+      "emailPlaceholder":"Enter your email address",
+      "password":"Password",
+      "passwordPlaceholder":"Enter your password"
+    },
+    "ctas":{
+      "login":"Log in",
+      "loggingIn":"Logging in...",
+      "register":"Create an account"
+    },
+    "errors":{
+      "emailAndPasswordEmpty":"Please enter both email and password.",
+      "invalidCredentials":"Invalid email or password.",
+      "loginError":"An error occurred during login. Please try again."
+    }
+  },
+  "Register":{
+    "title":"Register",
+    "inputs":{
+      "name":"Name",
+      "namePlaceholder":"Enter your name",
+      "email":"Email",
+      "emailPlaceholder":"Enter your email address",
+      "phone":"Phone Number",
+      "phonePlaceholder":"Enter your phone number",
+      "password":"Password",
+      "passwordPlaceholder":"Enter your password",
+      "confirmpassword":"Confirm Password",
+      "confirmpasswordPlaceholder":"Confirm your password"
+    },
+    "ctas":{
+      "register":"Create account",
+      "registering":"Creating account...",
+      "login":"Back to login"
+    },
+    "errors":{
+      "fieldEmpty":"Please fill in all fields",
+      "passwordsMatch":"Passwords do not match.",
+      "passwordLength":"Password must be at least 6 characters long.",
+      "nameLength":"Name must be at least 3 characters long",
+      "invalidEmail":"Please enter a valid email address.",
+      "invalidPhone":"Please enter a valid phone number.",
+      "accountExists":"Account already exists.",
+      "registerError":"An error occurred during registration. Please try again."
+    }
+  },
+  "Doctypes": {
+    "JournalEntry": "Journal Entry",
+    "PaymentVoucher": "Payment Voucher",
+    "ReceiptVoucher": "Receipt Voucher",
+    "Voucher": "Voucher"
+  },
+  "Sidebar": {
+    "title": "Documents",
+    "noDocuments": "No Documents found"
+  },
+  "NoOpenDocuments": {
+    "title": "No Open Documents",
+    "subtitle": "Open a document from the sidebar or create a new one",
+    "cta": "Create New Document"
+  },
+  "CreateDocumentModal": {
+    "title": "Create New Document",
+    "inputs": {
+      "docnameLabel": "Document name",
+      "docnameplaceHolder": "Name your new  document",
+      "templateLabel": "Choose a document template"
+    },
+    "ctas": {
+      "cancel": "Cancel",
+      "create": "Create Document"
+    }
+  },
+  "Editor": {
+    "header": {
+      "documentNumber": "Document #",
+      "date": "Date"
+    },
+    "table": {
+      "th": {
+        "accountNumber": "Acc #",
+        "accountName": "Acc Name",
+        "currency": "Currency",
+        "debit": "Debit",
+        "credit": "Credit",
+        "rate": "Rate",
+        "description": "Description"
+      }
+    },
+    "removeRow": {
+      "title": "Are you sure?",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "popup": {
+      "title": "Are you sure?",
+      "subtitle": "Your unsaved changes will be lost.",
+      "ctas": {
+        "saveAndClose": "Save & close",
+        "closeWithoutSaving": "Close without saving",
+        "cancel": "Cancel"
+      }
+    },
+    "errors": {
+      "balance": "Debit and Credit totals do not match."
+    },
+    "ctas": {
+      "save": "Save",
+      "saving": "Saving...",
+      "saved": "Saved",
+      "addRow": "Add row"
+    }
+  }
 }
