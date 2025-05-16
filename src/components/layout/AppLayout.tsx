@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { PanelLeftOpen, PanelLeftClose, Moon, Sun, ChevronDown, LogOut, FilePlus } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { useFileSystem } from '../../contexts/FileSystemContext';
 import Sidebar from './Sidebar';
 import Editor from '../editor/Editor';
@@ -16,6 +17,7 @@ const AppLayout: React.FC = () => {
 
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { language, toggleLanguage } = useLanguage();
   const { activeDoc, openDocuments, getDocumentById } = useFileSystem();
 
   useEffect(() => {
@@ -76,14 +78,23 @@ const AppLayout: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-2">
-          <button
-            onClick={toggleTheme}
-            className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
-            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-          >
-            {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-          </button>
-
+          <div>
+            <button
+              onClick={toggleLanguage}
+              className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
+              aria-label={`Switch to ${language === 'en' ? 'Arabic' : 'English'}`}
+            >
+              Switch to {language === 'en' ? 'Arabic' : 'English'}
+            </button>
+            
+            <button
+              onClick={toggleTheme}
+              className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
+              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+            >
+              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+            </button>
+          </div>
           <div className="relative group">
             <button className="flex items-center space-x-1 px-2 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 outline-none">
               <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white">

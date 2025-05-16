@@ -8,6 +8,8 @@ const Editor: React.FC = () => {
   const { activeDoc, openDocuments, updateDocContent, saveDoc } = useFileSystem();
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [isBalanced, setIsBalanced] = useState(true);
+
   const [docContent, setDocContent] = useState<any>(null);
   const [docTypeNameEn, setDocTypeNameEn] = useState("");
   const [docTypeNameAr, setDocTypeNameAr] = useState("");
@@ -43,6 +45,14 @@ const Editor: React.FC = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeDoc, docContent]);
+
+  useEffect(() => {
+    if (!docContent?.data) return;
+
+    const totalDebit = calculateTotal("debit");
+    const totalCredit = calculateTotal("credit");
+    setIsBalanced(Math.abs(totalDebit - totalCredit) < 0.01);
+  }, [docContent?.data]);
 
   const getDocTypeNames = async (id: number) => {
     const result = await window.electron.doctypes.getDocTypeName(id)
@@ -135,10 +145,6 @@ const Editor: React.FC = () => {
     }, 0);
   };
 
-  const totalDebit = calculateTotal("debit");
-  const totalCredit = calculateTotal("credit");
-  const isBalanced = Math.abs(totalDebit - totalCredit) < 0.01; // handles floating point precision
-
   if (activeDoc == null || !currentDoc || !docContent) {
     return (
       <div className="h-full flex items-center justify-center text-gray-500">
@@ -189,11 +195,11 @@ const Editor: React.FC = () => {
       <div className="p-2 overflow-auto">
         {!isBalanced && (
           <div className="flex items-center p-1.5 justify-between rounded-lg overflow-hidden font-medium mb-2 bg-red-500 bg-opacity-20 text-red-500">
-            <div className="relative flex items-center gap-3 pl-[15px] text-sm before:absolute before:top-0 before:left-0 before:w-[5px] before:h-[100%] before:bg-red-600 before:rounded-lg">
-              <AlertTriangle size={18} strokeWidth={2.5}/>
+            <div className="relative flex items-center gap-2 pl-[15px] text-sm before:absolute before:top-0 before:left-0 before:w-[5px] before:h-[100%] before:bg-red-600 before:rounded-lg">
+              <AlertTriangle size={18} strokeWidth={2.5} />
               Debit and Credit totals do not match.
             </div>
-            <X size={18} className="font-bold" strokeWidth={3.5}/>
+            <X size={18} className="font-bold cursor-pointer" strokeWidth={3.5} onClick={() => setIsBalanced(true)} />
 
           </div>
 
@@ -257,13 +263,10 @@ const Editor: React.FC = () => {
                           value={value ?? ""}
                           onChange={(e) => handleTableInputChange(rowIndex, key, e.target.value)}
                         >
-                          <option value="">Select</option>
+                          <option value="">-</option>
+                          <option value="LBP">LBP</option>
                           <option value="USD">USD</option>
                           <option value="EUR">EUR</option>
-                          <option value="LBP">LBP</option>
-                          <option value="GBP">GBP</option>
-                          <option value="JPY">JPY</option>
-                          {/* Add more currencies as needed */}
                         </select>
                       ) : (
                         <input

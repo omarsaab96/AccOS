@@ -1,15 +1,18 @@
 import React from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { FileSystemProvider } from './contexts/FileSystemContext';
 import LoginScreen from './components/auth/LoginScreen';
 import RegisterScreen from './components/auth/RegisterScreen';
 import AppLayout from './components/layout/AppLayout';
+import { useTranslation } from 'react-i18next';
 
 function AppContent() {
   const { isAuthenticated, loading, showRegister } = useAuth();
-  
+  const { t, i18n } = useTranslation();
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
@@ -20,7 +23,7 @@ function AppContent() {
       </div>
     );
   }
-  
+
   return (
     <AnimatePresence mode="wait">
       {isAuthenticated ? (
@@ -39,9 +42,11 @@ function AppContent() {
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }
