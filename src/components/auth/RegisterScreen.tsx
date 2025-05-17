@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Lock, User, Mail, Phone, ArrowLeft, ArrowRight } from 'lucide-react';
+import { FileText, Lock, User, Mail, Phone, ArrowLeft, ArrowRight, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -134,11 +134,14 @@ const RegisterScreen: React.FC = () => {
 
                         {error && (
                             <motion.div
-                                className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-md text-sm"
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
+                                className="flex items-center p-1.5 justify-between rounded-lg overflow-hidden font-medium mb-2 bg-red-500 bg-opacity-20 text-red-500"
+                                initial={{ opacity: 0, x: language === 'ar' ? 10 : -10 }}
+                                animate={{ opacity: 1, x: 0 }}
                             >
-                                {error}
+                                <div className="relative flex items-center gap-2 ltr:pl-[15px] rtl:pr-[15px] text-sm before:absolute before:top-0 ltr:before:left-0 rtl:before:right-0 before:w-[5px] before:h-[100%] before:bg-red-600 before:rounded-lg">
+                                    <AlertTriangle size={18} strokeWidth={2.5} />
+                                    {error}
+                                </div>
                             </motion.div>
                         )}
 

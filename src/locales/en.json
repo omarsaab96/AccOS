@@ -1,54 +1,54 @@
 {
-  "Common":{
-    "languageToggle":"العربية"
+  "Common": {
+    "languageToggle": "العربية"
   },
-  "Login":{
-    "title":"Log In",
-    "inputs":{
-      "email":"Email",
-      "emailPlaceholder":"Enter your email address",
-      "password":"Password",
-      "passwordPlaceholder":"Enter your password"
+  "Login": {
+    "title": "Log In",
+    "inputs": {
+      "email": "Email",
+      "emailPlaceholder": "Enter your email address",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password"
     },
-    "ctas":{
-      "login":"Log in",
-      "loggingIn":"Logging in...",
-      "register":"Create an account"
+    "ctas": {
+      "login": "Log in",
+      "loggingIn": "Logging in...",
+      "register": "Create an account"
     },
-    "errors":{
-      "emailAndPasswordEmpty":"Please enter both email and password.",
-      "invalidCredentials":"Invalid email or password.",
-      "loginError":"An error occurred during login. Please try again."
+    "errors": {
+      "emailAndPasswordEmpty": "Please enter both email and password.",
+      "invalidCredentials": "Invalid email or password.",
+      "loginError": "An error occurred during login. Please try again."
     }
   },
-  "Register":{
-    "title":"Register",
-    "inputs":{
-      "name":"Name",
-      "namePlaceholder":"Enter your name",
-      "email":"Email",
-      "emailPlaceholder":"Enter your email address",
-      "phone":"Phone Number",
-      "phonePlaceholder":"Enter your phone number",
-      "password":"Password",
-      "passwordPlaceholder":"Enter your password",
-      "confirmpassword":"Confirm Password",
-      "confirmpasswordPlaceholder":"Confirm your password"
+  "Register": {
+    "title": "Register",
+    "inputs": {
+      "name": "Name",
+      "namePlaceholder": "Enter your name",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email address",
+      "phone": "Phone Number",
+      "phonePlaceholder": "Enter your phone number",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "confirmpassword": "Confirm Password",
+      "confirmpasswordPlaceholder": "Confirm your password"
     },
-    "ctas":{
-      "register":"Create account",
-      "registering":"Creating account...",
-      "login":"Back to login"
+    "ctas": {
+      "register": "Create account",
+      "registering": "Creating account...",
+      "login": "Back to login"
     },
-    "errors":{
-      "fieldEmpty":"Please fill in all fields",
-      "passwordsMatch":"Passwords do not match.",
-      "passwordLength":"Password must be at least 6 characters long.",
-      "nameLength":"Name must be at least 3 characters long",
-      "invalidEmail":"Please enter a valid email address.",
-      "invalidPhone":"Please enter a valid phone number.",
-      "accountExists":"Account already exists.",
-      "registerError":"An error occurred during registration. Please try again."
+    "errors": {
+      "fieldEmpty": "Please fill in all fields",
+      "passwordsMatch": "Passwords do not match.",
+      "passwordLength": "Password must be at least 6 characters long.",
+      "nameLength": "Name must be at least 3 characters long",
+      "invalidEmail": "Please enter a valid email address.",
+      "invalidPhone": "Please enter a valid phone number.",
+      "accountExists": "Account already exists.",
+      "registerError": "An error occurred during registration. Please try again."
     }
   },
   "Doctypes": {
@@ -102,14 +102,18 @@
     "popup": {
       "title": "Are you sure?",
       "subtitle": "Your unsaved changes will be lost.",
+      "errorTitle":"Cannot save!",
+      "errorSubtitle":"Kindly fix errors before attempting to save document",
       "ctas": {
         "saveAndClose": "Save & close",
         "closeWithoutSaving": "Close without saving",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "ok":"OK"
       }
     },
     "errors": {
-      "balance": "Debit and Credit totals do not match."
+      "balance": "Debit and Credit totals do not match.",
+      "debitCredit": "A row cannot contain both debit and credit values."
     },
     "ctas": {
       "save": "Save",

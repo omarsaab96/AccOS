@@ -125,15 +125,6 @@
         "credit": "230",
         "rate": "",
         "description": ""
-      },
-      {
-        "accountNumber": "",
-        "accountName": "",
-        "currency": "USD",
-        "debit": "0",
-        "credit": "100",
-        "rate": "",
-        "description": ""
       }
     ],
     "company": -1,

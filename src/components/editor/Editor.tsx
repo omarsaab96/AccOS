@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useFileSystem } from '../../contexts/FileSystemContext';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../contexts/LanguageContext';
+import Swal from 'sweetalert2';
 
 
 const Editor: React.FC = () => {
@@ -17,6 +18,7 @@ const Editor: React.FC = () => {
   const [docContent, setDocContent] = useState<any>(null);
   const [docTypeNameEn, setDocTypeNameEn] = useState("");
   const [docTypeNameAr, setDocTypeNameAr] = useState("");
+  const [invalidRows, setInvalidRows] = useState<number[]>([]);
   const [rowRemove, setRowRemove] = useState(-1);
 
   const currentDoc = openDocuments.find(doc => doc.id === activeDoc);
@@ -56,6 +58,16 @@ const Editor: React.FC = () => {
     const totalDebit = calculateTotal("debit");
     const totalCredit = calculateTotal("credit");
     setIsBalanced(Math.abs(totalDebit - totalCredit) < 0.01);
+
+    // Find all rows with both debit and credit filled
+    const conflicts = docContent.data.reduce((acc: number[], row: any, index: number) => {
+      if (row.debit && row.credit) acc.push(index);
+      return acc;
+    }, []);
+
+    console.log(conflicts)
+    setInvalidRows(conflicts);
+
   }, [docContent?.data]);
 
   const getDocTypeNames = async (id: number) => {
@@ -101,6 +113,40 @@ const Editor: React.FC = () => {
   }
 
   const handleSave = async () => {
+    const isDarkMode = true
+
+    if (!isBalanced || invalidRows.length != 0) {
+      Swal.fire({
+        title: t('Editor.popup.errorTitle'),
+        text: t('Editor.popup.errorSubtitle'),
+        icon: 'error',
+        showConfirmButton: false,
+        // confirmButtonText: t('Editor.popup.ctas.ok'),
+        background: isDarkMode ? '#1f2937' : undefined, // Tailwind gray-800
+        color: isDarkMode ? '#f9fafb' : undefined,      // Tailwind gray-50
+        timer: 3000,
+        timerProgressBar: true,
+        // 🔥 Remove default styling
+        buttonsStyling: false,
+
+        // 🎨 Custom button classes
+        customClass: {
+          popup: 'rounded-xl shadow-xl',
+          icon: 'text-xs',
+          confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-3 py-1.5 rounded-md outline-none ltr:mr-[10px] rtl:ml-[10px]',
+        },
+        didOpen: () => {
+          // Target the progress bar
+          const progressBar = document.querySelector('.swal2-timer-progress-bar');
+          if (progressBar) {
+            progressBar.style.backgroundColor = '#3b82f6';
+            // progressBar.style.height = '6px';
+            progressBar.style.borderRadius = '4px';
+          }
+        }
+      });
+      return;
+    }
     if (activeDoc != null && docContent != null) {
       setIsSaving(true);
       const response = await saveDoc(activeDoc, docContent.data);
@@ -199,14 +245,31 @@ const Editor: React.FC = () => {
 
       {/* Table Editor */}
       <div className="p-2 overflow-auto">
+
         {!isBalanced && (
-          <div className="flex items-center p-1.5 justify-between rounded-lg overflow-hidden font-medium mb-2 bg-red-500 bg-opacity-20 text-red-500">
+          <motion.div className="flex items-center p-1.5 justify-between rounded-lg overflow-hidden font-medium mb-2 bg-red-500 bg-opacity-20 text-red-500"
+            initial={{ opacity: 0, x: language === 'ar' ? 10 : -10 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
             <div className="relative flex items-center gap-2 ltr:pl-[15px] rtl:pr-[15px] text-sm before:absolute before:top-0 ltr:before:left-0 rtl:before:right-0 before:w-[5px] before:h-[100%] before:bg-red-600 before:rounded-lg">
               <AlertTriangle size={18} strokeWidth={2.5} />
               {t('Editor.errors.balance')}
             </div>
-            <X size={18} className="font-bold cursor-pointer" strokeWidth={3.5} onClick={() => setIsBalanced(true)} />
-          </div>
+            {/* <X size={18} className="font-bold cursor-pointer" strokeWidth={3.5} onClick={() => setIsBalanced(true)} /> */}
+          </motion.div>
+        )}
+
+        {invalidRows.length != 0 && (
+          <motion.div className="flex items-center p-1.5 justify-between rounded-lg overflow-hidden font-medium mb-2 bg-red-500 bg-opacity-20 text-red-500"
+            initial={{ opacity: 0, x: language === 'ar' ? 10 : -10 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <div className="relative flex items-center gap-2 ltr:pl-[15px] rtl:pr-[15px] text-sm before:absolute before:top-0 ltr:before:left-0 rtl:before:right-0 before:w-[5px] before:h-[100%] before:bg-red-600 before:rounded-lg">
+              <AlertTriangle size={18} strokeWidth={2.5} />
+              {t('Editor.errors.debitCredit')}
+            </div>
+            {/* <X size={18} className="font-bold cursor-pointer" strokeWidth={3.5} onClick={() => setIsBalanced(true)} /> */}
+          </motion.div>
         )}
 
         <table className="w-full text-sm ltr:text-left rtl:text-right">
@@ -260,6 +323,7 @@ const Editor: React.FC = () => {
                       </div>
                     </div>
                   </td>
+
                   {Object.entries(row).map(([key, value], cellIndex) => (
                     <td key={cellIndex} className="px-1 py-2 ltr:last:pr-0 rtl:last:pl-0">
                       {key === "currency" ? (
@@ -275,7 +339,7 @@ const Editor: React.FC = () => {
                         </select>
                       ) : (
                         <input
-                          className="bg-gray-100 dark:bg-gray-800 rounded-lg border-none w-full py-1 px-2 outline-none"
+                          className={`bg-gray-100 dark:bg-gray-800 rounded-lg border-none w-full py-1 px-2 outline-none ${(invalidRows.includes(rowIndex) && (key === "debit" || key === "credit")) ? 'bg-red-500/40 dark:bg-red-500/20 bg-opacity-50' : ''}`}
                           type="text"
                           value={value ?? ""}
                           onChange={(e) => handleTableInputChange(rowIndex, key, e.target.value)}
@@ -283,6 +347,7 @@ const Editor: React.FC = () => {
                       )}
                     </td>
                   ))}
+
                 </tr>
               );
             })}
@@ -300,12 +365,12 @@ const Editor: React.FC = () => {
               </td>
 
               <td className="px-1 p y-1">
-                <div className='bg-gray-100 dark:bg-gray-900 rounded-lg border-none w-full py-1 px-2 outline-none'>
+                <div className={`bg-gray-100 dark:bg-gray-900 rounded-lg border-none w-full py-1 px-2 outline-none ${!isBalanced ? 'bg-red-500/40 dark:bg-red-600/20 bg-opacity-50' : ''}`}>
                   {calculateTotal("debit").toFixed(2)}
                 </div>
               </td>
               <td className="px-1 p y-1">
-                <div className='bg-gray-100 dark:bg-gray-900 rounded-lg border-none w-full py-1 px-2 outline-none'>
+                <div className={`bg-gray-100 dark:bg-gray-900 rounded-lg border-none w-full py-1 px-2 outline-none ${!isBalanced ? 'bg-red-500/40 dark:bg-red-600/20 bg-opacity-50' : ''}`}>
                   {calculateTotal("credit").toFixed(2)}
                 </div>
               </td>
