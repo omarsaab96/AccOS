@@ -17,7 +17,8 @@
     },
     "errors": {
       "emailAndPasswordEmpty": "يرجى إدخال البريد الإلكتروني وكلمة المرور.",
-      "invalidCredentials": "المعلومات المدخلة غير صحيحة."
+      "invalidCredentials": "المعلومات المدخلة غير صحيحة.",
+      "loginError": "حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى."
     }
   },
   "Register": {
@@ -50,6 +51,31 @@
       "registerError": "حدث خطأ أثناء عملية التسجيل. يرجى المحاولة مرة أخرى."
     }
   },
+  "Accounts": {
+    "title": "اختر حسابًا للتدقيق",
+    "subtitle": "الحسابات المسجلة لديك معروضة أدناه. اختر حسابًا لبدء التدقيق",
+    "table": {
+      "th": {
+        "accountName": "اسم الحساب",
+        "numberOfDocuments": "عدد المستندات",
+        "createdOn": "تاريخ الإنشاء"
+      }
+    },
+    "noAccounts": {
+      "title": "لم يتم العثور على حسابات أو شركات",
+      "subtitle": "أنشئ حسابًا جديدًا لبدء عملية المحاسبة و التدقيق",
+      "cta": "إنشاء حساب جديد"
+    },
+    "removeRow": {
+      "title": "هل أنت متأكد؟ سيتم حذف الحساب والمستندات المرتبطة به نهائيًا.",
+      "yes": "نعم",
+      "no": "لا"
+    },
+    "search": {
+      "noResults": "لم يتم العثور على نتائج.",
+      "placeholder": "ابحث عن حساب"
+    }
+  },
   "Doctypes": {
     "JournalEntry": "قيد اليومية",
     "PaymentVoucher": "سند صرف",
@@ -58,7 +84,9 @@
   },
   "Sidebar": {
     "title": "المستندات",
-    "noDocuments": "لا يوجد مستندات"
+    "noDocuments": "لا يوجد مستندات",
+    "selectAccount": "اختر حسابًا",
+    "accountTitle": "الحساب الحالي"
   },
   "NoOpenDocuments": {
     "title": "لا توجد مستندات مفتوحة",
@@ -75,6 +103,17 @@
     "ctas": {
       "cancel": "إلغاء",
       "create": "إنشاء المستند"
+    }
+  },
+  "CreateAccountModal": {
+    "title": "إنشاء حساب جديد",
+    "inputs": {
+      "accountNameLabel": "اسم الحساب",
+      "accountNameplaceHolder": "قم بتسمية حسابك الجديد"
+    },
+    "ctas": {
+      "cancel": "إلغاء",
+      "create": "إنشاء الحساب"
     }
   },
   "Editor": {
@@ -118,7 +157,9 @@
       "save": "حفظ",
       "saving": "جارٍ الحفظ...",
       "saved": "تم الحفظ",
-      "addRow": "إضافة صف"
+      "addRow": "إضافة صف",
+      "print":"طبع",
+      "printing":"جار الطبع..."
     }
   }
 }

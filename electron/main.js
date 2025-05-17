@@ -7,7 +7,8 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import { initDocTypesDB, addDocType, getDocTypes, getDocTypeName } from './docTypeStore.js';
-import { initDocumentsDB, addDocument, getAllDocuments, readDoc, updateDoc } from './documentStore.js';
+import { initDocumentsDB, addDocument, getAllDocuments, getDocumentsByAccount, readDoc, updateDoc, deleteDocumentsByCompany } from './documentStore.js';
+import { initAccountsDB, getAllAccounts, addAccount, updateAccount, getAccountByID, deleteAccount } from './accountStore.js';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ async function initializeApp() {
   try {
     await initDocTypesDB();
     await initDocumentsDB();
+    await initAccountsDB();
     console.log('LocalDB initialized');
 
     await mongoose.connect(process.env.MONGO_URI, {
@@ -125,34 +127,67 @@ ipcMain.handle('login-user', async (event, { email, password }) => {
 });
 
 //IPC handler for DocTypes
-ipcMain.handle('doc:addDocType', async (_, name_en, name_ar) => {
+ipcMain.handle('doctypes:addDocType', async (_, name_en, name_ar) => {
   await addDocType(name_en, name_ar)
 })
 
-ipcMain.handle('doc:getAllDocTypes', async () => {
+ipcMain.handle('doctypes:getAllDocTypes', async () => {
   return await getDocTypes()
 })
 
-ipcMain.handle('doc:getDocTypeName', async (_, id) => {
+ipcMain.handle('doctypes:getDocTypeName', async (_, id) => {
   return await getDocTypeName(id)
 })
 
 //IPC handler for Documents
-ipcMain.handle('doc:addDocument', async (_, name, docType, docNumber, data, company) => {
+ipcMain.handle('documents:addDocument', async (_, name, docType, docNumber, data, company) => {
   return await addDocument(name, docType, docNumber, data, company)
 })
 
-ipcMain.handle('doc:getAllDocuments', async () => {
+ipcMain.handle('documents:getAllDocuments', async () => {
   return await getAllDocuments()
 })
 
-ipcMain.handle('doc:readDoc', async (_, id) => {
+ipcMain.handle('documents:getDocumentsByAccount', async (_,id) => {
+  return await getDocumentsByAccount(id)
+})
+
+ipcMain.handle('documents:readDoc', async (_, id) => {
   return await readDoc(id)
 })
 
-ipcMain.handle('doc:updateDoc', async (_, id, data) => {
+ipcMain.handle('documents:updateDoc', async (_, id, data) => {
   return await updateDoc(id, data)
 })
+
+ipcMain.handle('documents:deleteDocumentsByCompany', async (_, id) => {
+  return await deleteDocumentsByCompany(id)
+})
+
+//IPC handler for Accounts
+ipcMain.handle('accounts:getAllAccounts', async () => {
+  const accounts = await getAllAccounts();
+  return accounts;
+})
+
+ipcMain.handle('accounts:addAccount', async (_, name) => {
+  return await addAccount(name)
+})
+
+ipcMain.handle('accounts:updateAccount', async (_, id, name) => {
+  return await updateAccount(id, name)
+})
+
+ipcMain.handle('accounts:getAccountByID', async (_, id) => {
+  return await getAccountByID(id)
+})
+
+ipcMain.handle('accounts:deleteAccount', async (_, id) => {
+  return await deleteAccount(id)
+})
+
+
+//IPC handler for Printer
 
 
 //IPC handler for Files

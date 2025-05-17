@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { useTranslation } from 'react-i18next';
+import { useAccounts } from '../contexts/AccountsContext';
 
 interface FileItem {
   name: string;
@@ -70,6 +71,8 @@ interface FileSystemContextType {
   updateFileContent: (path: string, content: string) => void;
   updateDocContent: (id: number, data: any) => void;
   getDocumentById: (id: number) => Promise<DocItem | undefined>;
+  getDocsNumber: (id: number) => Promise<number>;
+  deleteDocumentsByCompany: (id: number) => Promise<boolean>;
   closeFile: (path: string) => void;
   closeDoc: (id: number) => Promise<boolean>;
 }
@@ -93,6 +96,8 @@ const FileSystemContext = createContext<FileSystemContextType>({
   updateFileContent: () => { },
   updateDocContent: () => { },
   getDocumentById: async () => undefined,
+  getDocsNumber: async () => 0,
+  deleteDocumentsByCompany: () => false,
   closeFile: () => { },
   closeDoc: async () => false,
 });
@@ -106,6 +111,7 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [activeFile, setActiveFilePath] = useState<string | null>(null);
   const [activeDoc, setActiveDoc] = useState<number | null>(null);
   const [docTypesCount, setDocTypesCount] = useState([]);
+  const { activeAccount } = useAccounts();
 
   // Load files on initial mount
   useEffect(() => {
@@ -127,8 +133,8 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const refreshDocuments = async () => {
     setDocumentsList([]);
     try {
-      const docs = await window.electron.documents.getAllDocuments();
-
+      if(!activeAccount) return;
+      const docs = await window.electron.documents.getDocumentsByAccount(activeAccount.id);
       const groupedByDoctype = {};
 
       for (const doc of docs) {
@@ -151,6 +157,17 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     } catch (error) {
       console.error('Failed to refresh documents list:', error);
+    }
+  };
+
+  // Get documents Count by account
+  const getDocsNumber = async (id: number): Promise<number> => {
+    try {
+      const docs = await window.electron.documents.getDocumentsByAccount(id);
+      return docs.length;
+    } catch (error) {
+      console.error('Failed to refresh documents list:', error);
+      return 0;
     }
   };
 
@@ -286,6 +303,16 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       return undefined;
     }
   };
+  
+  const deleteDocumentsByCompany = async (id: number): Promise<Boolean> => {
+    try {
+      const response = await window.electron.documents.deleteDocumentsByCompany(id);
+      return response;
+    } catch (error) {
+      console.error('Failed to get documents of account: '+id, error);
+      return false;
+    }
+  };
 
   // Close a file
   const closeFile = (path: string) => {
@@ -370,6 +397,8 @@ export const FileSystemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         updateFileContent,
         updateDocContent,
         getDocumentById,
+        getDocsNumber,
+        deleteDocumentsByCompany,
         closeFile,
         closeDoc,
       }}

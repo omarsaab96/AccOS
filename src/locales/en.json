@@ -51,6 +51,31 @@
       "registerError": "An error occurred during registration. Please try again."
     }
   },
+  "Accounts": {
+    "title": "Choose an account to audit",
+    "subtitle": "Your registered accounts are listed below. Select an account to start auditing",
+    "table": {
+      "th": {
+        "accountName": "Account name",
+        "numberOfDocuments": "Documents count",
+        "createdOn": "Created on"
+      }
+    },
+    "noAccounts": {
+      "title": "No Accounts or Companies Found",
+      "subtitle": "Create a new account to manage",
+      "cta": "Create new account"
+    },
+    "removeRow": {
+      "title": "Are you sure? Account and its documents will be permenantly deleted.",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "search": {
+      "noResults": "No results found.",
+      "placeholder": "Search for an account"
+    }
+  },
   "Doctypes": {
     "JournalEntry": "Journal Entry",
     "PaymentVoucher": "Payment Voucher",
@@ -59,7 +84,9 @@
   },
   "Sidebar": {
     "title": "Documents",
-    "noDocuments": "No Documents found"
+    "noDocuments": "No Documents found",
+    "selectAccount": "Select Account",
+    "accountTitle": "Selected account"
   },
   "NoOpenDocuments": {
     "title": "No Open Documents",
@@ -70,12 +97,23 @@
     "title": "Create New Document",
     "inputs": {
       "docnameLabel": "Document name",
-      "docnameplaceHolder": "Name your new  document",
+      "docnameplaceHolder": "Name your new document",
       "templateLabel": "Choose a document template"
     },
     "ctas": {
       "cancel": "Cancel",
       "create": "Create Document"
+    }
+  },
+  "CreateAccountModal": {
+    "title": "Create New Account",
+    "inputs": {
+      "accountNameLabel": "Account name",
+      "accountNameplaceHolder": "Name your new account"
+    },
+    "ctas": {
+      "cancel": "Cancel",
+      "create": "Create Account"
     }
   },
   "Editor": {
@@ -102,13 +140,13 @@
     "popup": {
       "title": "Are you sure?",
       "subtitle": "Your unsaved changes will be lost.",
-      "errorTitle":"Cannot save!",
-      "errorSubtitle":"Kindly fix errors before attempting to save document",
+      "errorTitle": "Cannot save!",
+      "errorSubtitle": "Kindly fix errors before attempting to save document",
       "ctas": {
         "saveAndClose": "Save & close",
         "closeWithoutSaving": "Close without saving",
         "cancel": "Cancel",
-        "ok":"OK"
+        "ok": "OK"
       }
     },
     "errors": {
@@ -119,7 +157,9 @@
       "save": "Save",
       "saving": "Saving...",
       "saved": "Saved",
-      "addRow": "Add row"
+      "addRow": "Add row",
+      "print": "Print",
+      "printing":"Printing..."
     }
   }
 }

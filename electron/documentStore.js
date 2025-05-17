@@ -45,11 +45,28 @@ export async function getAllDocuments() {
     }
 }
 
+export async function getDocumentsByAccount(id) {
+    if (id == -2) {
+        return [];
+    }
+
+    try {
+        await db.read();
+        const allDocs = db.data || [];
+        const filtered = allDocs.filter(doc => doc.company === id);
+        return filtered;
+    } catch (error) {
+        console.error('Error getting documents:', error)
+        throw error
+    }
+}
+
 export async function addDocument(name, docType, docNumber, data, company) {
     try {
         await db.read()
         const id = db.data.length
         const created_on = new Date().toLocaleString('en-UK', { day: '2-digit', month: '2-digit', year: 'numeric' })
+        const linked = true;
 
         db.data.push({
             id,
@@ -58,7 +75,8 @@ export async function addDocument(name, docType, docNumber, data, company) {
             docNumber,
             data,
             company,
-            created_on
+            created_on,
+            linked
         })
 
         await db.write()
@@ -76,7 +94,7 @@ export async function readDoc(id) {
         const doc = files.find(file => file.id === id);
         return doc || null;
     } catch (error) {
-        console.error('Error getting documents:', error)
+        console.error('Error reading document:', error)
         throw error
     }
 }
@@ -98,7 +116,32 @@ export async function updateDoc(id, data) {
 
         return { success: true };
     } catch (error) {
-        console.error('Error getting documents:', error)
+        console.error('Error updating document:', error)
         throw error
+    }
+}
+
+export async function deleteDocumentsByCompany(id) {
+    try {
+        await db.read();
+
+        let updated = false;
+
+        db.data.forEach(doc => {
+            if (doc.company === id) {
+                doc.linked = false;
+                updated = true;
+            }
+        });
+
+        if (!updated) {
+            throw new Error(`No documents found for company ${id}`);
+        }
+
+        await db.write();
+        return true;
+    } catch (error) {
+        console.error('Error unlinking documents by company:', error);
+        return false;
     }
 }

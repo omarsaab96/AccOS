@@ -1,15 +1,15 @@
 [
   {
     "id": 0,
-    "name": "test",
+    "name": "t",
     "docType": 0,
     "docNumber": 1,
     "data": [
       {
         "accountNumber": "",
-        "accountName": "",
+        "accountName": "w",
         "currency": "",
-        "debit": "",
+        "debit": "1",
         "credit": "",
         "rate": "",
         "description": ""
@@ -19,120 +19,38 @@
         "accountName": "",
         "currency": "",
         "debit": "",
-        "credit": "",
+        "credit": "1",
         "rate": "",
         "description": ""
       }
     ],
-    "company": -1,
-    "created_on": "15/05/2025"
+    "company": 0,
+    "created_on": "18/05/2025",
+    "linked": false
   },
   {
     "id": 1,
-    "name": "wed",
-    "docType": 1,
-    "docNumber": 1,
-    "data": [
-      {
-        "accountNumber": "",
-        "accountName": "",
-        "currency": "",
-        "debit": "",
-        "credit": "",
-        "rate": "",
-        "description": ""
-      }
-    ],
-    "company": -1,
-    "created_on": "15/05/2025"
-  },
-  {
-    "id": 2,
-    "name": "dew",
-    "docType": 2,
-    "docNumber": 1,
-    "data": [
-      {
-        "accountNumber": "",
-        "accountName": "",
-        "currency": "",
-        "debit": "",
-        "credit": "",
-        "rate": "",
-        "description": ""
-      }
-    ],
-    "company": -1,
-    "created_on": "15/05/2025"
-  },
-  {
-    "id": 3,
-    "name": "ew",
-    "docType": 3,
-    "docNumber": 1,
-    "data": [
-      {
-        "accountNumber": "",
-        "accountName": "",
-        "currency": "",
-        "debit": "",
-        "credit": "",
-        "rate": "",
-        "description": ""
-      }
-    ],
-    "company": -1,
-    "created_on": "15/05/2025"
-  },
-  {
-    "id": 4,
-    "name": "wef",
+    "name": "t",
     "docType": 0,
     "docNumber": 2,
     "data": [
       {
         "accountNumber": "",
         "accountName": "",
-        "currency": "USD",
-        "debit": "1000",
-        "credit": "",
-        "rate": "",
-        "description": ""
-      },
-      {
-        "accountNumber": "",
-        "accountName": "",
-        "currency": "USD",
+        "currency": "",
         "debit": "",
-        "credit": "1000",
-        "rate": "s",
-        "description": ""
-      },
-      {
-        "accountNumber": "",
-        "accountName": "",
-        "currency": "USD",
-        "debit": "230",
         "credit": "",
-        "rate": "",
-        "description": ""
-      },
-      {
-        "accountNumber": "",
-        "accountName": "",
-        "currency": "USD",
-        "debit": "",
-        "credit": "230",
         "rate": "",
         "description": ""
       }
     ],
-    "company": -1,
-    "created_on": "15/05/2025"
+    "company": 0,
+    "created_on": "18/05/2025",
+    "linked": false
   },
   {
-    "id": 5,
-    "name": "dq",
+    "id": 2,
+    "name": "t",
     "docType": 0,
     "docNumber": 3,
     "data": [
@@ -140,20 +58,30 @@
         "accountNumber": "",
         "accountName": "",
         "currency": "",
-        "debit": "",
+        "debit": "1",
         "credit": "",
+        "rate": "",
+        "description": ""
+      },
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "1",
         "rate": "",
         "description": ""
       }
     ],
-    "company": -1,
-    "created_on": "15/05/2025"
+    "company": 0,
+    "created_on": "18/05/2025",
+    "linked": false
   },
   {
-    "id": 6,
-    "name": "gergre",
+    "id": 3,
+    "name": "cv",
     "docType": 0,
-    "docNumber": 4,
+    "docNumber": 1,
     "data": [
       {
         "accountNumber": "",
@@ -165,26 +93,8 @@
         "description": ""
       }
     ],
-    "company": -1,
-    "created_on": "16/05/2025"
-  },
-  {
-    "id": 7,
-    "name": "يث",
-    "docType": 3,
-    "docNumber": 2,
-    "data": [
-      {
-        "accountNumber": "",
-        "accountName": "",
-        "currency": "",
-        "debit": "",
-        "credit": "",
-        "rate": "",
-        "description": ""
-      }
-    ],
-    "company": -1,
-    "created_on": "16/05/2025"
+    "company": 1,
+    "created_on": "18/05/2025",
+    "linked": true
   }
 ]

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Save, Plus, Trash, Check, AlertTriangle, X } from 'lucide-react';
+import { Save, Plus, Trash, Check, AlertTriangle, Printer } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useFileSystem } from '../../contexts/FileSystemContext';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../contexts/LanguageContext';
 import Swal from 'sweetalert2';
+import { ipcRenderer } from 'electron';
 
 
 const Editor: React.FC = () => {
@@ -13,6 +14,7 @@ const Editor: React.FC = () => {
   const { activeDoc, openDocuments, updateDocContent, saveDoc } = useFileSystem();
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
   const [isBalanced, setIsBalanced] = useState(true);
 
   const [docContent, setDocContent] = useState<any>(null);
@@ -65,7 +67,6 @@ const Editor: React.FC = () => {
       return acc;
     }, []);
 
-    console.log(conflicts)
     setInvalidRows(conflicts);
 
   }, [docContent?.data]);
@@ -165,6 +166,15 @@ const Editor: React.FC = () => {
     }
   };
 
+  const handlePrint = async () => {
+    setIsPrinting(true);
+
+    setTimeout(()=>{
+      setIsPrinting(false);
+    },2000)
+  };
+
+
   const removeRow = (index: number) => {
     setRowRemove(index)
   }
@@ -209,38 +219,62 @@ const Editor: React.FC = () => {
     <div className="h-full flex flex-col relative">
       {/* Header */}
       <div className="p-2 bg-gray-50 dark:bg-gray-800 border-b border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-        <div className="font-bold text-xs flex gap-5 text-gray-900 dark:text-blue-400">
+        <div id="printable" className="font-bold text-xs flex gap-5 text-gray-900 dark:text-blue-400">
           <div><span className="text-blue-600 dark:text-white">{language == 'ar' ? docTypeNameAr : docTypeNameEn}</span></div>
           <div className='flex items-center'>{t('Editor.header.documentNumber')}&nbsp;<span className="text-blue-600 dark:text-white">{docContent.docNumber}</span></div>
           <div className='flex items-center'>{t('Editor.header.date')}&nbsp;<span className="text-blue-600 dark:text-white">{docContent.created_on}</span></div>
         </div>
 
-        <motion.button
-          className="flex items-center gap-1 px-2 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-75 disabled:hover:bg-blue-500 disabled:cursor-not-allowed"
-          onClick={handleSave}
-          disabled={isSaving || !currentDoc.isDirty}
-          whileTap={{ scale: 0.95 }}
-        >
-          {isSaving ? (
-            <>
-              <svg className="animate-spin ltr:-ml-1 ltr:mr-2 rtl:-mr-1 rtl:ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zM6 17.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-              {t('Editor.ctas.saving')}
-            </>
-          ) : isSaved ? (
-            <>
-              <Check size={16} />
-              {t('Editor.ctas.saved')}
-            </>
-          ) : (
-            <>
-              <Save size={16} />
-              {t('Editor.ctas.save')}
-            </>
-          )}
-        </motion.button>
+        <div className='flex gap-2 items-center'>
+          <motion.button
+            className="flex items-center gap-1 px-2 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-75 disabled:hover:bg-blue-500 disabled:cursor-not-allowed"
+            onClick={handlePrint}
+            disabled={isPrinting || currentDoc.isDirty}
+            whileTap={{ scale: 0.95 }}
+          >
+            {isPrinting ? (
+              <>
+                <svg className="animate-spin ltr:-ml-1 ltr:mr-2 rtl:-mr-1 rtl:ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zM6 17.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                {t('Editor.ctas.printing')}
+              </>
+            ) : (
+              <>
+                <Printer size={16} />
+                {t('Editor.ctas.print')}
+              </>
+            )}
+          </motion.button>
+
+          <motion.button
+            className="flex items-center gap-1 px-2 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-75 disabled:hover:bg-blue-500 disabled:cursor-not-allowed"
+            onClick={handleSave}
+            disabled={isSaving || !currentDoc.isDirty}
+            whileTap={{ scale: 0.95 }}
+          >
+            {isSaving ? (
+              <>
+                <svg className="animate-spin ltr:-ml-1 ltr:mr-2 rtl:-mr-1 rtl:ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zM6 17.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                {t('Editor.ctas.saving')}
+              </>
+            ) : isSaved ? (
+              <>
+                <Check size={16} />
+                {t('Editor.ctas.saved')}
+              </>
+            ) : (
+              <>
+                <Save size={16} />
+                {t('Editor.ctas.save')}
+              </>
+            )}
+          </motion.button>
+        </div>
       </div>
 
       {/* Table Editor */}

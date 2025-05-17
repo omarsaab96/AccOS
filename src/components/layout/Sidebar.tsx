@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, RefreshCw, Plus, ChevronDown, ChevronUp } from 'lucide-react';
-import { useFileSystem } from '../../contexts/FileSystemContext';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { useFileSystem } from '../../contexts/FileSystemContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useAccounts } from '../../contexts/AccountsContext';
+import { useTheme } from '../../contexts/ThemeContext';
+import Select from 'react-select';
 
-type Props = { onOpenCreateDocModal: () => void; };
+
+type Props = { onOpenCreateDocModal: () => void; onOpenCreateAccountModal: () => void; };
 
 
-const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
+const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal, onOpenCreateAccountModal }) => {
   const { t } = useTranslation();
   const { language } = useLanguage();
+  const { theme } = useTheme();
   const { documentsList, refreshDocuments, openDocument } = useFileSystem();
 
   const [expanded, setExpanded] = useState({});
   const [hasInitialized, setHasInitialized] = useState(false);
+
+  const { refreshAccounts, activeAccount, setActiveAccount, accountsList } = useAccounts();
+
 
   useEffect(() => {
     if (!hasInitialized && Object.keys(documentsList).length > 0) {
@@ -26,6 +34,10 @@ const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
       setHasInitialized(true);
     }
   }, [documentsList, hasInitialized]);
+
+  useEffect(() => {
+    refreshDocuments()
+  }, [activeAccount]);
 
   const containerVariants = {
     hidden: { opacity: 1 },
@@ -44,11 +56,107 @@ const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
+      {accountsList.length > 0 && (
+        <div className="p-4 ltr:pr-2 rtl:pl-2 border-b border-gray-200 dark:border-gray-800">
+          <div className='flex items-center justify-between mb-2'>
+            <h2 className="font-bold text-sm">{t('Sidebar.accountTitle')}</h2>
+
+            <div className="flex gap-1">
+              <button
+                onClick={() => refreshAccounts()}
+                className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
+                title="Refresh"
+              >
+                <RefreshCw size={16} />
+              </button>
+              <button
+                onClick={() => onOpenCreateAccountModal()}
+                className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
+                title="Refresh"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+
+          </div>
+
+          <div className='ltr:pr-2 rtl:pl-2'>
+            <Select
+              options={accountsList.map(acc => ({
+                value: acc.id,
+                label: acc.name,
+              }))}
+              value={
+                activeAccount
+                  ? { value: activeAccount.id, label: activeAccount.name }
+                  : null
+              }
+              onChange={selected => {
+                const selectedAccount = accountsList.find(acc => acc.id === selected?.value);
+                if (selectedAccount) {
+                  setActiveAccount(selectedAccount);
+                }
+              }}
+              placeholder={t('Sidebar.selectAccount')}
+              isSearchable
+              className="text-sm"
+              styles={{
+                control: (base: any) => ({
+                  ...base,
+                  backgroundColor: theme == 'dark' ? '#1f2937' : 'white', // gray-800 or white
+                  borderColor: theme == 'dark' ? '#374151' : '#d1d5db',   // gray-700 or gray-300
+                  borderRadius: '0.375rem',
+                  boxShadow: 'none',
+                  '&:hover': {
+                    borderColor: theme == 'dark' ? '#4b5563' : '#9ca3af', // gray-600 or gray-400
+                  },
+                  cursor: 'pointer'
+                }),
+                menu: (base) => ({
+                  ...base,
+                  zIndex: 9999,
+                  backgroundColor: theme == 'dark' ? '#1f2937' : 'white', // gray-800 or white
+                  margin: 0,
+                  padding: 0
+                }),
+                singleValue: (base: any) => ({
+                  ...base,
+                  color: theme === 'dark' ? '#ffffff' : '#111827', // This controls selected option text
+                }),
+                input: (base: any) => ({
+                  ...base,
+                  color: theme === 'dark' ? '#ffffff' : '#111827', // This controls typing color
+                }),
+                indicatorSeparator: (base: any) => ({
+                  ...base,
+                  display: 'none',
+                }),
+                dropdownIndicator: (base: any) => ({
+                  ...base,
+                  color: theme === 'dark' ? '#9ca3af' : '#6b7280',
+                  '&:hover': {
+                    color: theme === 'dark' ? '#f9fafb' : '#111827',
+                  },
+                }),
+                option: (base: any, state: any) => ({
+                  ...base,
+                  padding: '2px 10px',
+                  cursor: 'pointer',
+                  backgroundColor: state.isFocused
+                    ? (theme === 'dark' ? '#374151' : '#e5e7eb')
+                    : (theme === 'dark' ? '#1f2937' : 'white'),
+                })
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Sidebar Header with Actions */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+      <div className="p-4 ltr:pr-2 rtl:pl-2 flex items-center justify-between">
         <h2 className="font-bold text-sm">{t('Sidebar.title')}</h2>
 
-        <div className="flex space-x-1">
+        <div className="flex gap-1">
           <button
             onClick={() => refreshDocuments()}
             className="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
@@ -69,12 +177,11 @@ const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
       {/* File List */}
       <div className="flex-1 overflow-y-auto">
         <div className="">
-          {documentsList.length === 0 ? (
+          {Object.keys(documentsList).length === 0 ? (
             <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
               {t('Sidebar.noDocuments')}
             </div>
           ) : (
-
             Object.entries(documentsList).map(([docType, docs]) => (
               <div key={docType} className='border-b dark:border-gray-800'>
                 <div
@@ -87,7 +194,7 @@ const Sidebar: React.FC<Props> = ({ onOpenCreateDocModal }) => {
                   }
                 >
                   <div className="flex items-center gap-[10px]">
-                    {t('Doctypes.'+docType.replace(" ",""))} <span className='text-blue-600 dark:text-blue-500 font-normal text-sm'>{docs.length}</span>
+                    {t('Doctypes.' + docType.replace(" ", ""))} <span className='text-blue-600 dark:text-blue-500 font-normal text-sm'>{docs.length}</span>
                   </div>
 
                   {expanded[docType] == true ? (

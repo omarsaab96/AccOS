@@ -25,9 +25,18 @@ interface Window {
     };
     documents: {
       addDocument: (name: string, docType: number, docNumber: number, data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[], company: number) => Promise<number>;
-      getAllDocuments: () => Promise<{ id: number; name: string; created_on: string; data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]; docType: number; docNumber:number}[]>;
-      readDoc: (id: number) => Promise<{ id: number; name: string; created_on: string; data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]; docType: number; docNumber:number}>;
+      getAllDocuments: () => Promise<{ id: number; name: string; created_on: string; data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]; docType: number; docNumber: number, linked:boolean }[]>;
+      getDocumentsByAccount: (id:number) => Promise<{ id: number; name: string; created_on: string; data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]; docType: number; docNumber: number, linked:boolean }[]>;
+      readDoc: (id: number) => Promise<{ id: number; name: string; created_on: string; data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]; docType: number; docNumber: number, linked:boolean }>;
       updateDoc: (id: number, data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]) => Promise<boolean>;
+      deleteDocumentsByCompany: (id: number) => Promise<boolean>;
+    };
+    accounts: {
+      getAllAccounts: () => Promise<{ id: number; name: string; created_on: string, linked:boolean }>;
+      addAccount: (name: string) => Promise<{ id: number; name: string; created_on: string, linked:boolean }>;
+      updateAccount: (id: number, name: string) => Promise<boolean>;
+      getAccountByID: (id: number) => Promise<{ id: number, name: string, created_on: string, linked:boolean }>;
+      deleteAccount: (id: number) => Promise<boolean>;
     }
 
     api: {

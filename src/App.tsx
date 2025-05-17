@@ -4,6 +4,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { FileSystemProvider } from './contexts/FileSystemContext';
+import { AccountsProvider } from './contexts/AccountsContext';
 import LoginScreen from './components/auth/LoginScreen';
 import RegisterScreen from './components/auth/RegisterScreen';
 import AppLayout from './components/layout/AppLayout';
@@ -41,9 +42,11 @@ function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
+        <AccountsProvider>
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+        </AccountsProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

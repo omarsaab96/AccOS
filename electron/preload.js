@@ -14,23 +14,25 @@ contextBridge.exposeInMainWorld('electron', {
     getStats: (path) => ipcRenderer.invoke('fs:getStats', path),
   },
   doctypes: {
-    addDocType: (name_en, name_ar, type) => ipcRenderer.invoke('doc:addDocType', name_en, name_ar),
-    getAllDocTypes: () => ipcRenderer.invoke('doc:getAllDocTypes'),
-    getDocTypeName: (id) => ipcRenderer.invoke('doc:getDocTypeName', id),
+    addDocType: (name_en, name_ar, type) => ipcRenderer.invoke('doctypes:addDocType', name_en, name_ar),
+    getAllDocTypes: () => ipcRenderer.invoke('doctypes:getAllDocTypes'),
+    getDocTypeName: (id) => ipcRenderer.invoke('doctypes:getDocTypeName', id),
   },
   documents: {
-    addDocument: (name, docType, docNumber, data, company) => ipcRenderer.invoke('doc:addDocument', name, docType, docNumber, data, company),
-    getAllDocuments: () => ipcRenderer.invoke('doc:getAllDocuments'),
-    readDoc: (id) => ipcRenderer.invoke('doc:readDoc', id),
-    updateDoc: (id, data) => ipcRenderer.invoke('doc:updateDoc', id, data),
+    addDocument: (name, docType, docNumber, data, company) => ipcRenderer.invoke('documents:addDocument', name, docType, docNumber, data, company),
+    getAllDocuments: () => ipcRenderer.invoke('documents:getAllDocuments'),
+    getDocumentsByAccount: (id) => ipcRenderer.invoke('documents:getDocumentsByAccount',id),
+    readDoc: (id) => ipcRenderer.invoke('documents:readDoc', id),
+    updateDoc: (id, data) => ipcRenderer.invoke('documents:updateDoc', id, data),
+    deleteDocumentsByCompany:(id) => ipcRenderer.invoke('documents:deleteDocumentsByCompany', id),
+  },
+  accounts: {
+    getAllAccounts: () => ipcRenderer.invoke('accounts:getAllAccounts'),
+    addAccount: (name) => ipcRenderer.invoke('accounts:addAccount', name),
+    updateAccount: (id, name) => ipcRenderer.invoke('accounts:updateAccount', id, name),
+    getAccountByID: (id) => ipcRenderer.invoke('accounts:getAccountByID', id),
+    deleteAccount: (id) => ipcRenderer.invoke('accounts:deleteAccount', id),
   }
-  // dialog: {
-  //   openDirectory: () => ipcRenderer.invoke('dialog:openDirectory'),
-  //   openFile: () => ipcRenderer.invoke('dialog:openFile'),
-  // },
-  // app: {
-  //   getVersion: () => ipcRenderer.invoke('app:getVersion'),
-  // }
 });
 
 contextBridge.exposeInMainWorld('api', {

@@ -4,6 +4,7 @@ import { useFileSystem } from '../contexts/FileSystemContext';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAccounts } from '../contexts/AccountsContext';
 
 
 
@@ -20,6 +21,7 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
     const [docTypes, setDocTypes] = useState<any[]>([]);
 
     const { refreshDocuments, openDocument, docTypesCount } = useFileSystem();
+    const { activeAccount } = useAccounts();
 
     useEffect(() => {
         fetchDocTypes()
@@ -52,7 +54,7 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
 
     const handleAddDocument = async (name: string, docType: number, docNumber: number, data: any, company: number): Promise<AddDocumentResult> => {
         try {
-            const resp = await window.electron.documents.addDocument(name, docType, docNumber, data, company);
+            const resp = await window.electron.documents.addDocument(name, docType, docNumber, data, activeAccount.id);
 
             return { success: true, id: resp };
         } catch (error) {
