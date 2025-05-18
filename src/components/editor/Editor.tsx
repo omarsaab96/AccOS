@@ -331,7 +331,7 @@ const Editor: React.FC = () => {
           background-color:#fcdada;
           color:#ef4444;
           margin-bottom:10px;
-          border-leftt:4px solid #ef4444;
+          border-left:4px solid #ef4444;
         } 
       </style>
       ${header}
@@ -464,8 +464,6 @@ const Editor: React.FC = () => {
           }
           `}
 
-        
-
         table, th, td {
           border-collapse:collapse;
         }
@@ -511,7 +509,7 @@ const Editor: React.FC = () => {
           background-color:#fcdada;
           color:#ef4444;
           margin-bottom:10px;
-          border-leftt:4px solid #ef4444;
+          border-left:4px solid #ef4444;
         } 
       </style>
       ${header}

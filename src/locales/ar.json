@@ -129,7 +129,7 @@
         "debit": "مدين",
         "credit": "دائن",
         "rate": "سعر الصرف",
-        "description": "الوصف"
+        "description": "الشرح"
       }
     },
     "removeRow": {

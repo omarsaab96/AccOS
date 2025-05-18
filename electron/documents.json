@@ -95,7 +95,7 @@
     ],
     "company": 1,
     "created_on": "18/05/2025",
-    "linked": true
+    "linked": false
   },
   {
     "id": 4,
@@ -123,6 +123,178 @@
       }
     ],
     "company": 1,
+    "created_on": "18/05/2025",
+    "linked": false
+  },
+  {
+    "id": 5,
+    "name": "تحويل لبناني لدولار",
+    "docType": 0,
+    "docNumber": 1,
+    "data": [
+      {
+        "accountNumber": "101",
+        "accountName": "dwedew",
+        "currency": "USD",
+        "debit": "100",
+        "credit": "",
+        "rate": "89000",
+        "description": "fewfwef"
+      },
+      {
+        "accountNumber": "102",
+        "accountName": "e23e32e32",
+        "currency": "USD",
+        "debit": "",
+        "credit": "100",
+        "rate": "89000",
+        "description": ""
+      },
+      {
+        "accountNumber": "400",
+        "accountName": "dwew",
+        "currency": "",
+        "debit": "1",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      },
+      {
+        "accountNumber": "423",
+        "accountName": "dewwe",
+        "currency": "",
+        "debit": "",
+        "credit": "1",
+        "rate": "",
+        "description": ""
+      },
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      },
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      },
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": 2,
+    "created_on": "18/05/2025",
+    "linked": true
+  },
+  {
+    "id": 6,
+    "name": "بصثثصبثصبثصبثص",
+    "docType": 1,
+    "docNumber": 1,
+    "data": [
+      {
+        "accountNumber": "102",
+        "accountName": "dwedew",
+        "currency": "USD",
+        "debit": "200",
+        "credit": "",
+        "rate": "89000",
+        "description": "gh4g5g54g45"
+      },
+      {
+        "accountNumber": "132",
+        "accountName": "wqdwwq",
+        "currency": "",
+        "debit": "",
+        "credit": "200",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": 2,
+    "created_on": "18/05/2025",
+    "linked": true
+  },
+  {
+    "id": 7,
+    "name": "fewfwefew",
+    "docType": 2,
+    "docNumber": 1,
+    "data": [
+      {
+        "accountNumber": "4111",
+        "accountName": "dewdw",
+        "currency": "USD",
+        "debit": "12",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      },
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "12",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": 2,
+    "created_on": "18/05/2025",
+    "linked": true
+  },
+  {
+    "id": 8,
+    "name": "d32d2",
+    "docType": 2,
+    "docNumber": 2,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "USD",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": 2,
+    "created_on": "18/05/2025",
+    "linked": true
+  },
+  {
+    "id": 9,
+    "name": "efwfewf",
+    "docType": 0,
+    "docNumber": 2,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "USD",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": 2,
     "created_on": "18/05/2025",
     "linked": true
   }

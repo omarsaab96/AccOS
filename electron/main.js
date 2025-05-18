@@ -369,16 +369,10 @@ ipcMain.handle('documents:printPDF', async (event, htmlContent) => {
       <html>
         <head>
           <meta charset="utf-8" />
-           <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-          <style>
-            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-            @media print {
-              body { padding: 0; }
-            }
-          </style>
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+          <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
         </head>
         <body>${htmlContent}</body>
       </html>
