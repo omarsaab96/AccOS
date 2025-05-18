@@ -86,9 +86,38 @@
       {
         "accountNumber": "",
         "accountName": "",
-        "currency": "",
+        "currency": "LBP",
         "debit": "",
         "credit": "",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": 1,
+    "created_on": "18/05/2025",
+    "linked": true
+  },
+  {
+    "id": 4,
+    "name": "dw",
+    "docType": 0,
+    "docNumber": 2,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "LBP",
+        "debit": "1",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      },
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "",
+        "debit": "",
+        "credit": "1",
         "rate": "",
         "description": ""
       }

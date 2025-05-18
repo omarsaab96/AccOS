@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Save, Plus, Trash, Check, AlertTriangle, Printer } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useFileSystem } from '../../contexts/FileSystemContext';
 import { useTranslation } from 'react-i18next';
+import { useFileSystem } from '../../contexts/FileSystemContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useAccounts } from '../../contexts/AccountsContext';
 import Swal from 'sweetalert2';
 import { ipcRenderer } from 'electron';
 
@@ -12,6 +13,7 @@ const Editor: React.FC = () => {
   const { t } = useTranslation();
   const { language } = useLanguage();
   const { activeDoc, openDocuments, updateDocContent, saveDoc } = useFileSystem();
+  const { activeAccount } = useAccounts();
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
@@ -166,14 +168,375 @@ const Editor: React.FC = () => {
     }
   };
 
+  const generatePDF = async () => {
+    setIsPrinting(true);
+
+    let errors = ``;
+
+    if (!isBalanced) {
+      errors += `
+        <div class="error">
+          <div style="">
+            &#9888;
+            ${t('Editor.errors.balance')}
+          </div>
+        </div>`;
+    }
+
+    if (invalidRows.length != 0) {
+      errors += `<div class="error">
+          <div>
+            &#9888;
+            ${t('Editor.errors.debitCredit')}
+          </div>
+        </div>` ;
+    }
+
+    errors += `<br>`;
+
+    let header = `
+    <table width="100%">
+      <tr>
+        <td style="vertical-align: middle;">
+          <img src="http://localhost:5173/logo.png" alt="Logo" width="200" />
+        </td>
+        <td class="docinfo">
+          <h2 style="margin: 0;">${language == 'ar' ? docTypeNameAr : docTypeNameEn}</h2>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="2" style="height:50px;">
+        </td>
+      </tr>
+      
+      <tr>
+        <td colspan="2">
+          <b>${t('Editor.pdf.accountName')}</b>
+           <span>${activeAccount.name}</span>
+          <br>
+          <b>${t('Editor.pdf.documentNumber')}</b>
+          <span>${docContent.docNumber}</span>
+         <br>
+          <b>${t('Editor.pdf.date')}</b>
+          <span>${docContent.created_on}</span>
+        </td>
+        
+      </tr>
+    </table>
+    <br><br>
+    `;
+
+    let table = `
+      <table class="table" width="100%">
+        <thead>
+          <tr>
+            <th>${t('Editor.table.th.accountNumber')}</th>
+            <th>${t('Editor.table.th.accountName')}</th>
+            <th>${t('Editor.table.th.currency')}</th>
+            <th>${t('Editor.table.th.debit')}</th>
+            <th>${t('Editor.table.th.credit')}</th>
+            <th>${t('Editor.table.th.rate')}</th>
+            <th>${t('Editor.table.th.description')}</th>
+          </tr>
+        </thead>
+        
+        <tbody>
+          ${docContent.data.map((row: any, rowIndex: number) =>
+      `<tr>${Object.entries(row).map(([key, value], cellIndex) =>
+        `<td class=${(invalidRows.includes(rowIndex) && (key === "debit" || key === "credit")) ? 'highlight' : ''}>${value}</td>`
+      ).join('')
+      }</tr>`
+    ).join('')}
+
+          <tr>
+            <td colspan="3"></td>
+            
+            <td class=${!isBalanced ? 'highlight' : ''}>
+              <div>
+                ${calculateTotal("debit").toFixed(2)}
+              </div>
+            </td>
+            
+            <td class="px-1 p y-1 ${!isBalanced ? 'highlight' : ''}">
+              <div>
+                ${calculateTotal("credit").toFixed(2)}
+              </div>
+            </td>
+
+            <td colspan="2"></td>
+          </tr>
+        </tbody>
+      </table>`;
+
+    let rawhtml = `
+      <style>
+
+        ${language == 'ar' ? `
+          *{
+            direction: rtl;
+            text-align: right;
+          }
+            body{
+            font-family: "Rubik", sans-serif;
+          }
+          `: `
+          body{
+            font-family: "Roboto", sans-serif;
+          }
+          `}
+
+        table, th, td {
+          border-collapse:collapse;
+        }
+
+        table tr td.docinfo{
+          vertical-align: middle;
+        }
+          
+        table tr td.docinfo h2{
+          ${language == 'ar' ? 'text-align:left;' : 'text-align:right;'}
+        }
+        
+        .table tr th{
+          background-color: #f3f4f6;
+          color: #111827;
+          font-weight:600;
+          padding:10px;
+          ${language == 'ar' ? 'text-align:right;' : 'text-align:left;'}
+          
+        }
+
+        .table tr th:first-child{
+          border-radius: 5px 0 0 5px;
+        }
+
+        .table tr th:last-child{
+          border-radius: 0 5px 5px 0;
+        }
+
+        .table tr td{
+          padding:10px;
+          border-bottom:1px solid #e5e7eb;
+        }
+
+        .table tr td.highlight{
+          background-color:#fcdada;
+        }
+
+        .error{
+          padding:5px;
+          border-radius:5px;
+          font-weight:600;
+          background-color:#fcdada;
+          color:#ef4444;
+          margin-bottom:10px;
+          border-leftt:4px solid #ef4444;
+        } 
+      </style>
+      ${header}
+      ${errors}
+      ${table}
+    `;
+
+    window.electron.documents.generatePDF(rawhtml);
+
+    setTimeout(() => {
+      setIsPrinting(false);
+    }, 2000)
+  };
+
   const handlePrint = async () => {
     setIsPrinting(true);
 
-    setTimeout(()=>{
-      setIsPrinting(false);
-    },2000)
-  };
+    let errors = ``;
 
+    if (!isBalanced) {
+      errors += `
+        <div class="error">
+          <div style="">
+            &#9888;
+            ${t('Editor.errors.balance')}
+          </div>
+        </div>`;
+    }
+
+    if (invalidRows.length != 0) {
+      errors += `<div class="error">
+          <div>
+            &#9888;
+            ${t('Editor.errors.debitCredit')}
+          </div>
+        </div>` ;
+    }
+
+    errors += `<br>`;
+
+    let header = `
+    <table width="100%">
+      <tr>
+        <td style="vertical-align: middle;">
+          <img src="http://localhost:5173/logo.png" alt="Logo" width="200" />
+        </td>
+        <td class="docinfo">
+          <h2 style="margin: 0;">${language == 'ar' ? docTypeNameAr : docTypeNameEn}</h2>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="2" style="height:50px;">
+        </td>
+      </tr>
+      
+      <tr>
+        <td colspan="2">
+          <b>${t('Editor.pdf.accountName')}</b>
+           <span>${activeAccount.name}</span>
+          <br>
+          <b>${t('Editor.pdf.documentNumber')}</b>
+          <span>${docContent.docNumber}</span>
+         <br>
+          <b>${t('Editor.pdf.date')}</b>
+          <span>${docContent.created_on}</span>
+        </td>
+        
+      </tr>
+    </table>
+    <br><br>
+    `;
+
+    let table = `
+      <table class="table" width="100%">
+        <thead>
+          <tr>
+            <th>${t('Editor.table.th.accountNumber')}</th>
+            <th>${t('Editor.table.th.accountName')}</th>
+            <th>${t('Editor.table.th.currency')}</th>
+            <th>${t('Editor.table.th.debit')}</th>
+            <th>${t('Editor.table.th.credit')}</th>
+            <th>${t('Editor.table.th.rate')}</th>
+            <th>${t('Editor.table.th.description')}</th>
+          </tr>
+        </thead>
+        
+        <tbody>
+          ${docContent.data.map((row: any, rowIndex: number) =>
+      `<tr>${Object.entries(row).map(([key, value], cellIndex) =>
+        `<td class=${(invalidRows.includes(rowIndex) && (key === "debit" || key === "credit")) ? 'highlight' : ''}>${value}</td>`
+      ).join('')
+      }</tr>`
+    ).join('')}
+
+          <tr>
+            <td colspan="3"></td>
+            
+            <td class=${!isBalanced ? 'highlight' : ''}>
+              <div>
+                ${calculateTotal("debit").toFixed(2)}
+              </div>
+            </td>
+            
+            <td class="px-1 p y-1 ${!isBalanced ? 'highlight' : ''}">
+              <div>
+                ${calculateTotal("credit").toFixed(2)}
+              </div>
+            </td>
+
+            <td colspan="2"></td>
+          </tr>
+        </tbody>
+      </table>`;
+
+    let rawhtml = `
+      <style>
+
+        ${language == 'ar' ? `
+          *{
+            direction: rtl;
+            text-align: right;
+          }
+            body{
+            font-family: "Rubik", sans-serif;
+          }
+          `: `
+          body{
+            font-family: "Roboto", sans-serif;
+          }
+          `}
+
+        
+
+        table, th, td {
+          border-collapse:collapse;
+        }
+
+        table tr td.docinfo{
+          vertical-align: middle;
+        }
+          
+        table tr td.docinfo h2{
+          ${language == 'ar' ? 'text-align:left;' : 'text-align:right;'}
+        }
+        
+        .table tr th{
+          background-color: #f3f4f6;
+          color: #111827;
+          font-weight:600;
+          padding:10px;
+          ${language == 'ar' ? 'text-align:right;' : 'text-align:left;'}
+          
+        }
+
+        .table tr th:first-child{
+          border-radius: 5px 0 0 5px;
+        }
+
+        .table tr th:last-child{
+          border-radius: 0 5px 5px 0;
+        }
+
+        .table tr td{
+          padding:10px;
+          border-bottom:1px solid #e5e7eb;
+        }
+
+        .table tr td.highlight{
+          background-color:#fcdada;
+        }
+
+        .error{
+          padding:5px;
+          border-radius:5px;
+          font-weight:600;
+          background-color:#fcdada;
+          color:#ef4444;
+          margin-bottom:10px;
+          border-leftt:4px solid #ef4444;
+        } 
+      </style>
+      ${header}
+      ${errors}
+      ${table}
+    `;
+
+    try {
+      const result = await window.electron.documents.printPDF(rawhtml);
+
+      if (!result.success) {
+        throw new Error(result.error || 'Printing failed');
+      }
+    } catch (error) {
+      console.error('Print error:', error);
+      // Show error to user
+      Swal.fire({
+        title: t('Print failed'),
+        text: error.message,
+        icon: 'error',
+      });
+    } finally {
+      setIsPrinting(false);
+    }
+  };
 
   const removeRow = (index: number) => {
     setRowRemove(index)
@@ -219,7 +582,7 @@ const Editor: React.FC = () => {
     <div className="h-full flex flex-col relative">
       {/* Header */}
       <div className="p-2 bg-gray-50 dark:bg-gray-800 border-b border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-        <div id="printable" className="font-bold text-xs flex gap-5 text-gray-900 dark:text-blue-400">
+        <div className="printable font-bold text-xs flex gap-5 text-gray-900 dark:text-blue-400">
           <div><span className="text-blue-600 dark:text-white">{language == 'ar' ? docTypeNameAr : docTypeNameEn}</span></div>
           <div className='flex items-center'>{t('Editor.header.documentNumber')}&nbsp;<span className="text-blue-600 dark:text-white">{docContent.docNumber}</span></div>
           <div className='flex items-center'>{t('Editor.header.date')}&nbsp;<span className="text-blue-600 dark:text-white">{docContent.created_on}</span></div>
@@ -229,7 +592,7 @@ const Editor: React.FC = () => {
           <motion.button
             className="flex items-center gap-1 px-2 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-75 disabled:hover:bg-blue-500 disabled:cursor-not-allowed"
             onClick={handlePrint}
-            disabled={isPrinting || currentDoc.isDirty}
+            disabled={isPrinting}
             whileTap={{ scale: 0.95 }}
           >
             {isPrinting ? (
@@ -278,7 +641,7 @@ const Editor: React.FC = () => {
       </div>
 
       {/* Table Editor */}
-      <div className="p-2 overflow-auto">
+      <div className="printable p-2 overflow-auto">
 
         {!isBalanced && (
           <motion.div className="flex items-center p-1.5 justify-between rounded-lg overflow-hidden font-medium mb-2 bg-red-500 bg-opacity-20 text-red-500"
@@ -309,7 +672,7 @@ const Editor: React.FC = () => {
         <table className="w-full text-sm ltr:text-left rtl:text-right">
           <thead>
             <tr className="text-gray-900 dark:text-blue-400 bg-gray-100 dark:bg-gray-800">
-              <th className="p-2 ltr:rounded-tl-lg ltr:rounded-bl-lg rtl:rounded-tr-lg rtl:rounded-br-lg "></th>
+              <th className="notPrintable p-2 ltr:rounded-tl-lg ltr:rounded-bl-lg rtl:rounded-tr-lg rtl:rounded-br-lg "></th>
               <th className="p-2">{t('Editor.table.th.accountNumber')}</th>
               <th className="p-2">{t('Editor.table.th.accountName')}</th>
               <th className="p-2">{t('Editor.table.th.currency')}</th>
@@ -326,7 +689,7 @@ const Editor: React.FC = () => {
               return (
                 <tr key={rowIndex}
                   className={`border-b border-gray-200 dark:border-gray-800 relative ${isLast ? 'border-none' : ''}`}>
-                  <td className="px-1 py-2 ltr:pl-0 rtl:pr-0">
+                  <td className="notPrintable px-1 py-2 ltr:pl-0 rtl:pr-0">
                     <motion.button
                       className="bg-gray-100 dark:bg-gray-800 rounded-lg border-none py-2 px-2 outline-none"
                       onClick={() => removeRow(rowIndex)}
@@ -362,11 +725,11 @@ const Editor: React.FC = () => {
                     <td key={cellIndex} className="px-1 py-2 ltr:last:pr-0 rtl:last:pl-0">
                       {key === "currency" ? (
                         <select
+                          id="currencySelect"
                           className="bg-gray-100 dark:bg-gray-800 rounded-lg border-none w-full py-1 px-2 outline-none"
                           value={value ?? ""}
                           onChange={(e) => handleTableInputChange(rowIndex, key, e.target.value)}
                         >
-                          <option value="">-</option>
                           <option value="LBP">LBP</option>
                           <option value="USD">USD</option>
                           <option value="EUR">EUR</option>
@@ -389,7 +752,7 @@ const Editor: React.FC = () => {
             <tr className="bg-gray-100 dark:bg-gray-800">
               <td colSpan="4" className="px-1 py-1 ltr:rounded-tl-lg ltr:rounded-bl-lg rtl:rounded-tr-lg rtl:rounded-br-lg">
                 <motion.button
-                  className="flex items-center gap-[5px] bg-gray-100 dark:bg-gray-900 rounded-lg border-none py-1 px-2 outline-none text-xs"
+                  className="notPrintable flex items-center gap-[5px] bg-gray-100 dark:bg-gray-900 rounded-lg border-none py-1 px-2 outline-none text-xs"
                   onClick={handleAddRow}
                   whileTap={{ scale: 0.95 }}
                 >

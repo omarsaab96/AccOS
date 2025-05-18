@@ -148,7 +148,7 @@ ipcMain.handle('documents:getAllDocuments', async () => {
   return await getAllDocuments()
 })
 
-ipcMain.handle('documents:getDocumentsByAccount', async (_,id) => {
+ipcMain.handle('documents:getDocumentsByAccount', async (_, id) => {
   return await getDocumentsByAccount(id)
 })
 
@@ -301,3 +301,118 @@ ipcMain.handle('fs:createFile', async (_, directoryPath, fileName, docType) => {
 //     throw error;
 //   }
 // });
+
+ipcMain.on('documents:generate-pdf', async (event, htmlContent) => {
+  const printWindow = new BrowserWindow({
+    show: false,
+    webPreferences: {
+      offscreen: true,
+    },
+  });
+
+  // Wrap HTML with a minimal document
+  const fullHTML = `
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+      </head>
+      <body>${htmlContent}</body>
+    </html>
+  `;
+
+  try {
+    await printWindow.loadURL('data:text/html;charset=utf-8,' + encodeURIComponent(fullHTML));
+
+    const pdfBuffer = await printWindow.webContents.printToPDF({
+      marginsType: 1,
+      printBackground: true,
+      pageSize: 'A4',
+    });
+
+    const { filePath } = await dialog.showSaveDialog(printWindow, {
+      defaultPath: 'document.pdf',
+      filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
+    });
+
+    if (filePath) {
+      await fs.writeFile(filePath, pdfBuffer);
+      console.log('PDF saved from div content!');
+    }
+
+    printWindow.close();
+  } catch (error) {
+    console.error('Failed to generate PDF from div:', error);
+  }
+});
+
+ipcMain.handle('documents:printPDF', async (event, htmlContent) => {
+  console.log('Starting print process...'); // Debug log
+  let printWindow;
+
+  try {
+    printWindow = new BrowserWindow({
+      show: false,
+      webPreferences: {
+        offscreen: true,
+        nodeIntegration: false,
+        contextIsolation: true
+      },
+    });
+
+    console.log('Created print window'); // Debug log
+
+    const fullHTML = `
+      <html>
+        <head>
+          <meta charset="utf-8" />
+           <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+          <style>
+            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+            @media print {
+              body { padding: 0; }
+            }
+          </style>
+        </head>
+        <body>${htmlContent}</body>
+      </html>
+    `;
+
+    await printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(fullHTML)}`);
+    console.log('HTML loaded in print window'); // Debug log
+
+    // Wait for content to load
+    await printWindow.webContents.executeJavaScript(`
+      Promise.all(Array.from(document.images).map(img =>
+        img.complete ? Promise.resolve() :
+        new Promise(resolve => {
+          img.onload = img.onerror = resolve;
+        })
+      ));
+    `);
+
+    console.log('Initiating print...'); // Debug log
+    await printWindow.webContents.print({
+      silent: false,
+      printBackground: true,
+      pageSize: 'A4',
+    });
+
+    console.log('Print completed successfully'); // Debug log
+    return { success: true };
+  } catch (error) {
+    console.error('Print error in main process:', error); // Debug log
+    return { success: false, error: error.message };
+  } finally {
+    // if (printWindow && !printWindow.isDestroyed()) {
+    //   printWindow.close();
+    // }
+    console.log('Print window cleaned up'); // Debug log
+  }
+});

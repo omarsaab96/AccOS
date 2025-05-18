@@ -153,6 +153,11 @@
       "balance": "Debit and Credit totals do not match.",
       "debitCredit": "A row cannot contain both debit and credit values."
     },
+    "pdf":{
+      "accountName":"Account Name",
+      "documentNumber":"Document#",
+      "date":"Date"
+    },
     "ctas": {
       "save": "Save",
       "saving": "Saving...",

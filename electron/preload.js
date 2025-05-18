@@ -21,10 +21,12 @@ contextBridge.exposeInMainWorld('electron', {
   documents: {
     addDocument: (name, docType, docNumber, data, company) => ipcRenderer.invoke('documents:addDocument', name, docType, docNumber, data, company),
     getAllDocuments: () => ipcRenderer.invoke('documents:getAllDocuments'),
-    getDocumentsByAccount: (id) => ipcRenderer.invoke('documents:getDocumentsByAccount',id),
+    getDocumentsByAccount: (id) => ipcRenderer.invoke('documents:getDocumentsByAccount', id),
     readDoc: (id) => ipcRenderer.invoke('documents:readDoc', id),
     updateDoc: (id, data) => ipcRenderer.invoke('documents:updateDoc', id, data),
-    deleteDocumentsByCompany:(id) => ipcRenderer.invoke('documents:deleteDocumentsByCompany', id),
+    deleteDocumentsByCompany: (id) => ipcRenderer.invoke('documents:deleteDocumentsByCompany', id),
+    generatePDF: (html) => ipcRenderer.send('documents:generate-pdf', html),
+    printPDF: (html) => ipcRenderer.invoke('documents:printPDF', html),
   },
   accounts: {
     getAllAccounts: () => ipcRenderer.invoke('accounts:getAllAccounts'),

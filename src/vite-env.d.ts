@@ -30,6 +30,9 @@ interface Window {
       readDoc: (id: number) => Promise<{ id: number; name: string; created_on: string; data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]; docType: number; docNumber: number, linked:boolean }>;
       updateDoc: (id: number, data: { accountName: string | null; accountNumber: string | null; credit: string | null; currency: string | null; debit: string | null; description: string | null; rate: string | null; }[]) => Promise<boolean>;
       deleteDocumentsByCompany: (id: number) => Promise<boolean>;
+      generatePDF: () => void;
+      printPDF: (html) => void;
+
     };
     accounts: {
       getAllAccounts: () => Promise<{ id: number; name: string; created_on: string, linked:boolean }>;

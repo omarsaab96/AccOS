@@ -93,7 +93,7 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
         const data = [{
             "accountNumber": "",
             "accountName": "",
-            "currency": "",
+            "currency": "USD",
             "debit": "",
             "credit": "",
             "rate": "",
