@@ -77,7 +77,7 @@
     }
   },
   "Doctypes": {
-    "JournalEntry": "Journal Entry",
+    "JournalVoucher": "Journal Voucher",
     "PaymentVoucher": "Payment Voucher",
     "ReceiptVoucher": "Receipt Voucher",
     "Voucher": "Voucher"
@@ -124,11 +124,13 @@
     "table": {
       "th": {
         "accountNumber": "Acc #",
+        "accountHelper":"Acc helper",
         "accountName": "Acc Name",
         "currency": "Currency",
         "debit": "Debit",
         "credit": "Credit",
         "rate": "Rate",
+        "equivalent": "Equivalent",
         "description": "Description"
       }
     },
@@ -151,7 +153,8 @@
     },
     "errors": {
       "balance": "Debit and Credit totals do not match.",
-      "debitCredit": "A row cannot contain both debit and credit values."
+      "debitCredit": "A row cannot contain both debit and credit values.",
+      "missingRate": "Rate is required for foreign currency transactions."
     },
     "pdf":{
       "accountName":"Account Name",
@@ -164,7 +167,9 @@
       "saved": "Saved",
       "addRow": "Add row",
       "print": "Print",
-      "printing":"Printing..."
+      "printing":"Printing...",
+      "exportPDF":"Export as PDF",
+      "exporting":"Exporting..."
     }
   }
 }

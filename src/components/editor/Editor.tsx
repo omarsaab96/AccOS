@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Save, Plus, Trash, Check, AlertTriangle, Printer } from 'lucide-react';
+import { Save, Plus, Trash, Check, AlertTriangle, Printer, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useFileSystem } from '../../contexts/FileSystemContext';
@@ -17,12 +17,16 @@ const Editor: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [isBalanced, setIsBalanced] = useState(true);
+  const defaultCurrency = "LBP";
 
   const [docContent, setDocContent] = useState<any>(null);
   const [docTypeNameEn, setDocTypeNameEn] = useState("");
   const [docTypeNameAr, setDocTypeNameAr] = useState("");
   const [invalidRows, setInvalidRows] = useState<number[]>([]);
+  const [rateInvalidRows, setRateInvalidRows] = useState<number[]>([]);
+
   const [rowRemove, setRowRemove] = useState(-1);
 
   const currentDoc = openDocuments.find(doc => doc.id === activeDoc);
@@ -61,7 +65,7 @@ const Editor: React.FC = () => {
 
     const totalDebit = calculateTotal("debit");
     const totalCredit = calculateTotal("credit");
-    setIsBalanced(Math.abs(totalDebit - totalCredit) < 0.01);
+    setIsBalanced(totalDebit == totalCredit);
 
     // Find all rows with both debit and credit filled
     const conflicts = docContent.data.reduce((acc: number[], row: any, index: number) => {
@@ -70,6 +74,37 @@ const Editor: React.FC = () => {
     }, []);
 
     setInvalidRows(conflicts);
+
+    // Check for rows with non-LBP currency and empty rate
+    const missingRateRows = docContent.data.reduce((acc: number[], row: any, index: number) => {
+      if (row.currency?.toLowerCase() !== defaultCurrency.toLowerCase() && !row.rate) {
+        acc.push(index);
+      }
+
+      if (row.currency?.toLowerCase() !== defaultCurrency.toLowerCase() && row.rate) {
+        if ((row.debit && row.credit) || (!row.debit && !row.credit)) {
+          row.equivalent = "";
+        } else if (row.debit && !row.credit) {
+          row.equivalent = parseFloat(row.debit) * parseFloat(row.rate);
+        } else {
+          row.equivalent = parseFloat(row.credit) * parseFloat(row.rate);
+        }
+      }
+
+      if (row.currency?.toLowerCase() == defaultCurrency.toLowerCase()) {
+        if ((row.debit && row.credit) || (!row.debit && !row.credit)) {
+          row.equivalent = "";
+        } else if (row.debit && !row.credit) {
+          row.equivalent = row.debit;
+        } else {
+          row.equivalent = row.credit;
+        }
+
+      }
+      return acc;
+    }, []);
+    setRateInvalidRows(missingRateRows);
+
 
   }, [docContent?.data]);
 
@@ -101,10 +136,11 @@ const Editor: React.FC = () => {
     const newRow = {
       accountNumber: "",
       accountName: "",
-      currency: "",
+      currency: defaultCurrency,
       debit: "",
       credit: "",
       rate: "",
+      equivalent: "",
       description: ""
     };
 
@@ -169,7 +205,7 @@ const Editor: React.FC = () => {
   };
 
   const generatePDF = async () => {
-    setIsPrinting(true);
+    setIsExporting(true);
 
     let errors = ``;
 
@@ -237,6 +273,7 @@ const Editor: React.FC = () => {
             <th>${t('Editor.table.th.debit')}</th>
             <th>${t('Editor.table.th.credit')}</th>
             <th>${t('Editor.table.th.rate')}</th>
+            <th>${t('Editor.table.th.equivalent')}</th>
             <th>${t('Editor.table.th.description')}</th>
           </tr>
         </thead>
@@ -254,13 +291,13 @@ const Editor: React.FC = () => {
             
             <td class=${!isBalanced ? 'highlight' : ''}>
               <div>
-                ${calculateTotal("debit").toFixed(2)}
+                ${calculateTotal("debit")}
               </div>
             </td>
             
             <td class="px-1 p y-1 ${!isBalanced ? 'highlight' : ''}">
               <div>
-                ${calculateTotal("credit").toFixed(2)}
+                ${calculateTotal("credit")}
               </div>
             </td>
 
@@ -269,8 +306,12 @@ const Editor: React.FC = () => {
         </tbody>
       </table>`;
 
-    let rawhtml = `
+    let styles = `
       <style>
+        * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
 
         ${language == 'ar' ? `
           *{
@@ -284,7 +325,8 @@ const Editor: React.FC = () => {
           body{
             font-family: "Roboto", sans-serif;
           }
-          `}
+          `
+      }
 
         table, th, td {
           border-collapse:collapse;
@@ -333,17 +375,33 @@ const Editor: React.FC = () => {
           margin-bottom:10px;
           border-left:4px solid #ef4444;
         } 
-      </style>
+      </style>`;
+
+    let rawhtml = `
+      ${styles}
       ${header}
       ${errors}
       ${table}
     `;
 
-    window.electron.documents.generatePDF(rawhtml);
 
-    setTimeout(() => {
-      setIsPrinting(false);
-    }, 2000)
+    try {
+      const result = await window.electron.documents.generatePDF(rawhtml);
+
+      if (!result.success) {
+        throw new Error(result.error || 'Export failed');
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+      // Show error to user
+      // Swal.fire({
+      //   title: t('Export failed'),
+      //   text: error.message,
+      //   icon: 'error',
+      // });
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const handlePrint = async () => {
@@ -415,6 +473,7 @@ const Editor: React.FC = () => {
             <th>${t('Editor.table.th.debit')}</th>
             <th>${t('Editor.table.th.credit')}</th>
             <th>${t('Editor.table.th.rate')}</th>
+            <th>${t('Editor.table.th.equivalent')}</th>
             <th>${t('Editor.table.th.description')}</th>
           </tr>
         </thead>
@@ -432,13 +491,13 @@ const Editor: React.FC = () => {
             
             <td class=${!isBalanced ? 'highlight' : ''}>
               <div>
-                ${calculateTotal("debit").toFixed(2)}
+                ${calculateTotal("debit")}
               </div>
             </td>
             
             <td class="px-1 p y-1 ${!isBalanced ? 'highlight' : ''}">
               <div>
-                ${calculateTotal("credit").toFixed(2)}
+                ${calculateTotal("credit")}
               </div>
             </td>
 
@@ -447,8 +506,12 @@ const Editor: React.FC = () => {
         </tbody>
       </table>`;
 
-    let rawhtml = `
+    let styles = `
       <style>
+        * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
 
         ${language == 'ar' ? `
           *{
@@ -462,7 +525,8 @@ const Editor: React.FC = () => {
           body{
             font-family: "Roboto", sans-serif;
           }
-          `}
+          `
+      }
 
         table, th, td {
           border-collapse:collapse;
@@ -511,7 +575,10 @@ const Editor: React.FC = () => {
           margin-bottom:10px;
           border-left:4px solid #ef4444;
         } 
-      </style>
+      </style>`;
+
+    let rawhtml = `
+      ${styles}
       ${header}
       ${errors}
       ${table}
@@ -560,11 +627,12 @@ const Editor: React.FC = () => {
       const value = parseFloat(row[key]);
       const rate = parseFloat(row.rate);
 
-      // If currency is already USD, use 1 as rate
-      const effectiveRate = row.currency === "USD" || isNaN(rate) ? 1 : rate;
 
-      const usdValue = isNaN(value) ? 0 : value / effectiveRate;
-      return sum + usdValue;
+      // If currency is already the default currency, use 1 as rate
+      const effectiveRate = row.currency === defaultCurrency || isNaN(rate) ? 1 : rate;
+
+      const realValue = isNaN(value) ? 0 : value * effectiveRate;
+      return sum + realValue;
     }, 0);
   };
 
@@ -587,6 +655,28 @@ const Editor: React.FC = () => {
         </div>
 
         <div className='flex gap-2 items-center'>
+          <motion.button
+            className="flex items-center gap-1 px-2 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-75 disabled:hover:bg-blue-500 disabled:cursor-not-allowed"
+            onClick={generatePDF}
+            disabled={isExporting}
+            whileTap={{ scale: 0.95 }}
+          >
+            {isExporting ? (
+              <>
+                <svg className="animate-spin ltr:-ml-1 ltr:mr-2 rtl:-mr-1 rtl:ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zM6 17.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                {t('Editor.ctas.exporting')}
+              </>
+            ) : (
+              <>
+                <ExternalLink size={16} />
+                {t('Editor.ctas.exportPDF')}
+              </>
+            )}
+          </motion.button>
+
           <motion.button
             className="flex items-center gap-1 px-2 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-75 disabled:hover:bg-blue-500 disabled:cursor-not-allowed"
             onClick={handlePrint}
@@ -667,16 +757,31 @@ const Editor: React.FC = () => {
           </motion.div>
         )}
 
+        {rateInvalidRows.length != 0 && (
+          <motion.div className="flex items-center p-1.5 justify-between rounded-lg overflow-hidden font-medium mb-2 bg-red-500 bg-opacity-20 text-red-500"
+            initial={{ opacity: 0, x: language === 'ar' ? 10 : -10 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <div className="relative flex items-center gap-2 ltr:pl-[15px] rtl:pr-[15px] text-sm before:absolute before:top-0 ltr:before:left-0 rtl:before:right-0 before:w-[5px] before:h-[100%] before:bg-red-600 before:rounded-lg">
+              <AlertTriangle size={18} strokeWidth={2.5} />
+              {t('Editor.errors.missingRate')}
+            </div>
+            {/* <X size={18} className="font-bold cursor-pointer" strokeWidth={3.5} onClick={() => setIsBalanced(true)} /> */}
+          </motion.div>
+        )}
+
         <table className="w-full text-sm ltr:text-left rtl:text-right">
           <thead>
             <tr className="text-gray-900 dark:text-blue-400 bg-gray-100 dark:bg-gray-800">
               <th className="notPrintable p-2 ltr:rounded-tl-lg ltr:rounded-bl-lg rtl:rounded-tr-lg rtl:rounded-br-lg "></th>
               <th className="p-2">{t('Editor.table.th.accountNumber')}</th>
+              <th className="p-2">{t('Editor.table.th.accountHelper')}</th>
               <th className="p-2">{t('Editor.table.th.accountName')}</th>
               <th className="p-2">{t('Editor.table.th.currency')}</th>
               <th className="p-2">{t('Editor.table.th.debit')}</th>
               <th className="p-2">{t('Editor.table.th.credit')}</th>
               <th className="p-2">{t('Editor.table.th.rate')}</th>
+              <th className="p-2">{t('Editor.table.th.equivalent')}</th>
               <th className="p-2 ltr:rounded-tr-lg ltr:rounded-br-lg rtl:rounded-tl-lg rtl:rounded-bl-lg">{t('Editor.table.th.description')}</th>
             </tr>
           </thead>
@@ -734,9 +839,10 @@ const Editor: React.FC = () => {
                         </select>
                       ) : (
                         <input
-                          className={`bg-gray-100 dark:bg-gray-800 rounded-lg border-none w-full py-1 px-2 outline-none ${(invalidRows.includes(rowIndex) && (key === "debit" || key === "credit")) ? 'bg-red-500/40 dark:bg-red-500/20 bg-opacity-50' : ''}`}
+                          className={`bg-gray-100 dark:bg-gray-800 rounded-lg border-none w-full py-1 px-2 outline-none ${((invalidRows.includes(rowIndex) && (key === "debit" || key === "credit")) || (rateInvalidRows.includes(rowIndex) && key === "rate")) ? 'bg-red-500/40 dark:bg-red-500/20 bg-opacity-50' : ''}`}
                           type="text"
                           value={value ?? ""}
+                          disabled={key === "equivalent"}
                           onChange={(e) => handleTableInputChange(rowIndex, key, e.target.value)}
                         />
                       )}
@@ -748,7 +854,7 @@ const Editor: React.FC = () => {
             })}
 
             <tr className="bg-gray-100 dark:bg-gray-800">
-              <td colSpan="4" className="px-1 py-1 ltr:rounded-tl-lg ltr:rounded-bl-lg rtl:rounded-tr-lg rtl:rounded-br-lg">
+              <td colSpan="5" className="px-1 py-1 ltr:rounded-tl-lg ltr:rounded-bl-lg rtl:rounded-tr-lg rtl:rounded-br-lg">
                 <motion.button
                   className="notPrintable flex items-center gap-[5px] bg-gray-100 dark:bg-gray-900 rounded-lg border-none py-1 px-2 outline-none text-xs"
                   onClick={handleAddRow}
@@ -761,15 +867,15 @@ const Editor: React.FC = () => {
 
               <td className="px-1 p y-1">
                 <div className={`bg-gray-100 dark:bg-gray-900 rounded-lg border-none w-full py-1 px-2 outline-none ${!isBalanced ? 'bg-red-500/40 dark:bg-red-600/20 bg-opacity-50' : ''}`}>
-                  {calculateTotal("debit").toFixed(2)}
+                  {calculateTotal("debit")}
                 </div>
               </td>
               <td className="px-1 p y-1">
                 <div className={`bg-gray-100 dark:bg-gray-900 rounded-lg border-none w-full py-1 px-2 outline-none ${!isBalanced ? 'bg-red-500/40 dark:bg-red-600/20 bg-opacity-50' : ''}`}>
-                  {calculateTotal("credit").toFixed(2)}
+                  {calculateTotal("credit")}
                 </div>
               </td>
-              <td colSpan="2" className='ltr:rounded-tr-lg ltr:rounded-br-lg rtl:rounded-tl-lg rtl:rounded-bl-lg'></td>
+              <td colSpan="3" className='ltr:rounded-tr-lg ltr:rounded-br-lg rtl:rounded-tl-lg rtl:rounded-bl-lg'></td>
             </tr>
           </tbody>
         </table>

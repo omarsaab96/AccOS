@@ -77,7 +77,7 @@
     }
   },
   "Doctypes": {
-    "JournalEntry": "قيد اليومية",
+    "JournalVoucher": "قيد اليومية",
     "PaymentVoucher": "سند صرف",
     "ReceiptVoucher": "سند قبض (إيصال)",
     "Voucher": "سند قيـد"
@@ -97,7 +97,7 @@
     "title": "إنشاء مستند جديد",
     "inputs": {
       "docnameLabel": "اسم المستند",
-      "docnameplaceHolder": "قم بتسمية المستند الجديد",
+      "docnameplaceHolder": "قم بتسمية المستند",
       "templateLabel": "اختر نوع المستند"
     },
     "ctas": {
@@ -124,11 +124,13 @@
     "table": {
       "th": {
         "accountNumber": "رقم الحساب",
+        "accountHelper": "المساعد",
         "accountName": "اسم الحساب",
         "currency": "العملة",
         "debit": "مدين",
         "credit": "دائن",
         "rate": "سعر الصرف",
+        "equivalent": "المعادل",
         "description": "الشرح"
       }
     },
@@ -151,20 +153,23 @@
     },
     "errors": {
       "balance": "إجمالي المدين والدائن غير متساويين.",
-      "debitCredit": "لا يمكن أن يحتوي السطر الواحد على قيم للمدين والدائن معًا."
+      "debitCredit": "لا يمكن أن يحتوي السطر الواحد على قيم للمدين والدائن معًا.",
+      "missingRate": "يرجى إدخال سعر الصرف للمعاملات الأجنبية."
     },
-    "pdf":{
-      "accountName":"اسم الحساب",
-      "documentNumber":"رقم المستند",
-      "date":"التاريخ"
+    "pdf": {
+      "accountName": "اسم الحساب",
+      "documentNumber": "رقم المستند",
+      "date": "التاريخ"
     },
     "ctas": {
       "save": "حفظ",
       "saving": "جارٍ الحفظ...",
       "saved": "تم الحفظ",
       "addRow": "إضافة صف",
-      "print":"طبع",
-      "printing":"جار الطبع..."
+      "print": "طبع",
+      "printing": "جار الطبع...",
+      "exportPDF": "تصدير كملف PDF",
+      "exporting": "جارٍ التصدير..."
     }
   }
 }

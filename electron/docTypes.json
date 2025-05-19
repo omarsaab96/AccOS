@@ -1,8 +1,8 @@
 [
   {
     "id": 0,
-    "nameEn": "Journal Entry",
-    "nameAr": "قيد اليومية"
+    "nameEn": "Journal Voucher",
+    "nameAr": "سند قيد اليومية"
   },
   {
     "id": 1,
@@ -16,7 +16,82 @@
   },
   {
     "id": 3,
-    "nameEn": "Voucher",
-    "nameAr": "سند قيـد"
+    "nameEn": "Debit Note",
+    "nameAr": "اشعار مدين"
+  },
+  {
+    "id": 4,
+    "nameEn": "Credit Note",
+    "nameAr": "اشعار دائن"
+  },
+  {
+    "id": 5,
+    "nameEn": "Opening Voucher",
+    "nameAr": "قيد افتتاحي"
+  },
+  {
+    "id": 6,
+    "nameEn": "Closing Voucher",
+    "nameAr": "قيد إغلاق"
+  },
+  {
+    "id": 7,
+    "nameEn": "Credit Sales Invoice",
+    "nameAr": "فاتورة مبيعات آجلة"
+  },
+  {
+    "id": 8,
+    "nameEn": "Cash Sales Invoice",
+    "nameAr": "فاتورة مبيعات نقدية"
+  },
+  {
+    "id": 9,
+    "nameEn": "Credit Purchase Invoice",
+    "nameAr": "فاتورة مشتريات آجلة"
+  },
+  {
+    "id": 10,
+    "nameEn": "Cash Purchase Invoice",
+    "nameAr": "فاتورة مشتريات نقدية"
+  },
+  {
+    "id": 11,
+    "nameEn": "Credit Fixed Asset Purchase Invoice",
+    "nameAr": "فاتورة شراء أصول ثابتة آجلة"
+  },
+  {
+    "id": 12,
+    "nameEn": "Cash Fixed Asset Purchase Invoice",
+    "nameAr": "فاتورة شراء أصول ثابتة نقدية"
+  },
+  {
+    "id": 13,
+    "nameEn": "Credit Fixed Asset Sales Invoice",
+    "nameAr": "فاتورة مبيع أصول ثابتة آجلة"
+  },
+  {
+    "id": 14,
+    "nameEn": "Cash Fixed Asset Sales Invoice",
+    "nameAr": "فاتورة مبيع أصول ثابتة نقدية"
+  },
+  {
+    "id": 15,
+    "nameEn": "Sales Return",
+    "nameAr": "مرتجع مبيعات"
+  },
+  {
+    "id": 16,
+    "nameEn": "Purchase Return",
+    "nameAr": "مرتجع مشتريات"
+  },
+  {
+    "id": 17,
+    "nameEn": "Fixed Asset Purchase Return",
+    "nameAr": "مرتجع شراء أصول ثابتة"
+  },
+  {
+    "id": 18,
+    "nameEn": "Fixed Asset Sales Return",
+    "nameAr": "مرتجع مبيع أصول ثابتة"
   }
 ]

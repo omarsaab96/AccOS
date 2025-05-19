@@ -65,7 +65,6 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
 
     const cancelShowDocTypesModal = () => {
         onClose();
-        refreshDocuments()
         setSelectedDocType(-1)
         setDocumentName("")
     }
@@ -89,14 +88,17 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
         const docType = selectedDocType;
         const docNumber = docTypesCount[selectedDocType]?.count + 1 || 1;
         const company = -1;
+        const defaultCurrency="LBP";
 
         const data = [{
             "accountNumber": "",
+            "accountHelper": "",
             "accountName": "",
-            "currency": "USD",
+            "currency": defaultCurrency,
             "debit": "",
             "credit": "",
             "rate": "",
+            "equivalent": "",
             "description": ""
         }]
 
@@ -123,8 +125,8 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
     };
 
     return (
-        <div className="h-full flex flex-col justify-between text-gray-500 dark:text-gray-400">
-            <div className="p-4">
+        <div className="h-full relative flex flex-col justify-between text-gray-500 dark:text-gray-400">
+            <div className="h-full p-4 pb-[100px] overflow-auto scrollbar-none">
                 <h2 className="text-xl font-medium text-white mb-5">{t('CreateDocumentModal.title')}</h2>
 
                 <p className="max-w-full mb-3 ltr:pl-[35px] rtl:pr-[35px] relative before:absolute before:content-['1'] before:font-medium before:text-white before:text-center before:leading-[24px] before:w-[24px]  before:h-[24px]  before:top-50 ltr:before:left-0 rtl:before:right-0 before:-translate-y-50 before:bg-blue-500 before:rounded-full">
@@ -149,11 +151,11 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
                     {t('CreateDocumentModal.inputs.templateLabel')}
                 </p>
 
-                <div className='flex w-full flex-wrap gap-2'>
+                <div className='flex w-full flex-wrap gap-2 pb-[1 00px]'>
                     {docTypes?.map((docType, index) => (
                         <div key={docType.id || index} className='w-[calc(33.33%-6px)]'>
                             <div
-                                className={`border border-gray-200 dark:border-gray-800 hover:border-blue-500 hover:dark:border-blue-500 transition rounded-lg p-4 cursor-pointer ${selectedDocType === docType.id ? '!border-blue-500 !dark:border-blue-500' : ''}`}
+                                className={`border border-gray-200 dark:border-gray-800 hover:border-blue-500 hover:dark:border-blue-500 transition rounded-lg p-3 cursor-pointer transition relative before:absolute before:top-[5px] before:left-[5px] before:w-[8px] before:h-[8px] before:rounded-full before:bg-blue-500 before:transition before:opacity-0 ${selectedDocType === docType.id ? '!border-blue-500 !dark:border-blue-500 text-white before:opacity-100' : ''}`}
                                 onClick={() => selectTemplate(docType.id)}
                             >
                                 <p className="text-sm flex flex-col items-center font-medium">
@@ -165,7 +167,7 @@ const CreateDocModal: React.FC<Props> = ({ onClose }) => {
                 </div>
             </div>
 
-            <div className="flex gap-5 bg-white dark:bg-gray-800 justify-between items-center p-4">
+            <div className="absolute bottom-0 w-full flex gap-5 bg-white dark:bg-gray-800 justify-between items-center p-4">
                 <motion.button
                     className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors focus:outline-none"
                     onClick={() => cancelShowDocTypesModal()}

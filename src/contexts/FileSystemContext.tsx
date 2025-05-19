@@ -22,6 +22,7 @@ interface DocItem {
     debit: string | null;
     description: string | null;
     rate: string | null;
+    equivalent: string | null;
   }[];
   docType: number;
   docTypeNameEn: string;
@@ -46,6 +47,7 @@ interface DocumentContent {
     debit: string | null;
     description: string | null;
     rate: string | null;
+    equivalent: string | null;
   }[];
   docType: number;
   docNumber: number,

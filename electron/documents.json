@@ -297,5 +297,98 @@
     "company": 2,
     "created_on": "18/05/2025",
     "linked": true
+  },
+  {
+    "id": 10,
+    "name": "fe",
+    "docType": 3,
+    "docNumber": 1,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "LBP",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": 2,
+    "created_on": "19/05/2025",
+    "linked": true
+  },
+  {
+    "id": 11,
+    "name": "few",
+    "docType": 18,
+    "docNumber": 1,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "LBP",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "description": ""
+      }
+    ],
+    "company": 2,
+    "created_on": "19/05/2025",
+    "linked": true
+  },
+  {
+    "id": 12,
+    "name": "wd",
+    "docType": 12,
+    "docNumber": 1,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "LBP",
+        "debit": "89000",
+        "credit": "",
+        "rate": "",
+        "equivalent": "",
+        "description": ""
+      },
+      {
+        "accountNumber": "",
+        "accountName": "",
+        "currency": "USD",
+        "debit": "",
+        "credit": "1",
+        "rate": "89000",
+        "equivalent": 89000,
+        "description": ""
+      }
+    ],
+    "company": 2,
+    "created_on": "19/05/2025",
+    "linked": true
+  },
+  {
+    "id": 13,
+    "name": "few",
+    "docType": 0,
+    "docNumber": 1,
+    "data": [
+      {
+        "accountNumber": "",
+        "accountHelper": "",
+        "accountName": "",
+        "currency": "LBP",
+        "debit": "",
+        "credit": "",
+        "rate": "",
+        "equivalent": "",
+        "description": ""
+      }
+    ],
+    "company": 3,
+    "created_on": "19/05/2025",
+    "linked": true
   }
 ]
