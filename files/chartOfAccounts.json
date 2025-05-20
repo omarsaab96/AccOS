@@ -1,5 +1,1165 @@
-{
-    "fileType":"table",
-    "format":"json",
-    "data":[]
-}
+[
+    {
+        "id": "1",
+        "name": "CLASS 1 - EQUITY & LONG TERM DEBTS",
+        "subAccounts": [
+            {
+                "id": "10",
+                "name": "CAPITAL",
+                "subAccounts": [
+                    {
+                        "id": "101",
+                        "name": "Capital (Company or Individual)",
+                        "subAccounts":[
+                            {"id":"1011", "name":"Subscribed Capital (Uncalled)"},
+                            {"id":"1012", "name":"Subscribed Capital (Called & Unpaid)"},
+                            {"id":"1013", "name":"Subscribed Capital (Called & Paid Up)"}
+                        ]
+                    },
+                    {
+                        "id":"102",
+                        "name":"Premiums Related to the Capital",
+                        "subAccounts":[
+                            {"id":"1021", "name":"Issue Premiums"},
+                            {"id":"1022", "name":"Merger Premiums"},
+                            {"id":"1023", "name":"Contributions Premiums"},
+                            {"id":"1024", "name":"Premium on converting D.Loans to Shares"}
+                        ]
+                    },
+                    
+                    {
+                        "id":"103",
+                        "name":"Revalution Variances",
+                        "subAccounts":[
+                            {"id":"1031", "name":"R. V. of Unamortizable Fixed Assets"},
+                            {"id":"1035", "name":"R. V. of Amortizable Fixed Assets"}
+                        ]
+                    },
+                    {"id":"109", "name":"Owners Current Account"}
+                ]
+            },
+            {
+                "id":"11",
+                "name":"RESERVES",
+                "subAccounts":[
+                    {"id":"111", "name":"Legal Reserve"},
+                    {"id":"112", "name":"Statutary & Contractual Reserve"},
+                    {"id":"119", "name":"Other Reserves"}
+                ]
+            },
+            {
+                "id":"12",
+                "name":"BROUGHT FORWARD RESULTS",
+                "subAccounts":[
+                    {"id":"121", "name":"Profit Brought Forward"},
+                    {"id":"125", "name":"Loss Brought Forward"}
+                ]
+            },
+            {
+                "id":"13",
+                "name":"NET RESULT OF THE FI. PER.(PRO.or LOSS)",
+                "subAccounts":[
+                    {"id":"131", "name":"Gross Trade Margin"},
+                    {"id":"132", "name":"Value Added"},
+                    {"id":"133", "name":"Gross Trading Operating Margin"},
+                    {"id":"134", "name":"Operating Result (Prior to FI. In.& Ex.)"},
+                    {"id":"135", "name":"Result Before Taxation"},
+                    {"id":"136", "name":"Non Operating Result"},
+                    {"id":"138", "name":"Result of the Period - Profits"},
+                    {"id":"139", "name":"Result of the Period - Losses"}
+                ]
+            },
+            {
+                "id":"14",
+                "name":"INVESTMENT SUBSIDIES",
+                "subAccounts":[
+                    {"id":"141", "name":"Investment Subsidies Received"},
+                    {"id":"145", "name":"Investment Subsidies Transf. to Results"}
+                ]
+            },
+            {
+                "id":"15",
+                "name":"PROVISIONS FOR CONTINGENCIES & CHARGES",
+                "subAccounts":[
+                    {
+                        "id":"151",
+                        "name": "Provisions for Contingencies",
+                        "subAccounts":[
+                            {"id":"1511","name": "P. for Litigation & Sundry Contingencies"},
+                            {"id":"1512","name": "P. in Respect of Gua. given to Customers"},
+                            {"id":"1513","name": "Provisions for Losses on Exchange"},
+                            {"id":"1514","name": "Pro. for Losses on Future Transactions"},
+                            {"id":"1515","name": "Provisions for Fines and Penalties"}
+                        ]
+                    },
+                    {
+                        "id":"155",
+                        "name": "Provisions for Charges",
+                        "subAccounts":[
+                            {"id":"1551","name": "Provisions for Defferd Charges"},
+                            {"id":"1552","name": "P. for Emp. End of Service Indemnities &"},
+                            {"id":"1553","name": "Provisions for Taxes"},
+                            {"id":"1554","name": "Provision of Telephone"},
+                            {"id":"1555","name": "Prov. Telephone"},
+                            {"id":"1556","name": "Prov. End Service"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "id":"16",
+                "name":"LONG & MEDIUM TERM DEBTS",
+                "subAccounts":[
+                    {"id":"161", "name":"Loans Against Debenture"},
+                    {"id":"162", "name":"Loans from Financial Institutions"},
+                    {
+                        "id":"168",
+                        "name":"Sundry Loans and Debts",
+                        "subAccounts":[
+                            {"id":"1681", "name":"Notes Payable Resulting from Pur.of Ent."},
+                            {"id":"1682", "name":"Deposits and Guarantees"},
+                            {"id":"1683", "name":"Advances from the Government"},
+                            {"id":"1684", "name":"Capitalized Life Annuities"},
+                            {"id":"1689", "name":"Other Medium and Long Term Debts"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "id":"18",
+                "name":"ACCOUNTS WITH AFFILIATED COMPANIES",
+                "subAccounts":[
+                    {
+                        "id":"181",
+                        "name":"Branches and Joint Ventures Accounts (.)",
+                        "subAccounts":[
+                            {"id":"1811", "name":"Balance Brought Forward"},
+                            {"id":"1815", "name":"Movements of the Period"}
+                        ]
+                    },
+                    {"id":"186", "name":"Intercompany Charges"},
+                    {"id":"187", "name":"Intercompany Income"}
+                ]
+            },
+            {
+                "id":"19",
+                "name":"ACC OF REGROUPING THE CHARGES & INCOME",
+                "subAccounts":[
+                    {"id":"191", "name":"Determination of the Gros Trading margin"},
+                    {"id":"192", "name":"Determination of Value Added"},
+                    {"id":"193", "name":"Determination of the Gross Operating Income"},
+                    {"id":"194", "name":"D. of Op. Result (Prior to F.I. & Exp)"},
+                    {"id":"195", "name":"D. of the Current Result before Taxation"},
+                    {"id":"196", "name":"Determination of Non Operating Result"},
+                    {"id":"197", "name":"Determination of the Period's Result"}
+                ]
+            }
+        ]
+    },
+    {
+        "id": "2",
+        "name": "CLASS 2 - ACCOUNTS OF FIXED ASSETS",
+        "subAccounts": [
+            {
+                "id": "21",
+                "name": "INTANGIBLE FIXED ASSETS",
+                "subAccounts": [
+                    {"id": "211", "name": "Business Concern (Keymoney,Goodwill,Cli)"},
+                    {"id": "212", "name": "Establishment Expenses"},
+                    {"id": "213", "name": "Research and Development Expenses"},
+                    {"id": "214", "name": "Patents, Licences,Trade Marks & Similars"},
+                    {"id": "219", "name": "Other Intangible Fixed Assets"}
+                ]
+            },
+            {
+                "id": "22",
+                "name": "TANGIBLE FIXED ASSETS",
+                "subAccounts": [
+                    {"id": "221", "name": "Land"},
+                    {"id": "223", "name": "Construction"},
+                    {"id": "224", "name": "Technical Installation and Industrial Tools"},
+                    {"id": "225", "name": "Transportation Equipment"},
+                    {"id": "226", "name": "Other Tangible Fixed Assets"},
+                    {"id": "227", "name": "Tangible Fixed Assets in Progress"},
+                    {"id": "228", "name": "Advance Payments on Acc of Tangible F.A."}
+                ]
+            },
+            {
+                "id": "25",
+                "name": "FINANCIAL FIXED ASSETS",
+                "subAccounts": [
+                    {"id": "251", "name": "Equity Participations"},
+                    {"id": "252", "name": "Receivables Related to Equity Participa."},
+                    {"id": "253", "name": "Other Blocked Securities"},
+                    {"id": "255", "name": "Long and Medium Term Loans"},
+                    {"id": "259", "name": "Other Blocked Long-Term Receivables"}
+                ]
+            },
+            {
+                "id": "28",
+                "name": "DEPRECIATION OF FIXED ASSETS",
+                "subAccounts": [
+                    {"id": "280", "name": "Amor. of the Business Concern (Goodwill)"},
+                    {
+                        "id": "281",
+                        "name": "Amortization of Other Intangible F. A.",
+                        "subAccounts":[
+                            {"id": "2811", "name": "Establishment Expenses"},
+                            {"id": "2812", "name": "Research and Development Expenses"},
+                            {"id": "2813", "name": "Patents, Licences & Similar Values"},
+                            {"id": "2819", "name": "Other Intangible Fixed Assets"}
+                        ]
+                    },
+                    {
+                        "id": "282",
+                        "name": "Depreciation of Tangible Fixed Assets",
+                        "subAccounts":[
+                            {"id": "2821", "name": "Extractive Land Sites (Mines,Quarries..)"},
+                            {"id": "2823", "name": "Constructions"},
+                            {"id": "2824", "name": "Technical Installations & Industri.tools"},
+                            {"id": "2825", "name": "Transportation Equipment"},
+                            {
+                                "id": "2826",
+                                "name": "Other Tangible Fixed Assets",
+                                "subAccounts":[
+                                    {"id": "28261", "name": "Dep. Of Computers"},
+                                    {"id": "28262", "name": "Dep of other Tangible Fixed Assets"}
+                                ] 
+                            },
+                            {"id": "2827", "name": "Dep. of Asset Accounts 227"}
+                        ]
+                    }
+                    
+                ]
+            },
+            {
+                "id": "29",
+                "name": "PROVISION FOR DIMUNITION IN VALUE OF F.A",
+                "subAccounts": [
+                    {"id": "290", "name": "P. for D. in Value of Business Concern"},
+                    {
+                        "id": "291",
+                        "name": "Prov. for Dimunition in Value of I. F.A.",
+                        "subAccounts":[
+                            {"id": "2911", "name": "Trade Marks and Similars"},
+                            {"id": "2919", "name": "Other Intangible Fixed Assets"}
+                        ]
+                    },
+                    {
+                        "id": "292",
+                        "name": "Prov. for Dimunition in Value of T. F.A.",
+                        "subAccounts":[
+                            {"id": "2921", "name": "Land (Other than extractive Land Sites)"},
+                            {"id": "2926", "name": "Other Tangible Fixed Assets"}
+                        ]
+                    },
+                    {
+                        "id": "295",
+                        "name": "Prov.for Dimu.in Value of Financial F.A.",
+                        "subAccounts":[
+                            {"id": "2951", "name": "Equity Participations"},
+                            {"id": "2952", "name": "Receivables Related to Equity Participa."},
+                            {"id": "2953", "name": "Other Blocked Securities"},
+                            {"id": "2955", "name": "Long and Medium Term Loans"},
+                            {"id": "2959", "name": "Other Blocked Long Term Receivables"}
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "3",
+        "name": "CLASS 3 - INVENTORY & GOODS IN PROCESS",
+        "subAccounts": [
+            {
+                "id": "31",
+                "name": "RAW MATERIALS AND CONSUMABLE GOODS",
+                "subAccounts": [
+                    {"id": "311", "name": "Raw Materials"},
+                    {"id": "315", "name": "Other Consumable Supplies and Materials"}
+                ]
+            },
+            {
+                "id": "33",
+                "name": "GOODS IN PROCESS (GOODS WORKS SERVICES)",
+                "subAccounts": [
+                    {"id": "331", "name": "Products in Process"},
+                    {"id": "332", "name": "Works in Progress"},
+                    {"id": "335", "name": "Studies in Progress"},
+                    {"id": "336", "name": "Services in Progress"}
+                ]
+            },
+            {
+                "id": "35",
+                "name": "PRODUCTS",
+                "subAccounts": [
+                    {"id": "351", "name": "Semi-Finished Goods"},
+                    {"id": "355", "name": "Manufactured Goods"},
+                    {"id": "358", "name": "Production Scrap"}
+                ]
+            },
+            {
+                "id": "37",
+                "name": "MERCHANDISE FOR SALE",
+                "subAccounts": [
+                    {"id": "371", "name": "Opening Inventory"},
+                    {"id": "372", "name": "Closing Inventory"}
+                ]
+            },
+            {
+                "id": "39",
+                "name": "P.F.D.IN VALUE OF INV.& GOODS IN PROCESS",
+                "subAccounts": [
+                    {"id": "391", "name": "P.f.D. in Value of Raw Mat.& Cons. Goods"},
+                    {"id": "393", "name": "P.for D. in Value of Products in Process"},
+                    {"id": "395", "name": "P.for D. in Value of Products in Process"},
+                    {"id": "397", "name": "Provisions for Dim.in Value of Inventory"}
+                ]
+            }
+        ]
+    },
+    {
+        "id": "4",
+        "name": "CLASS 4 - RECEIVABLES & PAYABLES",
+        "subAccounts": [
+            {
+                "id": "40",
+                "name": "SUPPLIERS",
+                "subAccounts": [
+                    {
+                        "id": "401",
+                        "name": "Accounts Payables (Suppliers)",
+                        "subAccounts":[
+                            {"id": "4011", "name": "Invoices"},
+                            {"id": "4012", "name": "Suppliers- Expenses"},
+                            {"id": "4015", "name": "Notes Payables"},
+                            {"id": "4018", "name": "Invoices not received yet"},
+                            {"id": "4019", "name": "Earned Discounts & Allowances"}
+                        ]
+                    },
+                    {
+                        "id": "403",
+                        "name": "Fixed Assets Suppliers",
+                        "subAccounts":[
+                            {"id": "4031", "name": "Invoices"},
+                            {"id": "4035", "name": "Notes Payables"},
+                            {"id": "4038", "name": "Invoices not received yet"},
+                            {"id": "4039", "name": "Earned Discounts & Allowances"}
+                        ]
+                    },
+                    {"id": "409", "name": "Advce Pay. on Acc of operational suplies"}
+                ]
+            },
+            {
+                "id": "41",
+                "name": "DEBTORS (CUSTOMERS)",
+                "subAccounts": [
+                    {
+                        "id": "411",
+                        "name": "Invoices",
+                        "subAccounts":[
+                            {"id": "4111", "name": "Clients"},
+                            {"id": "4112", "name": "responsibles offices"},
+                            {"id": "4115", "name": "Doubtful Clients"},
+                            {"id": "4119", "name": "Discounts & Allowances"}
+                        ]
+                    },
+                    {"id": "413", "name": "Notes Receivable (Clients)"},
+                    {"id": "415", "name": "Advances on Works Unbilled"},
+                    {"id": "418", "name": "Invoices Under Preparation"},
+                    {"id": "419", "name": "Ad & Pay on Ac for ordrs under execution"}
+                ]
+            },
+            {
+                "id": "42",
+                "name": "PERSONNEL",
+                "subAccounts": [
+                    {"id": "421", "name": "Payments Due to Personnel"},
+                    {
+                        "id": "428",
+                        "name": "Personnel's Accounts Receivable",
+                        "subAccounts":[
+                            {"id": "4281", "name": "Advances and Payments"},
+                            {"id": "4282", "name": "Retentions"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "43",
+                "name": "SOCIAL SECURITY",
+                "subAccounts": [
+                    {
+                        "id": "431",
+                        "name": "Accounts Payable to Social Security",
+                        "subAccounts":[
+                            {"id": "4311", "name": "Benefits Payable"},
+                            {"id": "4315", "name": "Notes Payable - Social Security"},
+                            {"id": "4318", "name": "Charges tobe accrued for Social Security"}
+                        ]
+                    },
+                    {"id": "438", "name": "Acc Receivable from Social Security fund"}
+                ]
+            },
+            {
+                "id": "44",
+                "name": "GOVERNMENT AND PUBLIC INSTITUTIONS",
+                "subAccounts": [
+                    {
+                        "id": "441",
+                        "name": "Taxes Due (Operational)",
+                        "subAccounts":[
+                            {
+                                "id": "4411",
+                                "name": "Taxes Due (Operational)",
+                                "subAccounts":[
+                                    {"id": "44111", "name": "Taxes On Salaries"},
+                                    {"id": "44112", "name": "TAX 7.5%"},
+                                    {"id": "44113", "name": "TAX 2.25%"},
+                                    {"id": "44114", "name": "TAX 8.5%"},
+                                    {"id": "44115", "name": "TAX 3.4%"}
+                                ]
+                            },
+                            {"id": "4415", "name": "Notes Payable (Taxes and Rates)"},
+                            {"id": "4418", "name": "Other Taxes to be Accured for"}
+                        ]
+                    },
+                    {
+                        "id": "442",
+                        "name": "Government and Public Institutions",
+                        "subAccounts":[
+                            {
+                                "id": "4421",
+                                "name": "Paid Value Added Tax (VAT)",
+                                "subAccounts":[
+                                    {"id": "44210", "name": "TVA On Purchase"},
+                                    {"id": "44211", "name": "Value Added Tax (VAT) paid on purchases used solely for transactions that allow the right of refund"},
+                                    {"id": "44212", "name": "Value Added Tax (VAT) paid on purchases for which the purpose of use cannot be determined"},
+                                    {"id": "44213", "name": "VAT On Assets"},
+                                    {"id": "44214", "name": "Value Added Tax (VAT) paid on fixed asset purchases used solely for transactions that allow the right of refund"},
+                                    {"id": "44215", "name": "Value Added Tax (VAT) paid on fixed assets for which the purpose of use cannot be determined"},
+                                    {"id": "44216", "name": "VAT On Expenses"},
+                                    {"id": "44217", "name": "Value Added Tax (VAT) paid on expenses used solely for transactions that allow the right of refund"},
+                                    {"id": "44218", "name": "Value Added Tax (VAT) paid on expenses for which the purpose of use cannot be determined"},
+                                    {"id": "44219", "name": "Value Added Tax (VAT) paid on advances and payments on account of investment orders"}
+                                ]
+                            },
+                            {
+                                "id": "4422",
+                                "name": "Refundable Value Added Tax (VAT) - Article 59",
+                                "subAccounts":[
+                                    {"id": "44221", "name": "Refundable VAT on Purchases - Article 59"},
+                                    {"id": "44222", "name": "Partially Refundable VAT on Purchases - Article 59"},
+                                    {"id": "44223", "name": "Refundable VAT on Fixed Asset Purchases - Article 59"},
+                                    {"id": "44224", "name": "Partially Refundable VAT on Fixed Asset Purchases - Article 59"},
+                                    {"id": "44225", "name": "Refundable VAT on Expenses - Article 59"},
+                                    {"id": "44226", "name": "Partially Refundable VAT on Expenses - Article 59"}
+                                ]
+                            },
+                            {
+                                "id": "4425",
+                                "name": "Value Added Tax (VAT) Balance",
+                                "subAccounts":[
+                                    {"id": "44251", "name": "Value Added Tax (VAT) Payable"},
+                                    {"id": "44252", "name": "Carried Forward Refundable Value Added Tax (VAT)"},
+                                    {"id": "44253", "name": "Sales VAT paid at Parliament"}
+                                ]
+                            },
+                            {
+                                "id": "4426",
+                                "name": "VAT 10% On Purchases-Expenses",
+                                "subAccounts":[
+                                    {"id": "44261", "name": "VAT On Purchases"}, 
+                                    {"id": "44262", "name": "VAT On Expenses"}, 
+                                    {"id": "44263", "name": "VAT On Purchase Of Assets"},
+                                    {"id": "44264", "name": "Partially Deductible Value Added Tax (VAT) on Fixed Asset Purchases"},
+                                    {"id": "44265", "name": "Deductible Value Added Tax (VAT) on Expenses"},
+                                    {"id": "44266", "name": "Partially Deductible Value Added Tax (VAT) on Expenses"},
+                                    {"id": "44267", "name": "Deductible Value Added Tax (VAT) on Advances and Payments on Account of Investment Orders"},
+                                    {"id": "44268", "name": "Partially Deductible Value Added Tax (VAT) on Advances and Payments on Account of Investment Orders"}  
+                                ]
+                            },
+                            {
+                                "id": "4427",
+                                "name":" VAT 10% On Sales",
+                                "subAccounts":[
+                                    {"id": "44270", "name":"VAT On Sales"},
+                                    {"id": "44271", "name":"Value Added Tax (VAT) Collected on Service Provision Transactions"},
+                                    {"id": "44272", "name":"Value Added Tax (VAT) Collected on Cash Basis Money Transfer Transactions"},
+                                    {"id": "44273", "name":"Value Added Tax (VAT) Collected on Service Provision Transactions on a Cash Basis"},
+                                    {"id": "44274", "name":"Value Added Tax (VAT) Collected on Jewelry Delivery Transactions Calculated on a Gross Profit Margin Basis"},
+                                    {"id": "44275", "name":"Value Added Tax (VAT) Collected on Money Transfers to Tourists"},
+                                    {"id": "44276", "name":"Value Added Tax (VAT) Collected on Money Transfers and Service Provision to the Self"},
+                                    {"id": "44277", "name":"Value Added Tax (VAT) Collected on Money Transfer Transactions on a Cash Basis for Amounts Due to Non-Residents"},
+                                    {"id": "44278", "name":"Value Added Tax (VAT) Collected on the Sale of Fixed Assets"},
+                                    {"id": "44279", "name":"Value Added Tax (VAT) Collected on Advances and Receipts on Account of Orders in Progress"}
+                                ]
+                            },
+                            {
+                                "id": "4428",
+                                "name":"TVA Reconceliation",
+                                "subAccounts":[
+                                    {"id": "44281", "name":"Debit Balance of Value Added Tax (VAT) Eligible for Settlement"},
+                                    {"id": "442811", "name":"Debit Balance of Value Added Tax (VAT) Eligible for Settlement on Advances"},
+                                    {"id": "442812", "name":"Debit Balance of Other Value Added Tax (VAT) Eligible for Settlement on Accounts"},
+                                    {"id": "44282", "name":"Credit Balance of Value Added Tax (VAT) Eligible for Settlement"},
+                                    {"id": "442821", "name":"Credit Balance of Value Added Tax (VAT) Eligible for Settlement on Advances"},
+                                    {"id": "442822", "name":"Credit Balance of Value Added Tax (VAT) Eligible for Settlement on Other Accounts"}
+                                ]
+                            },
+                            {
+                                "id": "4429",
+                                "name":"Value Added Tax (VAT) Requested for Refund",
+                                "subAccounts":[
+                                    {"id": "44291", "name":"Quarterly Refund of Value Added Tax (VAT) Requested for Refund"},
+                                    {"id": "44292", "name":"Semi-Annual Refund of Value Added Tax (VAT) Requested for Refund"},
+                                    {"id": "44293", "name":"Annual Refund of Value Added Tax (VAT) Requested for Refund"},
+                                    {"id": "44294", "name":"Value Added Tax (VAT) Requested for Refund - Article 59"}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "443",
+                        "name":"Tax due (Non Operational",
+                        "subAccounts":[
+                            {"id": "4431", "name": "Taxes on Profit"}
+                        ]
+                    },
+                    
+                    {
+                        "id": "445",
+                        "name": "Government & Public Institutions Other Account Payable",
+                        "subAccounts":[
+                            {"id": "4451", "name": "Ministry Of Communication - Opero"},
+                            {"id": "4452", "name": "Municipality"}
+                        ]
+                    },
+                    {
+                        "id": "449",
+                        "name": "Government & Public Institutions Account Receivable",
+                        "subAccounts": [
+                            {"id": "4491", "name": "Subsidies Receivable"},
+                            {"id": "4497", "name": "Other Relevables (Government & Public Institutes)"},
+                            {"id": "4498", "name": "Accrued Revenues Not Collected"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "45",
+                "name": "PARTNERS",
+                "subAccounts": [
+                    {
+                        "id": "451",
+                        "name": "Partners Current Account",
+                        "subAccounts":[
+                            {
+                                "id": "4510",
+                                "name": "Partners Current Account",
+                                "subAccounts":[
+                                    {"id": "45101", "name": "Partners Current A/Cs"}
+                                ]
+                            },
+                            {
+                                "id": "4511",
+                                "name": "Affiliated Companies",
+                                "subAccounts": [
+                                    {"id": "45111", "name": "Holding Company"},
+                                    {"id": "45112", "name": "Subsidiary Companies"},
+                                    {"id": "45113", "name": "Affiliated Companies"},
+                                    {"id": "45114", "name": "Multi Group Companies"}
+                                ]
+                            },
+                            {"id": "4515", "name": "Other Partner"},
+                            {"id": "4518", "name": "Joint Ventures"}
+                        ]
+                    },
+                    {"id": "453", "name": "Dividends Payable"},
+                    {
+                        "id": "455",
+                        "name": "Other Partners Payables",
+                        "subAccounts":[
+                            {"id": "4551", "name": "Contribution to The Company's Capital"},
+                            {"id": "4552", "name": "Re Impursement of Company's Capital"},
+                            {"id": "4557", "name": "Other Payables"}
+                        ]
+                    },
+                    {
+                        "id": "459",
+                        "name": "Shareholders Receivable",
+                        "subAccounts":[
+                            {"id": "4591", "name": "Subscribed & Uncalled Capital"},
+                            {"id": "4592", "name": "Subscribed Capital Called & Unpaid"},
+                            {"id": "4597", "name": "Other Receivables"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "46",
+                "name": "MISCELLANEOUS ACC. RECEIVABLE & PAYABLE",
+                "subAccounts": [
+                    {
+                        "id": "461",
+                        "name": "Miscellaneous Operating Acc Payable",
+                        "subAccounts":[
+                            {"id": "4611", "name": "Ac.Payable for Consignments & Containers"},
+                            {"id": "4619", "name": "other Payables"}
+                        ]   
+                    },
+                    {
+                        "id": "463",
+                        "name": "Installments on Financial Fixed Assets",
+                        "subAccounts":[
+                            {"id": "4631", "name": "Uncalled Equity Participation"},
+                            {"id": "4633", "name": "Other Blocked Securities (Uncalled)"}
+                        ]   
+                    },
+                    {
+                        "id": "465",
+                        "name": "Miscellaneous Acc Payable, Non Operating",
+                        "subAccounts":[
+                            {"id": "4651", "name": "Payables on Aquisition of Sec.Placements"},
+                            {"id": "4652", "name": "Debentures"},
+                            {"id": "4653", "name": "Installments on Aquisition of Sec.Place."},
+                            {
+                                "id": "4659",
+                                "name": "Other Miscellaneous Payable NonOperating",
+                                "subAccounts":[
+                                    {"id": "46591", "name": "Responsibles of Offices"}
+                                ]
+                            }                            
+                        ]
+                    },
+                    {
+                        "id": "468",
+                        "name": "Misc. Accounts Receivables Operating",
+                        "subAccounts":[
+                            {"id": "4681", "name": "Acc Recel. for Consignments & Containers"},
+                            {"id": "4689", "name": "Other Misc. Receivables Operational"}
+                        ]
+                    },
+                    {
+                        "id": "469",
+                        "name": "Miscellaneous Receivable Non Operating",
+                        "subAccounts":[
+                            {"id": "4691", "name": "Acc Rece on F.A. Disposal & sale of P.S."},
+                            {"id": "4699", "name": "Other Misc. Receivables Non Operational"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "47",
+                "name": "PRE PAYMENTS & ACCRUALS",
+                "subAccounts": [
+                    {
+                        "id": "471",
+                        "name": "Deferred Charges",
+                        "subAccounts":[
+                            {"id": "4711", "name": "Pre Operation Expenses"},
+                            {"id": "4712", "name": "Major Repairs for Amortization"},
+                            {"id": "4713", "name": "Debenture & Bonds Premiums"},
+                            {"id": "4714", "name": "Prepaid Interests On Loans"},
+                            {
+                                "id": "4719",
+                                "name": "Other Deferred Charges",
+                                "subAccounts":[
+                                    {"id": "47191", "name": "Pre-Paid Expenses"},
+                                    {"id": "47192", "name": "Prepaid Expenses"},
+                                    {"id": "47193", "name": "Prepaid Interest"},
+                                    {"id": "47194", "name": "Prepaid Insurance"},
+                                    {"id": "47195", "name": "Prepaid Expuses HT"}
+                                ]
+                            }
+                        ]
+                    },
+                    {"id": "472", "name": "Deferred Income"},
+                    {"id": "473", "name": "Accrued Income"},
+                    {
+                        "id": "475",
+                        "name": "Exchange Difference - Liabilities",
+                        "subAccounts":[
+                            {"id": "4751", "name": "Increase on Accounts Receivable"},
+                            {"id": "4752", "name": "Decrease on Accounts Payable"},
+                            {"id": "4758", "name": "Other Exchange Difference"}
+                        ]
+                    },
+                    {
+                        "id": "476",
+                        "name": "Exchange Difference - Assets",
+                        "subAccounts":[
+                            {"id": "4761", "name": "Decrease on Accounts Receivable"},
+                            {"id": "4762", "name": "Increase on Accounts Payable"},
+                            {"id": "4768", "name": "Other Exchange Difference"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "48",
+                "name": "TRANSITORY AND REGULARIZATION ACCOUNT",
+                "subAccounts": [
+                    {"id": "481", "name": "Periodical Allocation of Expenses"},
+                    {"id": "482", "name": "Periodical Allocation of Income"}
+                ]
+            },
+            {
+                "id": "49",
+                "name": "PRO. FOR DIMM. IN VALUE OF RECEI. & PAYA.",
+                "subAccounts": [
+                    {"id": "491", "name": "Pro. for Di. in Value of Recei.(Clients)"},
+                    {"id": "495", "name": "Pro. for Dimu. in Value of Partners Acc."},
+                    {
+                        "id": "496",
+                        "name": "Pro. for Di.in Values of Misc.Receivable",
+                        "subAccounts":[
+                            {"id": "4968", "name": "Miscellaneous Receivables - Operational"},
+                            {"id": "4969", "name": "Miscellaneous Receives - Non Operational"}
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "5",
+        "name": "CLASS 5 - FINANCIAL ACCOUNTS",
+        "subAccounts": [
+            {
+                "id": "50",
+                "name": "SECURITY PLACEMENTS",
+                "subAccounts": [
+                    {"id": "501", "name": "Purchases of the Company Own Shares"},
+                    {"id": "502", "name": "Property Rights Related to Notes"},
+                    {"id": "505", "name": "Debentures and Bonds"},
+                    {"id": "506", "name": "Liabilities Rights Related to Notes"}
+                ]
+            },
+            {
+                "id": "51",
+                "name": "FINANCIAL INSTITUTIONS",
+                "subAccounts": [
+                    {"id": "511", "name": "Cheques and Coupon for Collection"},
+                    {"id": "512", "name": "Banks"},
+                    {"id": "513", "name": "Banks Differed Between Years"},
+                    {"id": "514", "name": "Cheques For Collection"},
+                    {"id": "516", "name": "Bank Outstanding Cheques"},
+                    {"id": "519", "name": "Financial Institutions"}
+                ]
+            },
+            {
+                "id": "53",
+                "name": "CASH",
+                "subAccounts": [
+                    {"id": "531", "name": "CASH BOX - LBP"},
+                    {"id": "532", "name": "CASH BOX - USD"},
+                    {"id": "533", "name": "CASH BOX- CHECKS"}
+                ]
+            },
+            {
+                "id": "58",
+                "name": "INTERCOMPANY TRANSFERS",
+                "subAccounts": []
+            },
+            {
+                "id": "59",
+                "name": "PRO. FOR DIM. IN VALUE OF SEC.PLACEMENTS",
+                "subAccounts": []
+            }
+        ]
+    },
+    {
+        "id": "6",
+        "name": "CLASS 6 - EXPENDITURE",
+        "subAccounts": [
+            {
+                "id": "60",
+                "name": "PURCHASE AND VARIATION OF INVENTORY",
+                "subAccounts": [
+                    {
+                        "id": "601",
+                        "name": "Purchases",
+                        "subAccounts":[
+                            {"id": "6011", "name": "Goods - Inc. VAT"},
+                            {"id": "6012", "name": "Purchase of Goods W/O VAT"},
+                            {"id": "6013", "name": "Purchase of Goods-2.25%"},
+                            {"id": "6014", "name": "Purchase of Goods-Foreign HT"},
+                            {"id": "6015", "name": "Purchase of Goods-Foreign"},
+                            {
+                                "id": "6018",
+                                "name": "Expenses Connected to Purchases & Cont.",
+                                "subAccounts":[
+                                    {
+                                        "id": "60181",
+                                        "name": "Freight",
+                                        "subAccounts":[
+                                            {"id": "601811", "name": "Freight-HT"},
+                                            {"id": "601812", "name": "Freight"},
+                                            {"id": "601813", "name": "Freight-Previous Years"}
+                                        ]
+                                    },
+                                    {"id": "60182", "name": "Commissions"},
+                                    {"id": "60183", "name": "Insurance on Freight"},
+                                    {
+                                        "id": "60184",
+                                        "name": "Clearing Expenses",
+                                        "subAccounts":[
+                                            {"id": "601841", "name": "Port Fees-HT"},
+                                            {"id": "601842", "name": "Clearing Charges"},
+                                            {"id": "601843", "name": "Demurrage-HT"},
+                                            {"id": "601844", "name": "Clearing Charges-HT"},
+                                            {"id": "601845", "name": "Port Fees"},
+                                            {"id": "601846", "name": "Demurrage"}
+                                        ]
+                                    },
+                                    {
+                                        "id": "60185",
+                                        "name": "Customs Charges",
+                                        "subAccounts":[
+                                            {"id": "601851", "name": "Custom Charges-HT"},
+                                            {"id": "601852", "name": "Custom Charges"},
+                                            {"id": "601853", "name": "Fines Customs 3-bits- default"}
+                                        ]
+                                    },
+                                    {"id": "60186", "name": "Misc. Charges-HT"},
+                                    {"id": "60187", "name": "Stamps & Documentation"}
+                                ]
+                            },
+                            {
+                                "id": "6019",
+                                "name": "Discount & Allowances Earned",
+                                "subAccounts":[
+                                    {"id": "60191", "name": "Taxable Discount Earned-HT"},
+                                    {"id": "60192", "name": "Un-Taxable Discount Earned"},
+                                    {"id": "60193", "name": "Un-Taxable Discount Earned-Previous Years"}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "605",
+                        "name": "Variation of Inventory",
+                        "subAccounts":[
+                            {"id": "6051", "name": "Opening Stock"},
+                            {"id": "6052", "name": "Closing Stock"},
+                            {"id": "6053", "name": "Defected Stock"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "61",
+                "name": "PURCHASES RAW MATERIALS & CONSUMABLES",
+                "subAccounts": [
+                    {
+                        "id": "611",
+                        "name": "Raw Materials & Consumables Purchases",
+                        "subAccounts":[
+                            {"id": "6111", "name": "Raw Materials Purchases"},
+                            {
+                                "id": "6112",
+                                "name": "Consumables Purchases",
+                                "subAccounts":[
+                                    {"id": "61121", "name": "Fuel and Gaz"},
+                                    {"id": "61122", "name": "Maintenance Products"}
+                                ]
+                            },
+                            {"id": "6113", "name": "Containers & Packing Materials Purchases"},
+                            {"id": "6118", "name": "Ex.Con.to Raw Mat. & Consumable Purchase"},
+                            {
+                                "id": "6119",
+                                "name": "Discount & Allowances Earned-HT",
+                                "subAccounts":[
+                                    {"id": "61191", "name": "Discount & Allowances Earned W/O VAT"},
+                                    {"id": "61192", "name": "Discount & Allowances Earned W/O VAT"}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "615",
+                        "name": "Vari. of Raw Mat. & Consumable Inventory",
+                        "subAccounts":[
+                            {"id": "6151", "name": "Opening Stock"},
+                            {"id": "6152", "name": "Closing Stock"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "62",
+                "name": "OTHER CHARGES & DISBURSEMENTS",
+                "subAccounts": [
+                    {
+                        "id": "626",
+                        "name": "External Services",
+                        "subAccounts":[
+                            {"id": "6262", "name": "Maintenance & Repairs"},
+                            {
+                                "id": "6263",
+                                "name": "Rent & Building Services",
+                                "subAccounts":[
+                                    {"id": "62631", "name": "Rent"},
+                                    {"id": "62632", "name": "Other Related Charges"}
+                                ]
+                            },
+                            {
+                                "id": "6265",
+                                "name": "Personel Services",
+                                "subAccounts":[
+                                    {"id": "62653", "name": "Fees"}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "63",
+                "name": "PERSONNEL CHARGES",
+                "subAccounts": [
+                    {
+                        "id": "631",
+                        "name": "Salaries & Wages",
+                        "subAccounts":[
+                            {"id": "6311", "name": "Salaries"},
+                            {"id": "6312", "name": "Wages"}
+                        ]   
+                    },
+                    {
+                        "id": "635",
+                        "name": "Social Security",
+                        "subAccounts":[
+                            {"id": "6351", "name": "Exp Of Social Security"},
+                            {"id": "6352", "name": "Family Compensation"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "64",
+                "name": "FEES & TAXES",
+                "subAccounts": [
+                    {"id": "641", "name": "Income Tax on Salaries & Remunerations"},
+                    {
+                        "id": "642",
+                        "name": "Municipal Tax",
+                        "subAccounts":[
+                            {"id": "6421", "name": "Municipal Tax-Prev Years"},
+                            {"id": "6422", "name": "Municipal Tax"}
+                        ]
+                    },
+                    {"id": "643", "name": "Value Added Tax"},
+                    {
+                        "id": "645",
+                        "name": "Other Taxes",
+                        "subAccounts":[
+                            {"id": "6451", "name": "Other Taxes-Previous Years"},
+                            {
+                                "id": "6452",
+                                "name": "Municipal Taxes",
+                                "subAccounts":[
+                                    {"id": "64521", "name": "Municipal Taxes-Previous Years"},
+                                    {"id": "64522", "name": "Municipal Tax"}
+                                ]
+                            },
+                            {"id": "6453", "name": "Legal Fees"},
+                            {"id": "6454", "name": "Stamps"},
+                            {"id": "6455", "name": "TAX 2.25% & 7.5%"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "65",
+                "name": "AMORTIZATION DEPR. & PROV. (OPERATIONAL)",
+                "subAccounts": [
+                    {
+                        "id": "651",
+                        "name": "Depreciation & Amortization",
+                        "subAccounts":[
+                            {"id": "6511", "name": "Amortization of Intangible Assets"},
+                            {"id": "6512", "name": "Depreciation of Fixed Assets"},
+                            {"id": "6515", "name": "Amortization of Deffered Charges"},
+                            {"id": "6516", "name": "Dep. Previous Year"}
+                        ]
+                    },
+                    {"id": "655", "name": "Provisions"}
+                ]
+            },
+            {
+                "id": "66",
+                "name": "OTHER OPERATING CHARGES",
+                "subAccounts": [
+                    {
+                        "id": "661",
+                        "name": "Other Operating Charges",
+                        "subAccounts":[
+                            {"id": "6611", "name": "Attendance Fees"},
+                            {"id": "6612", "name": "Losses on Irrecoverable Operating Recei."}
+                        ]
+                    },
+                    {"id": "665", "name": "Loss on Joint Venture"}
+                ]
+            },
+            {
+                "id": "67",
+                "name": "FINANCIAL CHARGES",
+                "subAccounts": [
+                    {"id": "673", "name": "Interest"},
+                    {"id": "675", "name": "Negative Exchange Differences"},
+                    {"id": "676", "name": "Net Chees on disposal of Sec. Placements"}
+                ]
+            },
+            {
+                "id": "68",
+                "name": "NON OPERATING CHARGES",
+                "subAccounts": [
+                    {
+                        "id": "681",
+                        "name": "Net Book Value of Fix.Assets Disposed of",
+                        "subAccounts":[
+                            {"id": "6811", "name": "Intangible Fixed Assets"},
+                            {"id": "6812", "name": "Tangible Fixed Assets"},
+                            {"id": "6815", "name": "Financial Fixed Assets"}
+                        ]
+                    },
+                    {
+                        "id": "685",
+                        "name": "Other Charges - Non Operating",
+                        "subAccounts":[
+                            {
+                                "id": "6851",
+                                "name": "Charges on Administrative Operations",
+                                "subAccounts":[
+                                    {"id": "68511", "name": "Donations"},
+                                    {"id": "68512", "name": "Subsidies Granted"},
+                                    {"id": "68513", "name": "Fines & Penalties"},
+                                    {"id": "68514", "name": "Penalties on Contracts"},
+                                    {"id": "68515", "name": "Irrecoverable Receivables"},
+                                    {"id": "68516", "name": "Other Administrative Operations"},
+                                    {"id": "68517", "name": "Rechargeable Cards"}
+                                ]
+                            },
+                            {
+                                "id": "6852",
+                                "name": "Gifts",
+                                "subAccounts":[
+                                    {"id": "68521", "name": "Gifts-2.25%"},
+                                    {"id": "68522", "name": "Gifts W/O VAT"},
+                                    {"id": "68523", "name": "Gifts-HT"},
+                                    {"id": "68524", "name": "Gifts-Previous Years"},
+                                    {"id": "68525", "name": "Gifts-3.4%"}
+                                ]
+                            },
+                            {
+                                "id": "6855",
+                                "name": "Charges on Capital Operations",
+                                "subAccounts":[
+                                    {"id": "68551", "name": "Price Indexing"},
+                                    {"id": "68552", "name": "Reimbursement Allowances"},
+                                    {"id": "68553", "name": "Purcha.of the Company Own Shares & Notes"}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "689",
+                        "name": "Depreciation & Provisions Non Operating",
+                        "subAccounts":[
+                            {"id": "6891", "name": "Exceptional Depreciation of Fixed Assets"},
+                            {"id": "6892", "name": "Pro.for Exceptional Dimunition in Prices"},
+                            {"id": "6895", "name": "Pro.for Risks & Charges Non Operational"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "69",
+                "name": "INCOME TAX ON FROFITS",
+                "subAccounts": [
+                    {"id": "691", "name": "TAX On Profit Previous Years"},
+                    {"id": "692", "name": "Income tax on profits"}
+                ]
+            }
+        ]
+    },
+    {
+        "id": "7",
+        "name": "CLASS 7 - INCOME",
+        "subAccounts": [
+            {
+                "id": "70",
+                "name": "SALES OF GOODS",
+                "subAccounts": [
+                    {"id": "701", "name": "Invoices"},
+                    {"id": "709", "name": "Discount & Allowances Allowed"}
+                ]
+            },
+            {
+                "id": "71",
+                "name": "SALES OF PRODUCTION",
+                "subAccounts": [
+                    {"id": "711", "name": "Sales of Production"},
+                    {"id": "712", "name": "Works"},
+                    {"id": "713", "name": "Services"},
+                    {"id": "717", "name": "Proceeds from Ancillary Activities"},
+                    {"id": "719", "name": "Discount & Allowances Allowed"}
+                ]
+            },
+            {
+                "id": "72",
+                "name": "PRODUCTION (VARIATION)",
+                "subAccounts": [
+                    {"id": "721", "name": "Works in Process (Variation)"},
+                    {"id": "725", "name": "Produced Items (Variations)"}
+                ]
+            },
+            {
+                "id": "73",
+                "name": "PRODUCTION OF FIXED ASSETS",
+                "subAccounts": [
+                    {"id": "731", "name": "Intangible Fixed Assets"},
+                    {"id": "732", "name": "Tangible Fixed Assets"}
+                ]
+            },
+            {
+                "id": "74",
+                "name": "OPERATING SUBSIDIES",
+                "subAccounts": [
+                    {"id": "741", "name": "Related to Products"},
+                    {"id": "742", "name": "Related to Production"}
+                ]
+            },
+            {
+                "id": "75",
+                "name": "PROVISIONS WRITE-BACK",
+                "subAccounts": []
+            },
+            {
+                "id": "76",
+                "name": "OTHER OPERATING INCOME",
+                "subAccounts": []
+            },
+            {
+                "id": "77",
+                "name": "FINANCIAL REVENUES",
+                "subAccounts": [
+                    {"id": "771", "name": "Revenues of Equity Participations"},
+                    {"id": "772", "name": "Revenue from Other Assets"},
+                    {"id": "773", "name": "Interest & Similar Revenues"},
+                    {"id": "778", "name": "Other Financial Income"},
+                    {"id": "779", "name": "Write-Back of Financial Provisions"}
+                ]
+            },
+            {
+                "id": "78",
+                "name": "NON OPERATING REVENUES",
+                "subAccounts": []
+            }
+        ]
+    }
+]
