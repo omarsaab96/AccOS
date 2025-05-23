@@ -32,7 +32,7 @@ interface Window {
       deleteDocumentsByCompany: (id: number) => Promise<boolean>;
       generatePDF: () => void;
       printPDF: (html) => void;
-
+      exportToExcel: (data: ExcelExportData) => Promise<{ success: boolean; path?: string; error?: string }>;
     };
     accounts: {
       getAllAccounts: () => Promise<{ id: number; name: string; created_on: string, linked:boolean }>;
@@ -40,11 +40,25 @@ interface Window {
       updateAccount: (id: number, name: string) => Promise<boolean>;
       getAccountByID: (id: number) => Promise<{ id: number, name: string, created_on: string, linked:boolean }>;
       deleteAccount: (id: number) => Promise<boolean>;
-    }
-
+    };
+    chartOfAccounts:{
+      getChartOfAccountsByAccountId:(id:number) => Promise<any[]>;
+    };
     api: {
       registerUser: (data: any) => Promise<any>;
       loginUser: (data: any) => Promise<any>;
     };
+  };
+}
+
+interface ExcelExportData {
+  headers: string[];
+  rows: any[][];
+  summary: any[][];
+  metadata: {
+    title: string;
+    accountName: string;
+    documentNumber: string;
+    date: string;
   };
 }

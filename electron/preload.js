@@ -27,6 +27,7 @@ contextBridge.exposeInMainWorld('electron', {
     deleteDocumentsByCompany: (id) => ipcRenderer.invoke('documents:deleteDocumentsByCompany', id),
     generatePDF: (html) => ipcRenderer.send('documents:generate-pdf', html),
     printPDF: (html) => ipcRenderer.invoke('documents:printPDF', html),
+    exportToExcel: (data) => ipcRenderer.invoke('documents:exportToExcel', data),
   },
   accounts: {
     getAllAccounts: () => ipcRenderer.invoke('accounts:getAllAccounts'),
@@ -34,6 +35,9 @@ contextBridge.exposeInMainWorld('electron', {
     updateAccount: (id, name) => ipcRenderer.invoke('accounts:updateAccount', id, name),
     getAccountByID: (id) => ipcRenderer.invoke('accounts:getAccountByID', id),
     deleteAccount: (id) => ipcRenderer.invoke('accounts:deleteAccount', id),
+  },
+  chartOfAccounts:{
+    getChartOfAccountsByAccountId: (id) => ipcRenderer.invoke('chartOfAccounts:getChartOfAccountsByAccountId', id),
   }
 });
 

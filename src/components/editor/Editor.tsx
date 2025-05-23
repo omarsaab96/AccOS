@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Save, Plus, Trash, Check, AlertTriangle, Printer, ExternalLink } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { Save, Plus, Trash, Check, AlertTriangle, Printer, ExternalLink, HelpCircle, File, FileSpreadsheet, ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useFileSystem } from '../../contexts/FileSystemContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useAccounts } from '../../contexts/AccountsContext';
 import Swal from 'sweetalert2';
-import { ipcRenderer } from 'electron';
-
 
 const Editor: React.FC = () => {
   const { t } = useTranslation();
@@ -18,18 +16,41 @@ const Editor: React.FC = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [isExportingExcel, setIsExportingExcel] = useState(false);
+  const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [isBalanced, setIsBalanced] = useState(true);
-  const defaultCurrency = "LBP";
-
+  const [accountNumberIsNotANumber, setAccountNumberIsNotANumber] = useState(false);
+  const [accountHelperIsNotANumber, setAccountHelperIsNotANumber] = useState(false);
+  const [changedLanguage, setChangedLanguage] = useState(false);
   const [docContent, setDocContent] = useState<any>(null);
   const [docTypeNameEn, setDocTypeNameEn] = useState("");
   const [docTypeNameAr, setDocTypeNameAr] = useState("");
   const [invalidRows, setInvalidRows] = useState<number[]>([]);
   const [rateInvalidRows, setRateInvalidRows] = useState<number[]>([]);
-
   const [rowRemove, setRowRemove] = useState(-1);
-
   const currentDoc = openDocuments.find(doc => doc.id === activeDoc);
+  const [chartOfAccountEN, setChartOfAccountEN] = useState<any[]>([]);
+  const [chartOfAccountAR, setChartOfAccountAR] = useState<any[]>([]);
+
+  const defaultCurrency = "LBP";
+
+  useEffect(() => {
+    const getchartOfAccountsByAccountId = async (id: number) => {
+      try {
+        const chartOfAccounts = await window.electron.chartOfAccounts.getChartOfAccountsByAccountId(id);
+        // console.log(chartOfAccounts)
+        setChartOfAccountEN(chartOfAccounts.en)
+        setChartOfAccountAR(chartOfAccounts.ar)
+      } catch (error) {
+        console.error('Error fetching chart of accounts:', error);
+      }
+    };
+
+
+    if (activeAccount) {
+      getchartOfAccountsByAccountId(activeAccount.id);
+    }
+  }, []);
 
   useEffect(() => {
     if (currentDoc) {
@@ -108,11 +129,60 @@ const Editor: React.FC = () => {
 
   }, [docContent?.data]);
 
+  useEffect(() => {
+    if (!docContent) return;
+
+    docContent.data.forEach((row: any) => {
+      if (language == 'ar' && row.accountName.trim() != "" && !isArabic(row.accountName)) {
+        setChangedLanguage(true);
+      } else if (language != 'ar' && isArabic(row.accountName)) {
+        setChangedLanguage(true);
+      } else {
+        setChangedLanguage(false);
+      }
+    })
+
+  }, [language, docContent]);
+
   const getDocTypeNames = async (id: number) => {
     const result = await window.electron.doctypes.getDocTypeName(id)
     setDocTypeNameEn(result.nameEn);
     setDocTypeNameAr(result.nameAr);
   }
+
+  function findAccountById(accounts: any[], id: string): any | null {
+    for (const account of accounts) {
+      if (account.id == id) return account;
+      if (account.subAccounts) {
+        const found = findAccountById(account.subAccounts, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
+  const isArabic = (str: string) => {
+    return /[\u0600-\u06FF]/.test(str);
+  }
+
+  const translateAccountNames = () => {
+    if (!docContent) return;
+
+    const chart = language === 'ar' ? chartOfAccountAR : chartOfAccountEN;
+
+    const updatedData = docContent.data.map((row: any) => {
+      const account = findAccountById(chart, row.accountNumber);
+      return {
+        ...row,
+        accountName: account ? account.name : row.accountName,
+      };
+    });
+
+    // Call updateDocContent from context, mark as dirty inside there
+    updateDocContent(docContent.id, updatedData);
+
+    setChangedLanguage(false);
+  };
 
   const handleTableInputChange = (
     rowIndex: number,
@@ -120,6 +190,41 @@ const Editor: React.FC = () => {
     value: string
   ) => {
     if (!docContent) return;
+
+    if (key == "accountNumber") {
+      if (isNaN(value)) {
+        setAccountNumberIsNotANumber(true);
+        return;
+      } else {
+        setAccountNumberIsNotANumber(false);
+        value = value + ""; //convertTostring
+      }
+
+      if (docContent.data[rowIndex].accountHelper.trim() == "") {
+        //search the chartofaccounts for the input value
+        const account = findAccountById(language == 'ar' ? chartOfAccountAR : chartOfAccountEN, value + "");
+
+        if (account) {
+          docContent.data[rowIndex].accountName = account.name;
+        } else {
+          docContent.data[rowIndex].accountName = "";
+        }
+      }
+
+    }
+
+    if (key == "accountHelper") {
+      if (isNaN(value)) {
+        setAccountHelperIsNotANumber(true);
+        return;
+      } else {
+        setAccountHelperIsNotANumber(false);
+      }
+
+      if (value.trim() !== "") {
+        docContent.data[rowIndex].accountName = "";
+      }
+    }
 
     const updatedData = [...docContent.data];
     updatedData[rowIndex] = { ...updatedData[rowIndex], [key]: value };
@@ -135,6 +240,7 @@ const Editor: React.FC = () => {
 
     const newRow = {
       accountNumber: "",
+      accountHelper: "",
       accountName: "",
       currency: defaultCurrency,
       debit: "",
@@ -154,7 +260,7 @@ const Editor: React.FC = () => {
   const handleSave = async () => {
     const isDarkMode = true
 
-    if (!isBalanced || invalidRows.length != 0) {
+    if (!isBalanced || invalidRows.length != 0 || rateInvalidRows.length != 0) {
       Swal.fire({
         title: t('Editor.popup.errorTitle'),
         text: t('Editor.popup.errorSubtitle'),
@@ -228,13 +334,22 @@ const Editor: React.FC = () => {
         </div>` ;
     }
 
+    if (rateInvalidRows.length != 0) {
+      errors += `<div class="error">
+          <div>
+            &#9888;
+            ${t('Editor.errors.missingRate')}
+          </div>
+        </div>` ;
+    }
+
     errors += `<br>`;
 
     let header = `
     <table width="100%">
       <tr>
         <td style="vertical-align: middle;">
-          <img src="http://localhost:5173/logo.png" alt="Logo" width="200" />
+          <img src="http://localhost:5173/logo.png" alt="Logo" width="180" />
         </td>
         <td class="docinfo">
           <h2 style="margin: 0;">${language == 'ar' ? docTypeNameAr : docTypeNameEn}</h2>
@@ -268,6 +383,7 @@ const Editor: React.FC = () => {
         <thead>
           <tr>
             <th>${t('Editor.table.th.accountNumber')}</th>
+            <th>${t('Editor.table.th.accountHelper')}</th>
             <th>${t('Editor.table.th.accountName')}</th>
             <th>${t('Editor.table.th.currency')}</th>
             <th>${t('Editor.table.th.debit')}</th>
@@ -281,13 +397,13 @@ const Editor: React.FC = () => {
         <tbody>
           ${docContent.data.map((row: any, rowIndex: number) =>
       `<tr>${Object.entries(row).map(([key, value], cellIndex) =>
-        `<td class=${(invalidRows.includes(rowIndex) && (key === "debit" || key === "credit")) ? 'highlight' : ''}>${value}</td>`
+        `<td class=${((invalidRows.includes(rowIndex) && (key === "debit" || key === "credit")) || (rateInvalidRows.includes(rowIndex) && key === "rate")) ? 'highlight' : ''}>${value}</td>`
       ).join('')
       }</tr>`
     ).join('')}
 
           <tr>
-            <td colspan="3"></td>
+            <td colspan="4"></td>
             
             <td class=${!isBalanced ? 'highlight' : ''}>
               <div>
@@ -373,7 +489,8 @@ const Editor: React.FC = () => {
           background-color:#fcdada;
           color:#ef4444;
           margin-bottom:10px;
-          border-left:4px solid #ef4444;
+          ${language == 'ar' ? 'border-right:4px solid #ef4444;' : 'border-left:4px solid #ef4444;'}
+
         } 
       </style>`;
 
@@ -428,13 +545,22 @@ const Editor: React.FC = () => {
         </div>` ;
     }
 
+    if (rateInvalidRows.length != 0) {
+      errors += `<div class="error">
+          <div>
+            &#9888;
+            ${t('Editor.errors.missingRate')}
+          </div>
+        </div>` ;
+    }
+
     errors += `<br>`;
 
     let header = `
     <table width="100%">
       <tr>
         <td style="vertical-align: middle;">
-          <img src="http://localhost:5173/logo.png" alt="Logo" width="200" />
+          <img src="http://localhost:5173/logo.png" alt="Logo" width="180" />
         </td>
         <td class="docinfo">
           <h2 style="margin: 0;">${language == 'ar' ? docTypeNameAr : docTypeNameEn}</h2>
@@ -468,6 +594,7 @@ const Editor: React.FC = () => {
         <thead>
           <tr>
             <th>${t('Editor.table.th.accountNumber')}</th>
+            <th>${t('Editor.table.th.accountHelper')}</th>
             <th>${t('Editor.table.th.accountName')}</th>
             <th>${t('Editor.table.th.currency')}</th>
             <th>${t('Editor.table.th.debit')}</th>
@@ -481,13 +608,13 @@ const Editor: React.FC = () => {
         <tbody>
           ${docContent.data.map((row: any, rowIndex: number) =>
       `<tr>${Object.entries(row).map(([key, value], cellIndex) =>
-        `<td class=${(invalidRows.includes(rowIndex) && (key === "debit" || key === "credit")) ? 'highlight' : ''}>${value}</td>`
+        `<td class=${((invalidRows.includes(rowIndex) && (key === "debit" || key === "credit")) || (rateInvalidRows.includes(rowIndex) && key === "rate")) ? 'highlight' : ''}>${value}</td>`
       ).join('')
       }</tr>`
     ).join('')}
 
           <tr>
-            <td colspan="3"></td>
+            <td colspan="4"></td>
             
             <td class=${!isBalanced ? 'highlight' : ''}>
               <div>
@@ -573,7 +700,8 @@ const Editor: React.FC = () => {
           background-color:#fcdada;
           color:#ef4444;
           margin-bottom:10px;
-          border-left:4px solid #ef4444;
+          ${language == 'ar' ? 'border-right:4px solid #ef4444;' : 'border-left:4px solid #ef4444;'}
+          
         } 
       </style>`;
 
@@ -600,6 +728,71 @@ const Editor: React.FC = () => {
       });
     } finally {
       setIsPrinting(false);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    setIsExportingExcel(true);
+
+    try {
+      if (!docContent) return;
+
+      // Calculate totals in the renderer process
+      const debitTotal = calculateTotal("debit");
+      const creditTotal = calculateTotal("credit");
+
+      // Prepare data for Excel
+      const excelData = {
+        headers: [
+          t('Editor.table.th.accountNumber'),
+          t('Editor.table.th.accountHelper'),
+          t('Editor.table.th.accountName'),
+          t('Editor.table.th.currency'),
+          t('Editor.table.th.debit'),
+          t('Editor.table.th.credit'),
+          t('Editor.table.th.rate'),
+          t('Editor.table.th.equivalent'),
+          t('Editor.table.th.description')
+        ],
+        rows: docContent.data.map((row: any) => [
+          row.accountNumber,
+          row.accountHelper,
+          row.accountName,
+          row.currency,
+          row.debit,
+          row.credit,
+          row.rate,
+          row.equivalent,
+          row.description
+        ]),
+        totals: {
+          debit: debitTotal,
+          credit: creditTotal
+        },
+        metadata: {
+          title: language === 'ar' ? docTypeNameAr : docTypeNameEn,
+          accountName: activeAccount.name,
+          documentNumber: docContent.docNumber,
+          date: docContent.created_on
+        },
+        errors: [
+          ...(!isBalanced ? [{ id: "balance", msg: t('Editor.errors.balance'), row: null }] : []),
+          ...(invalidRows.length > 0 ? [{ id: "debitcredit", msg: t('Editor.errors.debitCredit'), rows: invalidRows }] : []),
+          ...(rateInvalidRows.length > 0 ? [{ id: "rate", msg: t('Editor.errors.missingRate'), rows: rateInvalidRows }] : [])
+        ],
+        language: language
+      };
+
+      const result = await window.electron.documents.exportToExcel(excelData);
+
+      if (!result.success) {
+        throw new Error(result.error || 'Excel export failed');
+      }
+    } catch (error) {
+      console.error('Excel export error:', error);
+
+    } finally {
+      setIsExportingExcel(false);
     }
   };
 
@@ -644,6 +837,20 @@ const Editor: React.FC = () => {
     );
   }
 
+  function focusNextField(current: HTMLElement) {
+    const formElements = Array.from(
+      document.querySelectorAll(
+        'input:not([disabled]):not([readonly]), select:not([disabled]):not([readonly]), textarea:not([disabled]):not([readonly])'
+      )
+    ).filter((el) => el.offsetParent !== null); // visible only
+
+    const index = formElements.indexOf(current);
+
+    if (index > -1 && index < formElements.length - 1) {
+      formElements[index + 1].focus();
+    }
+  }
+
   return (
     <div className="h-full flex flex-col relative">
       {/* Header */}
@@ -655,30 +862,65 @@ const Editor: React.FC = () => {
         </div>
 
         <div className='flex gap-2 items-center'>
-          <motion.button
-            className="flex items-center gap-1 px-2 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-75 disabled:hover:bg-blue-500 disabled:cursor-not-allowed"
-            onClick={generatePDF}
-            disabled={isExporting}
-            whileTap={{ scale: 0.95 }}
-          >
-            {isExporting ? (
-              <>
-                <svg className="animate-spin ltr:-ml-1 ltr:mr-2 rtl:-mr-1 rtl:ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zM6 17.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                {t('Editor.ctas.exporting')}
-              </>
-            ) : (
-              <>
-                <ExternalLink size={16} />
-                {t('Editor.ctas.exportPDF')}
-              </>
-            )}
-          </motion.button>
+          <div className="relative group z-10 after:absolute after:top-100 after:left-0 after:right-0 after:w-full after:h-[10px]">
+            <button className="flex items-center gap-1 px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-900 transition outline-none">
+              <ExternalLink size={16} />
+              <span className="text-sm hidden sm:inline">{t('Editor.ctas.export')}</span>
+              <ChevronDown size={14} />
+            </button>
+
+            <div className='absolute mt-1 ltr:right-0 rtl:left-0 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 border border-gray-200 dark:border-gray-700 hidden group-hover:block'>
+              <div className="flex items-center  text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                <motion.button
+                  className='flex items-center w-full px-4 py-2 text-sm'
+                  onClick={generatePDF}
+                  disabled={isExporting}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {isExporting ? (
+                    <>
+                      <svg className="animate-spin ltr:-ml-1 ltr:mr-2 rtl:-mr-1 rtl:ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zM6 17.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      {t('Editor.ctas.exporting')}
+                    </>
+                  ) : (
+                    <>
+                      <File size={16} className='ltr:mr-2 rtl:ml-2' />
+                      {t('Editor.ctas.exportPDF')}
+                    </>
+                  )}
+                </motion.button>
+              </div>
+              <div className="flex items-center  text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                <motion.button
+                  className='flex items-center w-full px-4 py-2 text-sm'
+                  onClick={handleExportExcel}
+                  disabled={isExportingExcel}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {isExportingExcel ? (
+                    <>
+                      <svg className="animate-spin ltr:-ml-1 ltr:mr-2 rtl:-mr-1 rtl:ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zM6 17.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      {t('Editor.ctas.exportingExcel')}
+                    </>
+                  ) : (
+                    <>
+                      <FileSpreadsheet size={16} className='ltr:mr-2 rtl:ml-2' />
+                      {t('Editor.ctas.exportExcel')}
+                    </>
+                  )}
+                </motion.button>
+              </div>
+            </div>
+          </div>
 
           <motion.button
-            className="flex items-center gap-1 px-2 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-75 disabled:hover:bg-blue-500 disabled:cursor-not-allowed"
+            className="flex items-center gap-1 px-2 py-1 text-sm rounded-md bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-900 transition disabled:opacity-75 disabled:hover:bg-gray-100 disabled:dark:hover:bg-gray-700 disabled:cursor-not-allowed"
             onClick={handlePrint}
             disabled={isPrinting}
             whileTap={{ scale: 0.95 }}
@@ -730,6 +972,64 @@ const Editor: React.FC = () => {
 
       {/* Table Editor */}
       <div className="printable p-2 overflow-auto">
+
+        {changedLanguage && (
+          <motion.div className="notPrintable flex items-center p-1.5 justify-between rounded-lg overflow-hidden font-medium mb-2 bg-yellow-400 dark:bg-yellow-500 bg-opacity-40 dark:bg-opacity-20 text-yellow-600 dark:text-yellow-400"
+            initial={{ opacity: 0, x: language === 'ar' ? 10 : -10 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <div className="relative flex items-center gap-2 ltr:pl-[15px] rtl:pr-[15px] text-sm before:absolute before:top-0 ltr:before:left-0 rtl:before:right-0 before:w-[5px] before:h-[100%] before:bg-yellow-600 dark:before:bg-yellow-400 before:rounded-lg">
+              <HelpCircle size={18} strokeWidth={2.5} />
+              {t('Editor.errors.languageChanged')}
+            </div>
+            <div className='flex items-center gap-4 ltr:pr-2 rtl:pl-2'>
+              <motion.button
+                className="rounded-lg border-none outline-none text-yellow-600 dark:text-yellow-400"
+                onClick={() => translateAccountNames()}
+                whileTap={{ scale: 0.95 }}
+              >
+                {t('Editor.errors.yes')}
+              </motion.button>
+
+              <motion.button
+                className="rounded-lg border-none outline-none text-yellow-600 dark:text-yellow-400"
+                onClick={() => setChangedLanguage(false)}
+                whileTap={{ scale: 0.95 }}
+              >
+                {t('Editor.errors.no')}
+              </motion.button>
+
+
+            </div>
+            {/* <X size={18} className="font-bold cursor-pointer" strokeWidth={3.5} onClick={() => setIsBalanced(true)} /> */}
+          </motion.div>
+        )}
+
+        {accountNumberIsNotANumber && (
+          <motion.div className="flex items-center p-1.5 justify-between rounded-lg overflow-hidden font-medium mb-2 bg-red-500 bg-opacity-20 text-red-500"
+            initial={{ opacity: 0, x: language === 'ar' ? 10 : -10 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <div className="relative flex items-center gap-2 ltr:pl-[15px] rtl:pr-[15px] text-sm before:absolute before:top-0 ltr:before:left-0 rtl:before:right-0 before:w-[5px] before:h-[100%] before:bg-red-600 before:rounded-lg">
+              <AlertTriangle size={18} strokeWidth={2.5} />
+              {t('Editor.errors.accountNotNumber')}
+            </div>
+            {/* <X size={18} className="font-bold cursor-pointer" strokeWidth={3.5} onClick={() => setIsBalanced(true)} /> */}
+          </motion.div>
+        )}
+
+        {accountHelperIsNotANumber && (
+          <motion.div className="flex items-center p-1.5 justify-between rounded-lg overflow-hidden font-medium mb-2 bg-red-500 bg-opacity-20 text-red-500"
+            initial={{ opacity: 0, x: language === 'ar' ? 10 : -10 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <div className="relative flex items-center gap-2 ltr:pl-[15px] rtl:pr-[15px] text-sm before:absolute before:top-0 ltr:before:left-0 rtl:before:right-0 before:w-[5px] before:h-[100%] before:bg-red-600 before:rounded-lg">
+              <AlertTriangle size={18} strokeWidth={2.5} />
+              {t('Editor.errors.helperNotNumber')}
+            </div>
+            {/* <X size={18} className="font-bold cursor-pointer" strokeWidth={3.5} onClick={() => setIsBalanced(true)} /> */}
+          </motion.div>
+        )}
 
         {!isBalanced && (
           <motion.div className="flex items-center p-1.5 justify-between rounded-lg overflow-hidden font-medium mb-2 bg-red-500 bg-opacity-20 text-red-500"
@@ -843,6 +1143,12 @@ const Editor: React.FC = () => {
                           type="text"
                           value={value ?? ""}
                           disabled={key === "equivalent"}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === "Tab") {
+                              e.preventDefault();
+                              focusNextField(e.target);
+                            }
+                          }}
                           onChange={(e) => handleTableInputChange(rowIndex, key, e.target.value)}
                         />
                       )}

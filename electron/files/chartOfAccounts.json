@@ -26,7 +26,6 @@
                             {"id":"1024", "name":"Premium on converting D.Loans to Shares"}
                         ]
                     },
-                    
                     {
                         "id":"103",
                         "name":"Revalution Variances",
@@ -229,7 +228,6 @@
                             {"id": "2827", "name": "Dep. of Asset Accounts 227"}
                         ]
                     }
-                    
                 ]
             },
             {
@@ -527,7 +525,6 @@
                             {"id": "4431", "name": "Taxes on Profit"}
                         ]
                     },
-                    
                     {
                         "id": "445",
                         "name": "Government & Public Institutions Other Account Payable",
@@ -759,16 +756,8 @@
                     {"id": "533", "name": "CASH BOX- CHECKS"}
                 ]
             },
-            {
-                "id": "58",
-                "name": "INTERCOMPANY TRANSFERS",
-                "subAccounts": []
-            },
-            {
-                "id": "59",
-                "name": "PRO. FOR DIM. IN VALUE OF SEC.PLACEMENTS",
-                "subAccounts": []
-            }
+            {"id": "58", "name": "INTERCOMPANY TRANSFERS"},
+            {"id": "59", "name": "PRO. FOR DIM. IN VALUE OF SEC.PLACEMENTS"}
         ]
     },
     {
@@ -1134,16 +1123,8 @@
                     {"id": "742", "name": "Related to Production"}
                 ]
             },
-            {
-                "id": "75",
-                "name": "PROVISIONS WRITE-BACK",
-                "subAccounts": []
-            },
-            {
-                "id": "76",
-                "name": "OTHER OPERATING INCOME",
-                "subAccounts": []
-            },
+            {"id": "75", "name": "PROVISIONS WRITE-BACK"},
+            {"id": "76", "name": "OTHER OPERATING INCOME"},
             {
                 "id": "77",
                 "name": "FINANCIAL REVENUES",
@@ -1155,11 +1136,7 @@
                     {"id": "779", "name": "Write-Back of Financial Provisions"}
                 ]
             },
-            {
-                "id": "78",
-                "name": "NON OPERATING REVENUES",
-                "subAccounts": []
-            }
+            {"id": "78", "name": "NON OPERATING REVENUES"}
         ]
     }
 ]

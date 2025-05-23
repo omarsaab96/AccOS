@@ -6,6 +6,10 @@ import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+const chartOfAccountsTemplateEN = path.join(__dirname, 'files', 'chartOfAccounts.json');
+const chartOfAccountsTemplateAR = path.join(__dirname, 'files', 'chartOfAccounts-ar.json');
+const chartOfAccountsPerAccount = path.join(__dirname, 'files', 'accounts');
+
 
 const dbPath = path.join(__dirname, 'accounts.json')
 const adapter = new JSONFile(dbPath)
@@ -46,7 +50,6 @@ export async function getAllAccounts() {
 export async function addAccount(name) {
     try {
         await db.read();
-
         // Auto-increment ID based on accounts length
         const id = db.data.length;
         const created_on = new Date().toLocaleString('en-UK', { day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -54,9 +57,23 @@ export async function addAccount(name) {
 
         const newAcc = { id, name, created_on, linked };
 
-        db.data.push(newAcc); // ✅ CORRECTED
+        db.data.push(newAcc);
 
         await db.write()
+
+        const destinationPathEN = path.join(chartOfAccountsPerAccount, `coaen_${id}.json`);
+        const destinationPathAR = path.join(chartOfAccountsPerAccount, `coaar_${id}.json`);
+
+        // await fs.mkdir(chartOfAccountsPerAccount, { recursive: true });
+
+        try {
+            await fs.copyFile(chartOfAccountsTemplateEN, destinationPathEN);
+            await fs.copyFile(chartOfAccountsTemplateAR, destinationPathAR);
+            console.log('Files copied successfully.');
+        } catch (err) {
+            console.error('Error copying chart files:', err);
+        }
+
         return newAcc
     } catch (error) {
         console.error('Error creating account:', error)

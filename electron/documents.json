@@ -390,5 +390,38 @@
     "company": 3,
     "created_on": "19/05/2025",
     "linked": true
+  },
+  {
+    "id": 14,
+    "name": "Testing document",
+    "docType": 11,
+    "docNumber": 1,
+    "data": [
+      {
+        "accountNumber": "101",
+        "accountHelper": "001",
+        "accountName": "",
+        "currency": "LBP",
+        "debit": "1",
+        "credit": "",
+        "rate": "",
+        "equivalent": "1",
+        "description": ""
+      },
+      {
+        "accountNumber": "",
+        "accountHelper": "",
+        "accountName": "",
+        "currency": "USD",
+        "debit": "",
+        "credit": "1",
+        "rate": "1",
+        "equivalent": 1,
+        "description": ""
+      }
+    ],
+    "company": 6,
+    "created_on": "22/05/2025",
+    "linked": true
   }
 ]

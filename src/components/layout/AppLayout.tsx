@@ -9,11 +9,10 @@ import { useAccounts } from '../../contexts/AccountsContext';
 import Sidebar from './Sidebar';
 import Editor from '../editor/Editor';
 import FileTabs from '../editor/FileTabs';
+import ChartOfAccounts from '../chartOfAccounts';
 import CreateDocModal from '../createDocModal';
 import CreateAccountModal from '../createAccountModal';
 import { useTranslation } from 'react-i18next';
-
-
 
 const AppLayout: React.FC = () => {
   const { t } = useTranslation();
@@ -23,6 +22,9 @@ const AppLayout: React.FC = () => {
   const [showDocTypesModal, setShowDocTypesModal] = useState(false);
   const [docsCounts, setDocsCounts] = useState<Record<number, number>>({});
   const [loadingCounts, setLoadingCounts] = useState(false);
+  const [openChartOfAccountsTab, setOpenChartOfAccountsTab] = useState(false);
+  const [onOpenDocumentsTab, setOpenDocumentsTab] = useState(false);
+
 
   const [rowRemove, setRowRemove] = useState(-1);
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,7 +33,6 @@ const AppLayout: React.FC = () => {
   const { language, toggleLanguage } = useLanguage();
   const { activeDoc, openDocuments, getDocumentById, getDocsNumber, deleteDocumentsByCompany } = useFileSystem();
   const { refreshAccounts, deleteAccount, accountsList, activeAccount, setActiveAccount } = useAccounts();
-
 
   useEffect(() => {
     refreshAccounts();
@@ -42,13 +43,11 @@ const AppLayout: React.FC = () => {
       if (activeDoc != null) {
         const name = await getFileName(activeDoc);
         setActiveFileName(name);
-      } else {
       }
     };
 
     fetchFileName();
   }, [activeDoc]);
-
 
   useEffect(() => {
     const loadDocsCounts = async () => {
@@ -74,7 +73,6 @@ const AppLayout: React.FC = () => {
     }
   }, [accountsList]);
 
-  // Get file name from path
   const getFileName = async (id: number | null) => {
     if (!id) return 'Untitled';
     const docname = await getDocumentById(id);
@@ -82,12 +80,12 @@ const AppLayout: React.FC = () => {
   };
 
   const createNewFile = () => {
-    setShowDocTypesModal(true)
-  }
+    setShowDocTypesModal(true);
+  };
 
   const handleCreateNewAccount = () => {
     setOpenCreateNewAccountModal(true);
-  }
+  };
 
   const selectAccount = (id: number) => {
     const account = accountsList.find(a => a.id === id);
@@ -95,40 +93,34 @@ const AppLayout: React.FC = () => {
   };
 
   const removeRow = (index: number) => {
-    setRowRemove(index)
-  }
+    setRowRemove(index);
+  };
 
   const confirmRemoveRow = async (id: number) => {
     const success = await deleteAccount(id);
     if (success) {
       const success2 = await deleteDocumentsByCompany(id);
-
-      if(success2){
+      if (success2) {
         setRowRemove(-1);
       }
-      
     }
-
   };
 
   const cancelRemoveRow = () => {
-    setRowRemove(-1)
-  }
+    setRowRemove(-1);
+  };
 
-  // Filter accounts based on search term
   const filteredAccounts = accountsList.filter(account =>
     account.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-
     <motion.div
       className="h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-
       {/* App Header */}
       <header className="h-12 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 z-10 select-none">
         <div className="flex items-center">
@@ -148,16 +140,6 @@ const AppLayout: React.FC = () => {
             ) : (
               <img className="" src="logo.png" alt="Logo" width="100px" height="36px" />
             )}
-            {/* {currentDirectory ? (
-              <span title={currentDirectory}>{getFileName(currentDirectory)}</span>
-            ) : (
-              'accos'
-            )}
-            {activeFileName && (
-              <span className="text-gray-500 dark:text-gray-400 ml-1">
-                — {activeFileName}
-              </span>
-            )} */}
           </h1>
         </div>
 
@@ -179,7 +161,7 @@ const AppLayout: React.FC = () => {
             </button>
           </div>
 
-          <div className="relative group">
+          <div className="relative group after:absolute after:top-100 after:left-0 after:right-0 after:w-full after:h-[10px]">
             <button className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 outline-none">
               <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white">
                 {user?.name?.charAt(0).toUpperCase() || 'null'}
@@ -194,7 +176,7 @@ const AppLayout: React.FC = () => {
                 className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left"
               >
                 <LogOut size={16} className="ltr:mr-2 rtl:ml-2 rtl:rotate-180" />
-                Sign out
+                {t('Common.logout')}
               </button>
             </div>
           </div>
@@ -202,17 +184,13 @@ const AppLayout: React.FC = () => {
       </header>
 
       {!activeAccount ? (
-        accountsList.length == 0 ? (
+        accountsList.length === 0 ? (
           openCreateNewAccountModal ? (
             <CreateAccountModal onClose={() => setOpenCreateNewAccountModal(false)} />
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 p-4">
               <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
-                {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg> */}
                 <Building2 size={35} />
-
               </div>
               <h2 className="text-xl font-medium mb-2">{t('Accounts.noAccounts.title')}</h2>
               <p className="text-center max-w-md mb-8">
@@ -230,7 +208,7 @@ const AppLayout: React.FC = () => {
             </div>
           )
         ) : (
-          < div className="h-full overflow-auto flex flex-col justify-between text-gray-500 dark:text-gray-400">
+          <div className="h-full overflow-auto flex flex-col justify-between text-gray-500 dark:text-gray-400">
             <div className="p-4">
               <h2 className="text-xl font-medium text-white mb-5">
                 {t('Accounts.title')}
@@ -240,7 +218,7 @@ const AppLayout: React.FC = () => {
               </p>
 
               <div className="mb-4 relative">
-                <Search size={20} className='absolute top-[50%] -translate-y-[50%] ltr:left-2 rtl:right-2'/>
+                <Search size={20} className='absolute top-[50%] -translate-y-[50%] ltr:left-2 rtl:right-2' />
                 <input
                   type="text"
                   placeholder={t('Accounts.search.placeholder')}
@@ -250,7 +228,7 @@ const AppLayout: React.FC = () => {
                 />
               </div>
 
-              {filteredAccounts.length != 0 && (
+              {filteredAccounts.length !== 0 && (
                 <table className="w-full text-sm ltr:text-left rtl:text-right">
                   <thead>
                     <tr className="text-gray-900 dark:text-blue-400 bg-gray-100 dark:bg-gray-800">
@@ -261,7 +239,7 @@ const AppLayout: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {searchTerm.trim() == '' && accountsList?.map((account: any, rowIndex: number) => {
+                    {searchTerm.trim() === '' && accountsList?.map((account: any, rowIndex: number) => {
                       const isLast = rowIndex === accountsList.length - 1;
                       return (
                         <tr key={rowIndex}
@@ -276,7 +254,7 @@ const AppLayout: React.FC = () => {
                               <Trash size={12} className='opacity-50' />
                             </motion.button>
 
-                            <div className={`absolute top-0 left-0 h-full px-1 py-2 rounded-lg transition-all w-full origin-left ${rowRemove == rowIndex ? ' scale-100 opacity-100 visible' : ' scale-0 opacity-0 invisible'}`}>
+                            <div className={`absolute top-0 left-0 h-full px-1 py-2 rounded-lg transition-all w-full origin-left ${rowRemove === rowIndex ? ' scale-100 opacity-100 visible' : ' scale-0 opacity-0 invisible'}`}>
                               <div className='h-full text-[#111827] dark:text-white bg-red-600 bg-opacity-50 backdrop-blur-sm flex justify-center items-center gap-2 rounded-lg text-center font-bold'>
                                 <Trash size={14} />
                                 {t('Accounts.removeRow.title')}
@@ -294,7 +272,6 @@ const AppLayout: React.FC = () => {
                                 >
                                   {t('Accounts.removeRow.no')}
                                 </motion.button>
-
                               </div>
                             </div>
                           </td>
@@ -312,7 +289,7 @@ const AppLayout: React.FC = () => {
                       );
                     })}
 
-                    {searchTerm.trim() != '' && filteredAccounts?.map((account: any, rowIndex: number) => {
+                    {searchTerm.trim() !== '' && filteredAccounts?.map((account: any, rowIndex: number) => {
                       const isLast = rowIndex === accountsList.length - 1;
                       return (
                         <tr key={rowIndex}
@@ -327,7 +304,7 @@ const AppLayout: React.FC = () => {
                               <Trash size={12} className='opacity-50' />
                             </motion.button>
 
-                            <div className={`absolute top-0 left-0 h-full px-1 py-2 rounded-lg transition-all w-full origin-left ${rowRemove == rowIndex ? ' scale-100 opacity-100 visible' : ' scale-0 opacity-0 invisible'}`}>
+                            <div className={`absolute top-0 left-0 h-full px-1 py-2 rounded-lg transition-all w-full origin-left ${rowRemove === rowIndex ? ' scale-100 opacity-100 visible' : ' scale-0 opacity-0 invisible'}`}>
                               <div className='h-full text-[#111827] dark:text-white bg-red-600 bg-opacity-50 backdrop-blur-sm flex justify-center items-center gap-2 rounded-lg text-center font-bold'>
                                 <Trash size={14} />
                                 {t('Accounts.removeRow.title')}
@@ -345,7 +322,6 @@ const AppLayout: React.FC = () => {
                                 >
                                   {t('Accounts.removeRow.no')}
                                 </motion.button>
-
                               </div>
                             </div>
                           </td>
@@ -383,61 +359,67 @@ const AppLayout: React.FC = () => {
             animate={{ width: sidebarOpen ? 250 : 0 }}
             transition={{ duration: 0.2 }}
           >
-            {sidebarOpen && <Sidebar onOpenCreateDocModal={() => setShowDocTypesModal(true)} onOpenCreateAccountModal={() => setOpenCreateNewAccountModal(true)} />}
+            {sidebarOpen &&
+              <Sidebar
+                onOpenCreateDocModal={() => setShowDocTypesModal(true)}
+                onOpenCreateAccountModal={() => setOpenCreateNewAccountModal(true)}
+                onOpenChartOfAccountsTab={() => setOpenChartOfAccountsTab(true)}
+                onOpenDocumentsTab={() => setOpenChartOfAccountsTab(false)}
+              />
+            }
           </motion.div>
 
           {/* Main Content */}
           <div className="flex-1 flex flex-col overflow-hidden">
+            {openChartOfAccountsTab ? (
+              <ChartOfAccounts />
+            ) : (
+              <div className="flex-1 overflow-hidden">
+                {openCreateNewAccountModal &&
+                  <CreateAccountModal onClose={() => setOpenCreateNewAccountModal(false)} />
+                }
+                {showDocTypesModal &&
+                  <CreateDocModal onClose={() => setShowDocTypesModal(false)} />
+                }
 
-            {/* Editor Area */}
-            <div className="flex-1 overflow-hidden">
-              {openCreateNewAccountModal &&
+                {activeDoc != null ? (
+                  <>
+                    {/* File Tabs */}
+                    {openDocuments.length > 0 && (
+                      <FileTabs />
+                    )}
 
-                <CreateAccountModal onClose={() => setOpenCreateNewAccountModal(false)} />
-              }
-              {showDocTypesModal &&
+                    <Editor />
+                  </>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 p-4">
+                    <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <h2 className="text-xl font-medium mb-2">{t('NoOpenDocuments.title')}</h2>
+                    <p className="text-center max-w-md mb-8">
+                      {t('NoOpenDocuments.subtitle')}
+                    </p>
 
-                <CreateDocModal onClose={() => setShowDocTypesModal(false)} />
-              }
-
-              {activeDoc != null ? (
-                <>
-                  {/* File Tabs */}
-                  {openDocuments.length > 0 && (
-                    <FileTabs />
-                  )}
-
-                  <Editor />
-                </>
-              ) : (
-                <div className="h-full flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 p-4">
-                  <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
+                    <motion.button
+                      className="flex items-center gap-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors focus:outline-none"
+                      onClick={() => createNewFile()}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <FilePlus size={20} />
+                      {t('NoOpenDocuments.cta')}
+                    </motion.button>
                   </div>
-                  <h2 className="text-xl font-medium mb-2">{t('NoOpenDocuments.title')}</h2>
-                  <p className="text-center max-w-md mb-8">
-                    {t('NoOpenDocuments.subtitle')}
-                  </p>
-
-                  <motion.button
-                    className="flex items-center gap-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors focus:outline-none"
-                    onClick={() => createNewFile()}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <FilePlus size={20} />
-                    {t('NoOpenDocuments.cta')}
-                  </motion.button>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
-    </motion.div >
+    </motion.div>
   );
 };
 
 export default AppLayout;
-

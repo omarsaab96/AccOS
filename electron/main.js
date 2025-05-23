@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs/promises';
@@ -6,6 +6,7 @@ import * as fsSync from 'fs';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import ExcelJS from 'exceljs';
 import { initDocTypesDB, addDocType, getDocTypes, getDocTypeName } from './docTypeStore.js';
 import { initDocumentsDB, addDocument, getAllDocuments, getDocumentsByAccount, readDoc, updateDoc, deleteDocumentsByCompany } from './documentStore.js';
 import { initAccountsDB, getAllAccounts, addAccount, updateAccount, getAccountByID, deleteAccount } from './accountStore.js';
@@ -23,6 +24,7 @@ const User = mongoose.model('User', userSchema);
 // Determine if we're in development or production
 const isDev = process.env.NODE_ENV === 'development';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const chartOfAccountsPerAccount = path.join(__dirname, 'files', 'accounts');
 
 let mainWindow;
 
@@ -186,8 +188,368 @@ ipcMain.handle('accounts:deleteAccount', async (_, id) => {
   return await deleteAccount(id)
 })
 
+//IPC handler for Generate PDF
+ipcMain.on('documents:generate-pdf', async (event, htmlContent) => {
+  const printWindow = new BrowserWindow({
+    show: false,
+    webPreferences: {
+      offscreen: true,
+    },
+  });
 
-//IPC handler for Printer
+  // Wrap HTML with a minimal document
+  const fullHTML = `
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+      </head>
+      <body>${htmlContent}</body>
+    </html>
+  `;
+
+  try {
+    await printWindow.loadURL('data:text/html;charset=utf-8,' + encodeURIComponent(fullHTML));
+
+    const pdfBuffer = await printWindow.webContents.printToPDF({
+      marginsType: 1,
+      printBackground: true,
+      pageSize: 'A4',
+    });
+
+    const { filePath } = await dialog.showSaveDialog(printWindow, {
+      title: 'Save PDF File',
+      defaultPath: 'document.pdf',
+      filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
+    });
+
+    if (filePath) {
+      await fs.writeFile(filePath, pdfBuffer);
+      console.log('PDF saved from div content!');
+    }
+
+    printWindow.close();
+
+    shell.openPath(filePath);
+
+  } catch (error) {
+    console.error('Failed to generate PDF from div:', error);
+  }
+});
+
+//IPC handler for Print PDF
+ipcMain.handle('documents:printPDF', async (event, htmlContent) => {
+  console.log('Starting print process...'); // Debug log
+  let printWindow;
+
+  try {
+    printWindow = new BrowserWindow({
+      show: false,
+      webPreferences: {
+        offscreen: true,
+        nodeIntegration: false,
+        contextIsolation: true
+      },
+    });
+
+    console.log('Created print window'); // Debug log
+
+    const fullHTML = `
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+          <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+        </head>
+        <body>${htmlContent}</body>
+      </html>
+    `;
+
+    await printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(fullHTML)}`);
+    console.log('HTML loaded in print window'); // Debug log
+
+    // Wait for content to load
+    await printWindow.webContents.executeJavaScript(`
+      Promise.all(Array.from(document.images).map(img =>
+        img.complete ? Promise.resolve() :
+        new Promise(resolve => {
+          img.onload = img.onerror = resolve;
+        })
+      ));
+    `);
+
+    console.log('Initiating print...'); // Debug log
+    await printWindow.webContents.print({
+      silent: false,
+      printBackground: true,
+      pageSize: 'A4',
+    });
+
+    console.log('Print completed successfully'); // Debug log
+    return { success: true };
+  } catch (error) {
+    console.error('Print error in main process:', error); // Debug log
+    return { success: false, error: error.message };
+  } finally {
+    // if (printWindow && !printWindow.isDestroyed()) {
+    //   printWindow.close();
+    // }
+    console.log('Print window cleaned up'); // Debug log
+  }
+});
+
+//IPC handler for export to Excel
+ipcMain.handle('documents:exportToExcel', async (event, data) => {
+  try {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Document');
+
+    // Set RTL if Arabic
+    if (data.language === 'ar') {
+      worksheet.views = [{
+        rightToLeft: true
+      }];
+    }
+
+    // Merge cells for logo and title
+    worksheet.mergeCells('A1:C4');
+    worksheet.mergeCells('D1:I4');
+
+    // Add logo image
+    try {
+      const imageId = workbook.addImage({
+        filename: path.join(__dirname, 'assets', 'logo.png'),
+        extension: 'png',
+      });
+
+      worksheet.addImage(imageId, {
+        tl: {
+          col: 0.1,
+          row: 0.5
+        },
+        ext: { width: 180, height: 54 }
+      });
+    } catch (imageError) {
+      console.warn('Could not add image:', imageError);
+    }
+
+
+    const titleCell = worksheet.getCell('D1');
+    titleCell.value = data.metadata.title;
+    titleCell.font = { bold: true, size: 16 };
+    titleCell.alignment = {
+      horizontal: data.language === 'ar' ? 'left' : 'right',
+      vertical: 'middle',
+      wrapText: true
+    };
+
+    // Set column widths
+    // worksheet.columns = [
+    //   { width: 15 }, // Account #
+    //   { width: 10 }, // Account Helper
+    //   { width: 20 }, // Account Name
+    //   { width: 10 }, // Currency
+    //   { width: 15 }, // Debit
+    //   { width: 15 }, // Credit
+    //   { width: 10 }, // Rate
+    //   { width: 15 }, // Equivalent
+    //   { width: 25 }  // Description
+    // ];
+
+    // Document info starting at row 5
+    let currentRow = 7;
+
+    // Add document info (3 rows)
+    const addInfoRow = (label, value) => {
+      const row = worksheet.getRow(currentRow);
+      row.getCell(1).value = label;
+      row.getCell(1).font = { bold: true };
+      row.getCell(3).value = value;
+      row.alignment = {
+        horizontal: data.language === 'ar' ? 'right' : 'left'
+      };
+      worksheet.mergeCells(`A${currentRow}:B${currentRow}`);
+      worksheet.mergeCells(`C${currentRow}:I${currentRow}`);
+      currentRow++;
+    };
+
+    addInfoRow(data.language === 'ar' ? 'اسم الحساب' : 'Account Name', data.metadata.accountName);
+    addInfoRow(data.language === 'ar' ? 'رقم المستند' : 'Document #', data.metadata.documentNumber + "");
+    addInfoRow(data.language === 'ar' ? 'التاريخ' : 'Date', data.metadata.date);
+    currentRow += 3; // Add 3 empty rows after info
+
+    // Add error messages if any exist
+    if (data.errors.length > 0) {
+      data.errors.forEach(error => {
+        const errorRow = worksheet.getRow(currentRow++);
+
+
+
+        errorRow.getCell(1).value = ` !  ${error.msg}`;
+        worksheet.mergeCells(`A${errorRow.number}:I${errorRow.number}`);
+
+        // Style error row
+        errorRow.font = { bold: true, color: { argb: 'FFFF0000' } };
+        errorRow.eachCell(cell => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFFFE0E0' }
+          };
+          cell.alignment = {
+            horizontal: data.language === 'ar' ? 'right' : 'left',
+            readingOrder: data.language === 'ar' ? 'rtl' : 'ltr' 
+          };
+        });
+      });
+      currentRow++; // Add empty row after errors
+    }
+
+
+    const headerRow = worksheet.getRow(currentRow++);
+    headerRow.values = data.headers;
+
+    // Style headers
+    headerRow.font = { bold: true };
+    headerRow.eachCell(cell => {
+      cell.border = {
+        top: { style: 'thin' },
+        bottom: { style: 'thin' }
+      };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFD3D3D3' }
+      };
+
+    });
+
+
+    // Process error highlights
+    const debitcreditError = data.errors.find(error => error.id === 'debitcredit');
+    const rateError = data.errors.find(error => error.id === 'rate');
+    const debitCreditRowsArray = debitcreditError?.rows || [];
+    const rateErrorRowsArray = rateError?.rows || [];
+
+    // Add data rows with error highlighting
+    data.rows.forEach((row, index) => {
+      const dataRow = worksheet.addRow(row);
+
+      dataRow.eachCell((cell, colNumber) => {
+        cell.border = {
+          top: { style: 'thin' },
+          bottom: { style: 'thin' }
+        };
+
+        // Highlight debit/credit errors (adjust column numbers for RTL)
+        const debitCol = 5;
+        const creditCol = 6;
+        const rateCol = 7;
+
+        if (debitCreditRowsArray.includes(index) &&
+          (colNumber === debitCol || colNumber === creditCol)) {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFFFE0E0' }
+          };
+        }
+
+        // Highlight rate errors
+        if (rateErrorRowsArray.includes(index) && colNumber === rateCol) {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFFFE0E0' }
+          };
+        }
+      });
+    });
+
+    // Add totals row
+    const totalsData = [
+      '', '', '', '',
+      data.totals.debit,
+      data.totals.credit,
+      '', '', ''
+    ];
+
+    const totalRow = worksheet.addRow(totalsData);
+
+    // Style totals row
+    totalRow.font = { bold: true };
+    totalRow.eachCell((cell, colNumber) => {
+      cell.border = {
+        top: { style: 'thin' },
+        bottom: { style: 'thin' }
+      };
+
+      // Highlight balance errors
+      const debitCol = 5;
+      const creditCol = 6;
+
+      if (data.errors.some(error => error.id === 'balance') &&
+        (colNumber === debitCol || colNumber === creditCol)) {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFFFE0E0' }
+        };
+      }
+    });
+
+    // Show save dialog
+    const { filePath, canceled } = await dialog.showSaveDialog({
+      title: 'Save Excel File',
+      defaultPath: `${data.metadata.title.replace(/\s+/g, '_')}_${data.metadata.documentNumber}.xlsx`,
+      filters: [{ name: 'Excel Files', extensions: ['xlsx'] }]
+    });
+
+    if (canceled || !filePath) {
+      return { success: false, error: 'Save canceled by user' };
+    }
+
+    // Save and open the file
+    await workbook.xlsx.writeFile(filePath);
+    shell.openPath(filePath);
+
+    return { success: true, path: filePath };
+  } catch (error) {
+    console.error('Excel export error:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+//IPC handler for ChartOfAccounts
+ipcMain.handle('chartOfAccounts:getChartOfAccountsByAccountId', async (_, id) => {
+  try {
+    const filePathEN = path.join(chartOfAccountsPerAccount, `coaen_${id}.json`);
+    const filePathAR = path.join(chartOfAccountsPerAccount, `coaar_${id}.json`);
+
+    // Ensure files exist
+    await fs.access(filePathEN);
+    await fs.access(filePathAR);
+
+    // Read contents
+    const [enContent, arContent] = await Promise.all([
+      fs.readFile(filePathEN, 'utf-8'),
+      fs.readFile(filePathAR, 'utf-8')
+    ]);
+
+    return {
+      en: JSON.parse(enContent),
+      ar: JSON.parse(arContent)
+    };
+  } catch (error) {
+    console.error(`Failed to read chart of accounts for account ID ${id}:`, error);
+    return { error: `Chart of accounts not found for account ID ${id}` };
+  }
+})
 
 
 //IPC handler for Files
@@ -301,112 +663,3 @@ ipcMain.handle('fs:createFile', async (_, directoryPath, fileName, docType) => {
 //     throw error;
 //   }
 // });
-
-ipcMain.on('documents:generate-pdf', async (event, htmlContent) => {
-  const printWindow = new BrowserWindow({
-    show: false,
-    webPreferences: {
-      offscreen: true,
-    },
-  });
-
-  // Wrap HTML with a minimal document
-  const fullHTML = `
-    <html>
-      <head>
-        <meta charset="utf-8" />
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-      </head>
-      <body>${htmlContent}</body>
-    </html>
-  `;
-
-  try {
-    await printWindow.loadURL('data:text/html;charset=utf-8,' + encodeURIComponent(fullHTML));
-
-    const pdfBuffer = await printWindow.webContents.printToPDF({
-      marginsType: 1,
-      printBackground: true,
-      pageSize: 'A4',
-    });
-
-    const { filePath } = await dialog.showSaveDialog(printWindow, {
-      defaultPath: 'document.pdf',
-      filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
-    });
-
-    if (filePath) {
-      await fs.writeFile(filePath, pdfBuffer);
-      console.log('PDF saved from div content!');
-    }
-
-    printWindow.close();
-  } catch (error) {
-    console.error('Failed to generate PDF from div:', error);
-  }
-});
-
-ipcMain.handle('documents:printPDF', async (event, htmlContent) => {
-  console.log('Starting print process...'); // Debug log
-  let printWindow;
-
-  try {
-    printWindow = new BrowserWindow({
-      show: false,
-      webPreferences: {
-        offscreen: true,
-        nodeIntegration: false,
-        contextIsolation: true
-      },
-    });
-
-    console.log('Created print window'); // Debug log
-
-    const fullHTML = `
-      <html>
-        <head>
-          <meta charset="utf-8" />
-          <link rel="preconnect" href="https://fonts.googleapis.com">
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-          <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-          <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-        </head>
-        <body>${htmlContent}</body>
-      </html>
-    `;
-
-    await printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(fullHTML)}`);
-    console.log('HTML loaded in print window'); // Debug log
-
-    // Wait for content to load
-    await printWindow.webContents.executeJavaScript(`
-      Promise.all(Array.from(document.images).map(img =>
-        img.complete ? Promise.resolve() :
-        new Promise(resolve => {
-          img.onload = img.onerror = resolve;
-        })
-      ));
-    `);
-
-    console.log('Initiating print...'); // Debug log
-    await printWindow.webContents.print({
-      silent: false,
-      printBackground: true,
-      pageSize: 'A4',
-    });
-
-    console.log('Print completed successfully'); // Debug log
-    return { success: true };
-  } catch (error) {
-    console.error('Print error in main process:', error); // Debug log
-    return { success: false, error: error.message };
-  } finally {
-    // if (printWindow && !printWindow.isDestroyed()) {
-    //   printWindow.close();
-    // }
-    console.log('Print window cleaned up'); // Debug log
-  }
-});

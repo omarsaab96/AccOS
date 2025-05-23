@@ -57,7 +57,7 @@ const CreateAccountModal: React.FC<Props> = ({ onClose }) => {
     return (
         <div className="h-full flex flex-col justify-between text-gray-500 dark:text-gray-400">
             <div className="p-4">
-                <h2 className="text-xl font-medium text-white mb-5">{t('CreateAccountModal.title')}</h2>
+                <h2 className="text-xl font-medium text-gray-900 dark:text-white mb-5">{t('CreateAccountModal.title')}</h2>
 
                 <p className="max-w-full mb-3 ltr:pl-[35px] rtl:pr-[35px] relative before:absolute before:content-['1'] before:font-medium before:text-white before:text-center before:leading-[24px] before:w-[24px]  before:h-[24px]  before:top-50 ltr:before:left-0 rtl:before:right-0 before:-translate-y-50 before:bg-blue-500 before:rounded-full">
                     {t('CreateAccountModal.inputs.accountNameLabel')}

@@ -1,6 +1,7 @@
 {
   "Common": {
-    "languageToggle": "العربية"
+    "languageToggle": "العربية",
+    "logout":"Log out"
   },
   "Login": {
     "title": "Log In",
@@ -80,13 +81,42 @@
     "JournalVoucher": "Journal Voucher",
     "PaymentVoucher": "Payment Voucher",
     "ReceiptVoucher": "Receipt Voucher",
-    "Voucher": "Voucher"
+    "DebitNote": "Debit Note",
+    "CreditNote": "Credit Note",
+    "OpeningVoucher": "Opening Voucher",
+    "ClosingVoucher": "Closing Voucher",
+    "CreditSalesInvoice": "Credit Sales Invoice",
+    "CashSalesInvoice": "Cash Sales Invoice",
+    "CreditPurchaseInvoice": "Credit Purchase Invoice",
+    "CashPurchaseInvoice": "Cash Purchase Invoice",
+    "CreditFixedAssetPurchaseInvoice": "Credit Fixed Asset Purchase Invoice",
+    "CashFixedAssetPurchaseInvoice": "Cash Fixed Asset Purchase Invoice",
+    "CreditFixedAssetSalesInvoice": "Credit Fixed Asset Sales Invoice",
+    "CashFixedAssetSalesInvoice": "Cash Fixed Asset Sales Invoice",
+    "SalesReturn": "Sales Return",
+    "PurchaseReturn": "Purchase Return",
+    "FixedAssetPurchaseReturn": "Fixed Asset Purchase Return",
+    "FixedAssetSalesReturn": "Fixed Asset Sales Return"
   },
   "Sidebar": {
-    "title": "Documents",
-    "noDocuments": "No Documents found",
-    "selectAccount": "Select Account",
-    "accountTitle": "Selected account"
+    "accounts": {
+      "title": "Selected account",
+      "selectAccount": "Select Account"
+    },
+    "documents": {
+      "title": "Documents",
+      "noDocuments": "No Documents found"
+    },
+    "menu": {
+      "title": "Menu",
+      "noMenu": "No actions available",
+      "documents": "Documents",
+      "chartOfAccounts": "Chart of Accounts"
+    }
+  },
+  "ChartOfAccounts": {
+    "title": "Chart Of Accounts",
+    "intro": "The chart of accounts is a list of all accounts used by the company. It provides a systematic way to categorize and organize financial transactions."
   },
   "NoOpenDocuments": {
     "title": "No Open Documents",
@@ -124,7 +154,7 @@
     "table": {
       "th": {
         "accountNumber": "Acc #",
-        "accountHelper":"Acc helper",
+        "accountHelper": "Acc Helper",
         "accountName": "Acc Name",
         "currency": "Currency",
         "debit": "Debit",
@@ -154,12 +184,17 @@
     "errors": {
       "balance": "Debit and Credit totals do not match.",
       "debitCredit": "A row cannot contain both debit and credit values.",
-      "missingRate": "Rate is required for foreign currency transactions."
+      "missingRate": "Rate is required for foreign currency transactions.",
+      "accountNotNumber": "Account# must be a number.",
+      "helperNotNumber": "Account helper must be a number.",
+      "languageChanged": "Some account names are in Arabic. Would you like to translate them to English?",
+      "yes": "Yes",
+      "no": "No"
     },
-    "pdf":{
-      "accountName":"Account Name",
-      "documentNumber":"Document#",
-      "date":"Date"
+    "pdf": {
+      "accountName": "Account Name",
+      "documentNumber": "Document#",
+      "date": "Date"
     },
     "ctas": {
       "save": "Save",
@@ -167,9 +202,12 @@
       "saved": "Saved",
       "addRow": "Add row",
       "print": "Print",
-      "printing":"Printing...",
-      "exportPDF":"Export as PDF",
-      "exporting":"Exporting..."
+      "printing": "Printing...",
+      "exportPDF": "Export PDF",
+      "exporting": "Exporting...",
+      "exportExcel": "Export CSV (Excel)",
+      "exportingExcel": "Exporting...",
+      "export": "Export"
     }
   }
 }
